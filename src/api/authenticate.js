@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const fflApiUrl = "http://localhost:39826/api/Authenticate";
+const fflApiUrl = "https://ffltest.azurewebsites.net/api/Authenticate";
 
 export async function authenticateLogin(username, password) {
 
@@ -26,7 +26,7 @@ export async function getAccessTokenFromRefreshToken(accessToken, refreshToken) 
 
 export async function sendEmailwithUserName(email) {
 
-    const urlToPage = "http://localhost:3000/Login";
+    const urlToPage = "https://kind-sky-02d625b0f.4.azurestaticapps.net/Login";
     const result =
         await axios
             .post(`${fflApiUrl}/send-forgot-username-email`, { email, urlToPage })
@@ -38,7 +38,7 @@ export async function sendEmailwithUserName(email) {
 
 export async function sendEmailwithPasswordReset(email) {
 
-    const urlToPage = "http://localhost:3000/ResetPassword";
+    const urlToPage = "https://kind-sky-02d625b0f.4.azurestaticapps.net/ResetPassword";
     const result =
         await axios
             .post(`${fflApiUrl}/send-reset-password-email`, { email, urlToPage })
