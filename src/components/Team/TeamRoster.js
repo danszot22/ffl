@@ -1,0 +1,126 @@
+import { Paper, Link, Typography, Tooltip, Box, IconButton } from "@mui/material";
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import { formatPlayerName, playerStatuses } from "../../utils/helpers";
+import { Delete, Info, ThumbDown } from "@mui/icons-material";
+import { StyledTableHeaderRow } from "../common/styled";
+import withAuth from "../withAuth";
+
+function TeamRoster({ roster, teamDetails, team, isEditable }) {
+
+    const handleDelete = () => {
+        //TODO: Call API
+        console.log('delete');
+    };
+
+    return (
+        <TableContainer sx={{ maxWidth: 750 }} component={Paper}>
+            <Table size="small" aria-label="simple table">
+                <TableHead>
+                    <StyledTableHeaderRow>
+                        <TableCell colSpan={6}>
+                            Roster
+                        </TableCell>
+                    </StyledTableHeaderRow>
+                    <TableRow>
+                        <TableCell>
+
+                        </TableCell>
+                        <TableCell>
+                            Name
+                        </TableCell>
+                        <TableCell>
+                            Stats
+                        </TableCell>
+                        <TableCell>
+                            Status
+                        </TableCell>
+                        <TableCell>
+                            Bye
+                        </TableCell>
+                        <TableCell>
+
+                        </TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {roster?.Players.map((player, index) => (
+                        <TableRow sx={{ borderTop: index > 0 && player?.Group !== roster?.Players[index - 1]?.Group ? 3 : 1 }} key={player.PlayerId}>
+                            <TableCell>
+                                {player?.PositionCode?.startsWith('TM') ?
+                                    <img
+                                        alt={player?.DisplayCode}
+                                        height={30}
+                                        src={`https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/${player?.DisplayCode}.png&h=150&w=150`}
+                                        loading="lazy"
+                                        style={{ borderRadius: '50%' }}
+                                    /> : player.EspnPlayerId ?
+                                        <img
+                                            alt="?"
+                                            height={30}
+                                            src={`https://a.espncdn.com/combiner/i?img=/i/headshots/nfl/players/full/${player.EspnPlayerId}.png&h=120&w=120&scale=crop`}
+                                            loading="lazy"
+                                            style={{ borderRadius: '50%' }}
+                                        /> :
+                                        <img
+                                            alt="?"
+                                            height={30}
+                                            src={`https://a.espncdn.com/combiner/i?img=/i/headshots/nophoto.png&w=120&h=120&scale=crop`}
+                                            loading="lazy"
+                                            style={{ borderRadius: '50%' }}
+                                        />
+                                }
+                            </TableCell>
+                            <TableCell>
+                                <Link to={`/Player/${player.PlayerId}`} >{formatPlayerName(player.PlayerName, player.PositionCode)}</Link>
+                                {` ${player.PositionCode} ${player.DisplayCode}`}
+                            </TableCell>
+                            <TableCell >
+                                <Typography variant="caption">
+                                    {["TMQB", "QB"].includes(player.PositionCode) ? `${player.PassYds ?? 0} Yds, ${player.PassTds ?? 0} TDs, ${player.PassInts ?? 0} Ints` : ' '}
+                                    {["RB"].includes(player.PositionCode) ? `${player.RushingYds ?? 0} Yds, ${player.RushingTds ?? 0} TDs` : ' '}
+                                    {["WR", "TE"].includes(player.PositionCode) ? `${player.ReceivingYds ?? 0} Yds, ${player.ReceivingTds ?? 0} TDs` : ' '}
+                                    {["TMPK", "PK"].includes(player.PositionCode) ? ` ${player.FGYds ?? 0} FGYds, ${player.XPs ?? 0} XPs` : ' '}
+                                    {["S", "CB", "LB", "DE", "DT"].includes(player.PositionCode) ? ` ${player.Tackles ?? 0} Tckls, ${player.Sacks ?? 0} Sacks` : ' '}
+                                </Typography>
+                            </TableCell>
+                            <TableCell>
+                                {player.StatusDescription?.length > 0 ?
+                                    (<Tooltip title={player.StatusDescription}>
+                                        <Box sx={{
+                                            display: 'flex',
+                                        }}>
+                                            <Typography variant="caption" sx={{ pr: 1 }}>
+                                                {playerStatuses[player.StatusCode]}
+                                            </Typography>
+                                            <Info />
+                                        </Box>
+                                    </Tooltip>) : null
+                                }
+                            </TableCell>
+                            <TableCell>
+                                {player.ByeWeek}
+                            </TableCell>
+                            <TableCell>
+                                {team?.TeamId === teamDetails?.TeamId ?
+                                    <Tooltip title="Drop">
+                                        <IconButton variant="contained" color="error" to={`/RosterPlayer/Drop/${teamDetails?.TeamId}/${player.RosterPlayerId}`}>
+                                            <ThumbDown />
+                                        </IconButton>
+                                    </Tooltip>
+                                    : null}
+                                {isEditable ?
+                                    <Tooltip title="Delete">
+                                        <IconButton variant="contained" color="error" onClick={handleDelete}>
+                                            <Delete />
+                                        </IconButton>
+                                    </Tooltip>
+                                    : null}
+                            </TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
+        </TableContainer>)
+}
+
+export default withAuth(TeamRoster);
