@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const dabFflUrl = "http://ffl-api.eastus.azurecontainer.io:5000/graphql/";
+const dabFflUrl = "https://ffltest.azurewebsites.net/api/dab/graphql/";
 
 export const seasonStandingsLoader = async (year, leagueId) => {
     const response = await postToApi(`{
