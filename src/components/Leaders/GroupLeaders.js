@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from 'react-router-dom';
 import { leaguePlayersLoader } from "../../api/graphql";
 import { formatPlayerFullName } from "../../utils/helpers";
 import { Card, CardContent, Table, TableRow, TableCell, TableHead, TableBody, Paper, Typography, Box, Link } from "@mui/material";
@@ -7,7 +6,6 @@ import withAuth from "../withAuth";
 
 function GroupLeaders({ league, availability, spot }) {
     const [players, setPlayers] = useState([]);
-    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchPlayers = async () => {
