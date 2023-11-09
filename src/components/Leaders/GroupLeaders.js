@@ -19,10 +19,6 @@ function GroupLeaders({ league, availability, spot }) {
         availability, spot, league,
     ]);
 
-    function handleGoToPlayerList() {
-        navigate(`/PlayerList/1?availability=${availability}&spot=${spot}`);
-    }
-
     return (
         <Card sx={{ minWidth: 600 }}>
             <CardContent p={0}>
@@ -38,7 +34,7 @@ function GroupLeaders({ league, availability, spot }) {
                                                 spot === "TMQB" ? "Team Quarterbacks" :
                                                     "Players"}
                                 </TableCell>
-                                <TableCell><Link onClick={handleGoToPlayerList}>View</Link></TableCell>
+                                <TableCell><Link to={`/PlayerList/1?availability=${availability}&spot=${spot}`}>View</Link></TableCell>
                                 <TableCell>Points</TableCell>
                             </TableRow>
                         </TableHead>
