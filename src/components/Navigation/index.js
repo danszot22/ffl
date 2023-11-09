@@ -27,7 +27,7 @@ function Navigation({ league, team, isAuthenticated, user }) {
 
     return (
         <>
-            <Box sx={{ display: { xs: 'block', sm: 'none' } }}>
+            <AppBar position="sticky" sx={{ display: { xs: 'block', sm: 'none' } }}>
                 <IconButton
                     color="inherit"
                     aria-label="open drawer"
@@ -50,7 +50,7 @@ function Navigation({ league, team, isAuthenticated, user }) {
                         <NavItems league={league} team={team} leagues={leagues} teams={teams} isAuthenticated={isAuthenticated} user={user} />
                     </Box>
                 </Drawer>
-            </Box>
+            </AppBar>
             <AppBar position="sticky" sx={{ display: { xs: 'none', sm: 'block' } }}>
                 <Toolbar>
                     <NavItems league={league} team={team} leagues={leagues} teams={teams} isAuthenticated={isAuthenticated} user={user} />
