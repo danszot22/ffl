@@ -1,4 +1,4 @@
-import { Paper, Link, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import { Paper, Link, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 import { formatDollars } from '../../utils/helpers';
 import { StyledTableRow } from '../common/styled';
 import { mapSeasonPoints } from '../../utils/parsers';
@@ -8,11 +8,11 @@ function SeasonPoints({ data }) {
     const points = mapSeasonPoints(data);
     return (
         <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 650 }}>
+            <Table >
                 <TableHead>
                     <TableRow>
-                        <TableCell colSpan={2}>Season Points</TableCell>
-                        <TableCell colSpan={3}> <TableToolbar /> </TableCell>
+                        <TableCell colSpan={1}>Season Points</TableCell>
+                        <TableCell colSpan={4}> <TableToolbar /> </TableCell>
                     </TableRow>
                 </TableHead>
                 <TableHead>
@@ -30,8 +30,11 @@ function SeasonPoints({ data }) {
                             <TableCell>
                                 {point.rank}
                             </TableCell>
-                            <TableCell>
-                                <Link to={`/Team/${point.TeamId}`} >{point.Team.TeamName} ({point.Team.OwnerName})</Link>
+                            <TableCell sx={{ width: { xs: 150, md: 350 } }} >
+                                <Link to={`/Team/${point.TeamId}`} >
+                                    <Typography variant='inherit' sx={{ display: { xs: 'none', md: 'block' }, }}>{point.Team.TeamName} ({point.Team.OwnerName})</Typography>
+                                    <Typography variant='inherit' sx={{ display: { xs: 'block', md: 'none' }, }}>{point.Team.OwnerName}</Typography>
+                                </Link>
                             </TableCell>
                             <TableCell>
                                 {point.PointTotal}

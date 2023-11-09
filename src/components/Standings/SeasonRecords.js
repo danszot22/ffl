@@ -1,4 +1,4 @@
-import { Paper, Link, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button } from '@mui/material';
+import { Paper, Link, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Typography } from '@mui/material';
 import { StyledTableRow } from '../common/styled';
 import { mapSeasonRecords } from '../../utils/parsers';
 
@@ -8,7 +8,7 @@ function SeasonRecords({ data }) {
     return (
         <TableContainer component={Paper}>
             {leagueRecords?.map((leagueRecord, index) =>
-                <Table key={leagueRecord.key} sx={{ minWidth: 650 }}>
+                <Table key={leagueRecord.key}>
                     <TableHead>
                         {index === 0 ? <TableRow>
                             <TableCell>
@@ -31,8 +31,11 @@ function SeasonRecords({ data }) {
                     <TableBody>
                         {leagueRecord.records.map((record) => (
                             <StyledTableRow key={record.TeamId}>
-                                <TableCell sx={{ width: 350 }}>
-                                    <Link to={`/Team/${record.TeamId}`} >{record.Team.TeamName} ({record.Team.OwnerName})</Link>
+                                <TableCell sx={{ width: { xs: 150, md: 350 } }} >
+                                    <Link to={`/Team/${record.TeamId}`} >
+                                        <Typography variant='inherit' sx={{ display: { xs: 'none', md: 'block' }, }}>{record.Team.TeamName} ({record.Team.OwnerName})</Typography>
+                                        <Typography variant='inherit' sx={{ display: { xs: 'block', md: 'none' }, }}>{record.Team.OwnerName}</Typography>
+                                    </Link>
                                 </TableCell>
                                 <TableCell>
                                     {record.Wins}

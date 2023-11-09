@@ -7,8 +7,14 @@ import { currentNflGameWeekLoader, lastNflGameWeekPlayedLoader } from "../../api
 
 const Item = styled(Paper)(({ theme }) => ({
 
-    padding: theme.spacing(2),
-    margin: theme.spacing(1),
+    [theme.breakpoints.down('md')]: {
+        padding: theme.spacing(1),
+        margin: theme.spacing(0),
+    },
+    [theme.breakpoints.up('md')]: {
+        padding: theme.spacing(2),
+        margin: theme.spacing(1),
+    },
     textAlign: 'left',
 
 }));

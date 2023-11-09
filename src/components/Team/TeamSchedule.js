@@ -1,5 +1,5 @@
 
-import { Paper, Link } from "@mui/material";
+import { Paper, Link, Typography } from "@mui/material";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { StyledTableHeaderRow } from "../common/styled";
 
@@ -35,7 +35,10 @@ export default function TeamSchedule({ games }) {
                         <TableRow key={gameWeek.Game.FantasyGameId}>
                             <TableCell>{gameWeek.Week}</TableCell>
                             <TableCell>
-                                <Link to={`/Team/${gameWeek.Game.Opponent.TeamId}`}>{gameWeek.Game.Opponent.TeamName} ({gameWeek.Game.Opponent.OwnerName})</Link>
+                                <Link to={`/Team/${gameWeek.Game.Opponent.TeamId}`} >
+                                    <Typography variant='inherit' sx={{ display: { xs: 'none', md: 'block' }, }}>{gameWeek.Game.Opponent.TeamName} ({gameWeek.Game.Opponent.OwnerName})</Typography>
+                                    <Typography variant='inherit' sx={{ display: { xs: 'block', md: 'none' }, }}>{gameWeek.Game.Opponent.OwnerName}</Typography>
+                                </Link>
                             </TableCell>
                             <TableCell align="right">
                                 {gameWeek.Game.Result > ' ' ? `(${gameWeek.Game.Result}) ` : ' '}

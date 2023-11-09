@@ -26,10 +26,10 @@ function Standings({ league, team }) {
             <PageToolbar title={'Season Standings'} />
             {standings ?
                 <Grid container spacing={6}>
-                    <Grid md={6}>
+                    <Grid lg={6}>
                         <SeasonPoints data={standings} />
                     </Grid>
-                    <Grid md={6}>
+                    <Grid lg={6}>
                         <SeasonRecords data={standings} />
                     </Grid>
                 </Grid>

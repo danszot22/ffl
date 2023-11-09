@@ -57,17 +57,18 @@ function Team({ league, team, user }) {
             <PageToolbar title={'Team Details'} />
             <Box sx={{
                 display: 'flex',
-                flexDirection: 'row',
+                flexDirection: { xs: 'column', lg: 'row' },
                 justifyContent: 'space-evenly',
                 p: 1,
             }}>
                 <Box sx={{
                     display: 'flex',
-                    flexDirection: 'column',
+                    flexDirection: { xs: 'row', lg: 'column' },
                 }}>
                     <Typography sx={{
                         ml: 1,
                         fontWeight: 700,
+                        minWidth: { xs: 200 }
                     }}>
                         Team
                     </Typography>
@@ -79,11 +80,12 @@ function Team({ league, team, user }) {
                 </Box>
                 <Box sx={{
                     display: 'flex',
-                    flexDirection: 'column',
+                    flexDirection: { xs: 'row', lg: 'column' },
                 }}>
                     <Typography sx={{
                         ml: 1,
                         fontWeight: 700,
+                        minWidth: { xs: 200 }
                     }}>
                         # Add/Drops
                     </Typography>
@@ -96,11 +98,12 @@ function Team({ league, team, user }) {
                 {waivers?.length > 0 && team?.TeamId === teamDetails?.TeamId ?
                     <Box sx={{
                         display: 'flex',
-                        flexDirection: 'column',
+                        flexDirection: { xs: 'row', lg: 'column' },
                     }}>
                         <Typography sx={{
                             ml: 1,
                             fontWeight: 700,
+                            minWidth: { xs: 200 }
                         }}>
                             Waivers
                         </Typography>
@@ -114,7 +117,8 @@ function Team({ league, team, user }) {
                 {team?.TeamId === teamDetails?.TeamId || user?.isAdmin || user?.isCommissioner ?
                     <Box sx={{
                         display: 'flex',
-                        flexDirection: 'column',
+                        gap: 2,
+                        flexDirection: { xs: 'row', lg: 'column' },
                     }}>
                         <Button sx={{ maxWidth: 300 }} variant="contained" onClick={handleGoToTeamSettings}>Change Name</Button>
                         {team?.TeamId === teamDetails?.TeamId ?
@@ -127,11 +131,11 @@ function Team({ league, team, user }) {
             <Divider />
             <Box sx={{
                 display: 'flex',
-                flexDirection: { xs: 'column', sm: 'row' },
+                flexDirection: { xs: 'column', lg: 'row' },
                 justifyContent: 'center',
                 gap: 5,
-                p: 1,
-                m: 1,
+                p: { xs: 0, sm: 1 },
+                m: { xs: 0, sm: 1 },
             }}
             >
                 <TeamRoster roster={roster} teamDetails={teamDetails} isEditable={user?.isAdmin || user?.isCommissioner} />

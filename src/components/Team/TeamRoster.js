@@ -28,7 +28,7 @@ function TeamRoster({ roster, teamDetails, team, isEditable }) {
                         <TableCell>
                             Name
                         </TableCell>
-                        <TableCell>
+                        <TableCell sx={{ display: { xs: 'none', md: 'table-cell' }, }}>
                             Stats
                         </TableCell>
                         <TableCell>
@@ -74,8 +74,8 @@ function TeamRoster({ roster, teamDetails, team, isEditable }) {
                                 <Link to={`/Player/${player.PlayerId}`} >{formatPlayerName(player.PlayerName, player.PositionCode)}</Link>
                                 {` ${player.PositionCode} ${player.DisplayCode}`}
                             </TableCell>
-                            <TableCell >
-                                <Typography variant="caption">
+                            <TableCell sx={{ display: { xs: 'none', md: 'table-cell' }, }} >
+                                <Typography variant="caption" >
                                     {["TMQB", "QB"].includes(player.PositionCode) ? `${player.PassYds ?? 0} Yds, ${player.PassTds ?? 0} TDs, ${player.PassInts ?? 0} Ints` : ' '}
                                     {["RB"].includes(player.PositionCode) ? `${player.RushingYds ?? 0} Yds, ${player.RushingTds ?? 0} TDs` : ' '}
                                     {["WR", "TE"].includes(player.PositionCode) ? `${player.ReceivingYds ?? 0} Yds, ${player.ReceivingTds ?? 0} TDs` : ' '}
@@ -100,7 +100,7 @@ function TeamRoster({ roster, teamDetails, team, isEditable }) {
                             <TableCell>
                                 {player.ByeWeek}
                             </TableCell>
-                            <TableCell>
+                            <TableCell sx={{ p: { xs: 0, sm: 1 }, }}>
                                 {team?.TeamId === teamDetails?.TeamId ?
                                     <Tooltip title="Drop">
                                         <IconButton variant="contained" color="error" to={`/RosterPlayer/Drop/${teamDetails?.TeamId}/${player.RosterPlayerId}`}>
