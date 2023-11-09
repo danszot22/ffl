@@ -17,7 +17,7 @@ export default function TeamSchedule({ games }) {
                     </StyledTableHeaderRow>
                     <TableRow>
                         <TableCell>
-                            NFL Week
+                            Wk
                         </TableCell>
                         <TableCell>
                             Opponent
@@ -40,7 +40,7 @@ export default function TeamSchedule({ games }) {
                                     <Typography variant='inherit' sx={{ display: { xs: 'block', md: 'none' }, }}>{gameWeek.Game.Opponent.OwnerName}</Typography>
                                 </Link>
                             </TableCell>
-                            <TableCell align="right">
+                            <TableCell align="right" sx={{ p: { xs: 0, sm: 0 } }}>
                                 {gameWeek.Game.Result > ' ' ? `(${gameWeek.Game.Result}) ` : ' '}
                                 {
                                     gameWeek.Game.PointTotal > 0 ? gameWeek.Game.PointTotal.toFixed(1) :

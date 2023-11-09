@@ -1,6 +1,6 @@
 import { Paper, Link } from "@mui/material";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
-import { convertDateToLocal, formatPlayerFullName } from "../../utils/helpers";
+import { convertDateToLocal, formatPlayerFullName, formatPlayerName } from "../../utils/helpers";
 import { StyledTableHeaderRow } from "../common/styled";
 
 export default function TeamTransactions({ transactions }) {
@@ -29,7 +29,7 @@ export default function TeamTransactions({ transactions }) {
                 <TableBody>
                     {transactions?.map((transaction) => (
                         <TableRow key={transaction.TransactionId}>
-                            <TableCell>{convertDateToLocal(transaction.TransactionDate).toLocaleDateString()}</TableCell>
+                            <TableCell sx={{ pr: { xs: 0, sm: 1 } }}>{convertDateToLocal(transaction.TransactionDate).toLocaleDateString()}</TableCell>
                             <TableCell>
                                 {transaction.TransactionType === 0 ? "Unlimited" :
                                     transaction.TransactionType === 1 ? "FreeIR" :
@@ -39,16 +39,22 @@ export default function TeamTransactions({ transactions }) {
                                                     " "}
                                 {transaction.TransactionFee > 0 ? " $" : " "}
                             </TableCell>
-                            <TableCell>
+                            <TableCell >
                                 {`Added `}
-                                <Link to={`/Player/${transaction.RosterPlayerAdded.Player.PlayerId}`} >
+                                <Link sx={{ display: { xs: 'none', sm: 'inline' } }} to={`/Player/${transaction.RosterPlayerAdded.Player.PlayerId}`} >
                                     {formatPlayerFullName(transaction.RosterPlayerAdded.Player.Name, transaction.RosterPlayerAdded.Player.Position.PositionCode)}
+                                </Link>
+                                <Link sx={{ display: { xs: 'inline', sm: 'none' } }} to={`/Player/${transaction.RosterPlayerAdded.Player.PlayerId}`} >
+                                    {formatPlayerName(transaction.RosterPlayerAdded.Player.Name, transaction.RosterPlayerAdded.Player.Position.PositionCode)}
                                 </Link>
                                 {` ${transaction.RosterPlayerAdded.Player.Position.PositionCode}`}
                                 <br />
                                 {` dropped `}
-                                <Link to={`/Player/${transaction.RosterPlayerDeleted.Player.PlayerId}`} >
+                                <Link sx={{ display: { xs: 'none', sm: 'inline' } }} to={`/Player/${transaction.RosterPlayerDeleted.Player.PlayerId}`} >
                                     {formatPlayerFullName(transaction.RosterPlayerDeleted.Player.Name, transaction.RosterPlayerDeleted.Player.Position.PositionCode)}
+                                </Link>
+                                <Link sx={{ display: { xs: 'inline', sm: 'none' } }} to={`/Player/${transaction.RosterPlayerAdded.Player.PlayerId}`} >
+                                    {formatPlayerName(transaction.RosterPlayerDeleted.Player.Name, transaction.RosterPlayerDeleted.Player.Position.PositionCode)}
                                 </Link>
                                 {` ${transaction.RosterPlayerDeleted.Player.Position.PositionCode}`}
                             </TableCell>

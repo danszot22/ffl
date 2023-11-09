@@ -31,7 +31,7 @@ function TeamRoster({ roster, teamDetails, team, isEditable }) {
                         <TableCell sx={{ display: { xs: 'none', md: 'table-cell' }, }}>
                             Stats
                         </TableCell>
-                        <TableCell>
+                        <TableCell sx={{ display: { xs: 'none', md: 'table-cell' }, }}>
                             Status
                         </TableCell>
                         <TableCell>
@@ -73,6 +73,20 @@ function TeamRoster({ roster, teamDetails, team, isEditable }) {
                             <TableCell>
                                 <Link to={`/Player/${player.PlayerId}`} >{formatPlayerName(player.PlayerName, player.PositionCode)}</Link>
                                 {` ${player.PositionCode} ${player.DisplayCode}`}
+                                <Typography sx={{ display: { xs: 'block', sm: 'none' }, }}>
+                                    {player.StatusDescription?.length > 0 ?
+                                        (<Tooltip title={player.StatusDescription}>
+                                            <Box sx={{
+                                                display: 'flex',
+                                            }}>
+                                                <Typography variant="caption" sx={{ pr: 1 }}>
+                                                    {playerStatuses[player.StatusCode]}
+                                                </Typography>
+                                                <Info />
+                                            </Box>
+                                        </Tooltip>) : null
+                                    }
+                                </Typography>
                             </TableCell>
                             <TableCell sx={{ display: { xs: 'none', md: 'table-cell' }, }} >
                                 <Typography variant="caption" >
@@ -83,7 +97,7 @@ function TeamRoster({ roster, teamDetails, team, isEditable }) {
                                     {["S", "CB", "LB", "DE", "DT"].includes(player.PositionCode) ? ` ${player.Tackles ?? 0} Tckls, ${player.Sacks ?? 0} Sacks` : ' '}
                                 </Typography>
                             </TableCell>
-                            <TableCell>
+                            <TableCell sx={{ display: { xs: 'none', md: 'table-cell' }, }}>
                                 {player.StatusDescription?.length > 0 ?
                                     (<Tooltip title={player.StatusDescription}>
                                         <Box sx={{
