@@ -66,10 +66,8 @@ function Root() {
             <Route path="/Scoring" element={<Scoring />} />
             <Route path="/TeamPrizes" element={<TeamPrizes />} />
             <Route path="/Leaders" element={<Leaders />} />
-            <Route path="/PlayerList" element={<PlayerList />} />
             <Route path="/RosterPlayer/Drop/:id/:rosterPlayerId" element={<RosterPlayerDrop />} />
             <Route path="/RosterPlayer/Add/:playerId" element={<RosterPlayerAdd />} />
-            <Route path="/PlayerList/:id" element={<PlayerList />} />
             <Route path="/Player/:id" element={<Player />} />
             <Route path="/Team/:id" element={<Team />} />
             <Route path="/TeamTrades" element={<TeamTrades />} />
@@ -87,11 +85,11 @@ function Root() {
             <Route path="/PlayoffBracket" element={<PlayoffBracket />} />
             <Route path="/WaiverResults" element={<WaiverResults />} />
             <Route path="/League/Size" element={<EditLeagueSize />} />
-
         </Routes>
     );
 }
 
 export const router = createBrowserRouter([
     { path: "*", Component: Root },
+    { path: "/PlayerList/:id", Component: PlayerList }
 ]);
