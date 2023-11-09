@@ -408,7 +408,7 @@ function PlayerList({ league, team }) {
             <PageToolbar title={'Players'} />
             <MaterialReactTable columns={columns} data={players} getRowId={(row) => row.PlayerId}
                 muiTableBodyCellProps={{
-                    sx: { p: 1 }
+                    sx: { pr: 0 }
                 }}
                 manualFiltering
                 manualPagination
