@@ -11,12 +11,10 @@ function SeasonRecords({ data }) {
                 <Table key={leagueRecord.key}>
                     <TableHead>
                         {index === 0 ? <TableRow>
-                            <TableCell>
-                                Season Records
-                            </TableCell>
-                            <TableCell colSpan={4}>
-                                <Button variant='outlined' to='/PlayoffBracket'>
-                                    Preview Playoff Bracket
+                            <TableCell colSpan={5}>
+                                <Typography variant='inherit' sx={{ pr: 1 }} component='span' >Season Records</Typography>
+                                <Button sx={{ pl: 1 }} variant='outlined' to='/PlayoffBracket'>
+                                    Playoff Bracket Preview
                                 </Button>
                             </TableCell>
                         </TableRow> : null}

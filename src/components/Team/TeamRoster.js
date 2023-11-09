@@ -4,6 +4,7 @@ import { formatPlayerName, playerStatuses } from "../../utils/helpers";
 import { Delete, Info, ThumbDown } from "@mui/icons-material";
 import { StyledTableHeaderRow } from "../common/styled";
 import withAuth from "../withAuth";
+import PlayerImage from "../common/PlayerImage";
 
 function TeamRoster({ roster, teamDetails, team, isEditable }) {
 
@@ -46,29 +47,7 @@ function TeamRoster({ roster, teamDetails, team, isEditable }) {
                     {roster?.Players.map((player, index) => (
                         <TableRow sx={{ borderTop: index > 0 && player?.Group !== roster?.Players[index - 1]?.Group ? 3 : 1 }} key={player.PlayerId}>
                             <TableCell>
-                                {player?.PositionCode?.startsWith('TM') ?
-                                    <img
-                                        alt={player?.DisplayCode}
-                                        height={30}
-                                        src={`https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/${player?.DisplayCode}.png&h=150&w=150`}
-                                        loading="lazy"
-                                        style={{ borderRadius: '50%' }}
-                                    /> : player.EspnPlayerId ?
-                                        <img
-                                            alt="?"
-                                            height={30}
-                                            src={`https://a.espncdn.com/combiner/i?img=/i/headshots/nfl/players/full/${player.EspnPlayerId}.png&h=120&w=120&scale=crop`}
-                                            loading="lazy"
-                                            style={{ borderRadius: '50%' }}
-                                        /> :
-                                        <img
-                                            alt="?"
-                                            height={30}
-                                            src={`https://a.espncdn.com/combiner/i?img=/i/headshots/nophoto.png&w=120&h=120&scale=crop`}
-                                            loading="lazy"
-                                            style={{ borderRadius: '50%' }}
-                                        />
-                                }
+                                <PlayerImage positionCode={player?.PositionCode} nflTeamCode={player?.DisplayCode} espnPlayerId={player.EspnPlayerId} />
                             </TableCell>
                             <TableCell>
                                 <Link to={`/Player/${player.PlayerId}`} >{formatPlayerName(player.PlayerName, player.PositionCode)}</Link>

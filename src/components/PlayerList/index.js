@@ -7,13 +7,14 @@ import { Box, Link, Typography, Button, useTheme, useMediaQuery } from "@mui/mat
 import { useSearchParams, useParams } from 'react-router-dom';
 import PageToolbar from "../common/PageToolbar";
 import withAuth from "../withAuth";
+import PlayerImage from "../common/PlayerImage";
 
 function PlayerList({ league, team }) {
     const theme = useTheme();
     const isXs = useMediaQuery(theme.breakpoints.only('xs'));
-    const isSmall = useMediaQuery(theme.breakpoints.only('sm'));
-    const isMedium = useMediaQuery(theme.breakpoints.only('md'));
+    const isAboveSmall = useMediaQuery(theme.breakpoints.up('sm'));
     const isAboveMedium = useMediaQuery(theme.breakpoints.up('md'));
+    const isBelowLarge = useMediaQuery(theme.breakpoints.down('lg'));
 
     const [nflTeams, setNflTeams] = useState([]);
     const [searchParams] = useSearchParams();
@@ -112,94 +113,61 @@ function PlayerList({ league, team }) {
 
     const columns = useMemo(
         () => {
-            let allcolumns =
-                [
-                    {
-                        accessorFn: (row) => row.RowNumber,
-                        id: "RowNumber",
-                        header: "#",
-                        size: isXs ? 5 : 50,
-                        enableSorting: false,
-                        enableColumnFilter: false,
-                    }
-                ];
-            allcolumns = [...allcolumns,
-            {
-                accessorFn: (row) => formatPlayerFullName(row?.PlayerName), //accessorFn used to join multiple data into a single cell
-                id: 'PlayerName', //id is still required when using accessorFn instead of accessorKey
-                header: 'Name',
-                size: isXs || isSmall || isMedium ? 200 : 250,
-                enableSorting: false,
-                Cell: ({ renderedCellValue, row }) => (
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '1rem',
-                        }}
-                    >
-                        {row.original.PositionCode?.startsWith('TM') ?
-                            <img
-                                alt={row.original?.DisplayCode}
-                                height={30}
-                                src={`https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/${row.original?.DisplayCode}.png&h=150&w=150`}
-                                loading="lazy"
-                                style={{ borderRadius: '50%' }}
-                            /> : row.original.EspnPlayerId ?
-                                <img
-                                    alt="?"
-                                    height={30}
-                                    src={`https://a.espncdn.com/combiner/i?img=/i/headshots/nfl/players/full/${row.original.EspnPlayerId}.png&h=120&w=120&scale=crop`}
-                                    loading="lazy"
-                                    style={{ borderRadius: '50%' }}
-                                /> :
-                                <img
-                                    alt="?"
-                                    height={30}
-                                    src={`https://a.espncdn.com/combiner/i?img=/i/headshots/nophoto.png&w=120&h=120&scale=crop`}
-                                    loading="lazy"
-                                    style={{ borderRadius: '50%' }}
-                                />
-                        }
-                        {/* using renderedCellValue instead of cell.getValue() preserves filter match highlighting */}
+            let allcolumns = [
+                {
+                    accessorFn: (row) => formatPlayerFullName(row?.PlayerName), //accessorFn used to join multiple data into a single cell
+                    id: 'PlayerName', //id is still required when using accessorFn instead of accessorKey
+                    header: 'Name',
+                    size: isBelowLarge ? 200 : 250,
+                    enableSorting: false,
+                    Cell: ({ renderedCellValue, row }) => (
                         <Box
                             sx={{
                                 display: 'flex',
-                                flexDirection: 'column',
+                                alignItems: 'center',
+                                gap: '1rem',
                             }}
                         >
+                            <PlayerImage positionCode={row.original?.PositionCode} nflTeamCode={row.original?.DisplayCode} espnPlayerId={row.original.EspnPlayerId} />
+                            {/* using renderedCellValue instead of cell.getValue() preserves filter match highlighting */}
                             <Box
                                 sx={{
                                     display: 'flex',
-                                    flexDirection: 'row',
-                                    gap: 1
+                                    flexDirection: 'column',
                                 }}
                             >
-                                <Link to={`/Player/${row.original.PlayerId}`}>{formatPlayerName(row.original.PlayerName, row.original.PositionCode)}</Link>
-                                <Typography variant="caption">{playerStatusCodes[row.original.StatusCode]}</Typography>
+                                <Box
+                                    sx={{
+                                        display: 'flex',
+                                        flexDirection: 'row',
+                                        gap: 1
+                                    }}
+                                >
+                                    <Link to={`/Player/${row.original.PlayerId}`}>{formatPlayerName(row.original.PlayerName, row.original.PositionCode)}</Link>
+                                    <Typography variant="caption">{playerStatusCodes[row.original.StatusCode]}</Typography>
+                                </Box>
+                                <Box
+                                    sx={{
+                                        display: 'flex',
+                                        flexDirection: 'row',
+                                        gap: 1
+                                    }}
+                                >
+                                    {isXs ? <Typography variant="caption">{row.original.PositionCode}</Typography> : null}
+                                    {isXs ? <Typography variant="caption">{row.original.DisplayCode}</Typography> : null}
+                                </Box>
+                                {isXs ? <Typography variant="caption">{row.original.OwnerName != null ? row.original.OwnerName : 'Available'}</Typography> : null}
                             </Box>
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                    flexDirection: 'row',
-                                    gap: 1
-                                }}
-                            >
-                                {isXs ? <Typography variant="caption">{row.original.PositionCode}</Typography> : null}
-                                {isXs ? <Typography variant="caption">{row.original.DisplayCode}</Typography> : null}
-                            </Box>
-                            {isXs ? <Typography variant="caption">{row.original.OwnerName != null ? row.original.OwnerName : 'Available'}</Typography> : null}
                         </Box>
-                    </Box>
-                ),
-            }];
-            if (!(isXs)) {
+                    ),
+                }];
+            if (isAboveSmall) {
                 allcolumns = [...allcolumns,
                 {
                     accessorFn: (row) => row.Name != null ? `${row.Name}` : 'Free Agent',
                     id: 'NflTeamName',
                     header: 'Team',
-                    size: isSmall || isMedium ? 50 : 200,
+                    size: isBelowLarge ? 50 : 200,
                     enableSorting: false,
                     filterVariant: 'select',
                     filterSelectOptions: ['All', ...nflTeams],
@@ -233,7 +201,7 @@ function PlayerList({ league, team }) {
                     ),
                 }];
             }
-            if (!(isXs)) {
+            if (isAboveSmall) {
                 allcolumns = [...allcolumns,
                 {
                     accessorFn: (row) => row.PositionCode != null ? `${row.PositionCode}` : ' ',
@@ -246,7 +214,7 @@ function PlayerList({ league, team }) {
                     filterSelectOptions: spot === "DF" ? ['All', 'DE', 'CB', 'S', 'LB'] : spot === "R" ? ['All', 'WR', 'TE'] : spot === "All" ? ['All', 'TMQB', 'RB', 'WR', 'TE', 'TMPK', 'DE', 'CB', 'S', 'LB'] : [spot],
                 }];
             }
-            if (!(isXs || isSmall)) {
+            if (isAboveSmall) {
                 allcolumns = [...allcolumns,
                 {
                     accessorFn: (row) => row.OwnerName != null ? `${row.OwnerName}` : 'Available',
@@ -279,8 +247,20 @@ function PlayerList({ league, team }) {
                 //enableColumnFilter: false,
                 filterVariant: 'select',
                 filterSelectOptions: ['Last 2 Weeks', 'Last 4 Weeks', 'Season', 'Weekly Projections'],
+                Cell: ({ renderedCellValue, row }) => (
+                    <Box>
+                        {renderedCellValue}
+                        <Typography variant="caption" sx={{ display: { md: 'none' } }} component={'div'}>
+                            {["TMQB", "QB"].includes(row.original.PositionCode) ? `${row.original.PassYds ?? 0} Yds, ${row.original.PassTds ?? 0} TDs, ${row.original.PassInts ?? 0} Ints` : ' '}
+                            {["RB"].includes(row.original.PositionCode) ? `${row.original.RushingYds ?? 0} Yds, ${row.original.RushingTds ?? 0} TDs` : ' '}
+                            {["WR", "TE"].includes(row.original.PositionCode) ? `${row.original.ReceivingYds ?? 0} Yds, ${row.original.ReceivingTds ?? 0} TDs` : ' '}
+                            {["TMPK", "PK"].includes(row.original.PositionCode) ? ` ${row.original.FGYds ?? 0} FGYds, ${row.original.XPs ?? 0} XPs` : ' '}
+                            {["S", "CB", "LB", "DE", "DT"].includes(row.original.PositionCode) ? ` ${row.original.Tackles ?? 0} Tckls, ${row.original.Sacks ?? 0} Sacks` : ' '}
+                        </Typography>
+                    </Box>
+                )
             }];
-            if (spot === "TMQB") {
+            if (spot === "TMQB" && (isAboveMedium)) {
                 allcolumns = [...allcolumns,
                 {
                     accessorFn: (row) => row.PassYds,
@@ -305,7 +285,7 @@ function PlayerList({ league, team }) {
                 },
                 ]
             }
-            if (spot === "TMPK") {
+            if (spot === "TMPK" && (isAboveMedium)) {
                 allcolumns = [...allcolumns,
                 {
                     accessorFn: (row) => row.FGYds,
@@ -323,7 +303,7 @@ function PlayerList({ league, team }) {
                 },
                 ]
             }
-            if (spot === "RB" || spot === "TMQB") {
+            if ((spot === "RB" || spot === "TMQB") && isAboveMedium) {
                 allcolumns = [...allcolumns,
                 {
                     accessorFn: (row) => row.RushingYds,
@@ -341,7 +321,7 @@ function PlayerList({ league, team }) {
                 },
                 ]
             }
-            if (spot === "RB" || spot === "R") {
+            if ((spot === "RB" || spot === "R") && isAboveMedium) {
                 allcolumns = [...allcolumns,
                 {
                     accessorFn: (row) => row.ReceivingYds,
@@ -359,7 +339,7 @@ function PlayerList({ league, team }) {
                 },
                 ]
             }
-            if (spot === "DF") {
+            if (spot === "DF" && (isAboveMedium)) {
                 allcolumns = [...allcolumns,
                 {
                     accessorFn: (row) => row.Tackles,
@@ -420,13 +400,16 @@ function PlayerList({ league, team }) {
             }
             return allcolumns;
         },
-        [spot, nflTeams, isXs, isAboveMedium, isMedium, isSmall],
+        [spot, nflTeams, isXs, isAboveSmall, isAboveMedium, isBelowLarge],
     );
 
     return (
         <Root>
             <PageToolbar title={'Players'} />
             <MaterialReactTable columns={columns} data={players} getRowId={(row) => row.PlayerId}
+                muiTableBodyCellProps={{
+                    sx: { p: 1 }
+                }}
                 manualFiltering
                 manualPagination
                 manualSorting

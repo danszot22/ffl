@@ -1,6 +1,7 @@
 import { Typography, Link } from "@mui/material";
 import { TableBody, TableCell, TableRow } from "@mui/material";
 import { formatGameInfo, formatPlayerFullName } from "../../utils/helpers";
+import PlayerImage from "../common/PlayerImage";
 
 export default function LineupPlayers({ players }) {
 
@@ -10,29 +11,10 @@ export default function LineupPlayers({ players }) {
                 <TableRow key={player.RosterPlayer.RosterPlayerId}>
                     <TableCell>{player.RosterPlayer.Player.Position.PositionCode}</TableCell>
                     <TableCell>
-                        {player.RosterPlayer.Player.Position.PositionCode?.startsWith('TM') ?
-                            <img
-                                alt={player.RosterPlayer.Player.NflTeam?.DisplayCode}
-                                height={50}
-                                src={`https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/${player.RosterPlayer.Player.NflTeam?.DisplayCode}.png&h=150&w=150`}
-                                loading="lazy"
-                                style={{ borderRadius: '50%' }}
-                            /> : player.RosterPlayer.Player.EspnPlayerId ?
-                                <img
-                                    alt="?"
-                                    height={50}
-                                    src={`https://a.espncdn.com/combiner/i?img=/i/headshots/nfl/players/full/${player.RosterPlayer.Player.EspnPlayerId}.png&h=120&w=120&scale=crop`}
-                                    loading="lazy"
-                                    style={{ borderRadius: '50%' }}
-                                /> :
-                                <img
-                                    alt="?"
-                                    height={50}
-                                    src={`https://a.espncdn.com/combiner/i?img=/i/headshots/nophoto.png&w=120&h=120&scale=crop`}
-                                    loading="lazy"
-                                    style={{ borderRadius: '50%' }}
-                                />
-                        }
+                        <PlayerImage positionCode={player.RosterPlayer.Player.Position.PositionCode}
+                            nflTeamCode={player.RosterPlayer.Player.NflTeam?.DisplayCode}
+                            espnPlayerId={player.RosterPlayer.Player.EspnPlayerId}
+                            height={50} />
                     </TableCell>
                     <TableCell><Link to={`/Player/${player.RosterPlayer.PlayerId}`} >{formatPlayerFullName(player.RosterPlayer.Player.Name)}</Link></TableCell>
                     <TableCell>{player.RosterPlayer.Player.NflTeam?.DisplayCode}</TableCell>

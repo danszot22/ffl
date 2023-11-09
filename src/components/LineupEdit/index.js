@@ -10,6 +10,7 @@ import { mapTeamScoringTotals, mapRosterToTeamLineup, mapLineupToTeamLineup } fr
 import { FormGroup, Checkbox, Button, FormHelperText, FormControl } from "@mui/material";
 import PageToolbar from "../common/PageToolbar";
 import withAuth from "../withAuth";
+import PlayerImage from "../common/PlayerImage";
 
 function LineupEdit({ league, team }) {
     const { id } = useParams();
@@ -206,29 +207,10 @@ function LineupEdit({ league, team }) {
                                     </FormGroup>
                                 </TableCell>
                                 <TableCell>
-                                    {rosterPlayer.Player?.Position?.PositionCode?.startsWith('TM') ?
-                                        <img
-                                            alt={rosterPlayer.Player?.NflTeam?.DisplayCode}
-                                            height={40}
-                                            src={`https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/${rosterPlayer.Player?.NflTeam?.DisplayCode}.png&h=150&w=150`}
-                                            loading="lazy"
-                                            style={{ borderRadius: '50%' }}
-                                        /> : rosterPlayer.Player?.EspnPlayerId ?
-                                            <img
-                                                alt="?"
-                                                height={40}
-                                                src={`https://a.espncdn.com/combiner/i?img=/i/headshots/nfl/players/full/${rosterPlayer.Player?.EspnPlayerId}.png&h=120&w=120&scale=crop`}
-                                                loading="lazy"
-                                                style={{ borderRadius: '50%' }}
-                                            /> :
-                                            <img
-                                                alt="?"
-                                                height={40}
-                                                src={`https://a.espncdn.com/combiner/i?img=/i/headshots/nophoto.png&w=120&h=120&scale=crop`}
-                                                loading="lazy"
-                                                style={{ borderRadius: '50%' }}
-                                            />
-                                    }
+                                    <PlayerImage positionCode={rosterPlayer.Player?.Position?.PositionCode}
+                                        nflTeamCode={rosterPlayer.Player?.NflTeam?.DisplayCode}
+                                        espnPlayerId={rosterPlayer.Player?.EspnPlayerId}
+                                        height={40} />
                                 </TableCell>
                                 <TableCell>
                                     <Link to={`/Player/${rosterPlayer.PlayerId}`} >{formatPlayerName(rosterPlayer.Player?.Name, rosterPlayer.Player?.Position?.PositionCode)}</Link>
