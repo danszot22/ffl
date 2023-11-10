@@ -46,6 +46,10 @@ export function formatPlayerFullName(name) {
     return nameParts[1].trim() + " " + nameParts[0];
 }
 
+export function formatFantasyTeamName(team) {
+    return `${team?.TeamName} (${team?.OwnerName})`;
+}
+
 export function formatGameTime(nflGame) {
     if (nflGame?.NotPlayed) {
         const gameDate = new Date(nflGame.GameDate);

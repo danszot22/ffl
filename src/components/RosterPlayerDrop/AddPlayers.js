@@ -3,8 +3,11 @@ import { formatPlayerFullName, playerStatusCodes } from "../../utils/helpers";
 import { MaterialReactTable } from 'material-react-table';
 import { leaguePlayersLoader, nflTeamsLoader } from "../../api/graphql";
 import { getPositionsToAdd, getTransactionText } from "../../api/ffl";
-import { Box, Link, Typography, Button, Skeleton, DialogTitle, DialogContent, DialogContentText, DialogActions, Dialog } from "@mui/material";
+import { Box, Typography, Button, Skeleton, DialogTitle, DialogContent, DialogContentText, DialogActions, Dialog } from "@mui/material";
 import { alpha } from '@mui/material/styles';
+import PlayerImage from "../common/PlayerImage";
+import PlayerLink from "../common/PlayerLink";
+import FormattedPlayerStats from "../common/FormattedPlayerStats";
 
 export default function AddPlayers({ teamId, rosterPlayerToDrop, leagueId }) {
     const [open, setOpen] = useState(false);
@@ -118,7 +121,6 @@ export default function AddPlayers({ teamId, rosterPlayerToDrop, leagueId }) {
                     enableColumnFilter: false,
                 },
                 {
-                    accessorFn: (row) => formatPlayerFullName(row?.PlayerName), //accessorFn used to join multiple data into a single cell
                     id: 'PlayerName', //id is still required when using accessorFn instead of accessorKey
                     header: 'Name',
                     size: 250,
@@ -131,31 +133,8 @@ export default function AddPlayers({ teamId, rosterPlayerToDrop, leagueId }) {
                                 gap: '1rem',
                             }}
                         >
-                            {row.original.PositionCode?.startsWith('TM') ?
-                                <img
-                                    alt={row.original?.DisplayCode}
-                                    height={30}
-                                    src={`https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/${row.original?.DisplayCode}.png&h=150&w=150`}
-                                    loading="lazy"
-                                    style={{ borderRadius: '50%' }}
-                                /> : row.original.EspnPlayerId ?
-                                    <img
-                                        alt="?"
-                                        height={30}
-                                        src={`https://a.espncdn.com/combiner/i?img=/i/headshots/nfl/players/full/${row.original.EspnPlayerId}.png&h=120&w=120&scale=crop`}
-                                        loading="lazy"
-                                        style={{ borderRadius: '50%' }}
-                                    /> :
-                                    <img
-                                        alt="?"
-                                        height={30}
-                                        src={`https://a.espncdn.com/combiner/i?img=/i/headshots/nophoto.png&w=120&h=120&scale=crop`}
-                                        loading="lazy"
-                                        style={{ borderRadius: '50%' }}
-                                    />
-                            }
-                            {/* using renderedCellValue instead of cell.getValue() preserves filter match highlighting */}
-                            <Link to={`/Player/${row.original.PlayerId}`}>{renderedCellValue}</Link>
+                            <PlayerImage positionCode={row.original?.PositionCode} nflTeamCode={row.original?.DisplayCode} espnPlayerId={row.original.EspnPlayerId} height={30} />
+                            <PlayerLink playerId={row.original.PlayerId} playerName={row?.original.PlayerName} positionCode={row.original?.PositionCode} />
                             <Typography variant="caption">{playerStatusCodes[row.original.StatusCode]}</Typography>
                         </Box>
                     ),
@@ -237,13 +216,7 @@ export default function AddPlayers({ teamId, rosterPlayerToDrop, leagueId }) {
                 enableSorting: false,
                 enableColumnFilter: false,
                 Cell: ({ renderedCellValue, row }) => (
-                    <Typography>
-                        {["TMQB", "QB"].includes(row.original.PositionCode) ? `${row.original.PassYds ?? 0} Yds, ${row.original.PassTds ?? 0} TDs, ${row.original.PassInts ?? 0} Ints` : ' '}
-                        {["RB"].includes(row.original.PositionCode) ? `${row.original.RushingYds ?? 0} Yds, ${row.original.RushingTds ?? 0} TDs` : ' '}
-                        {["WR", "TE"].includes(row.original.PositionCode) ? `${row.original.ReceivingYds ?? 0} Yds, ${row.original.ReceivingTds ?? 0} TDs` : ' '}
-                        {["TMPK", "PK"].includes(row.original.PositionCode) ? ` ${row.original.FGYds ?? 0} FGYds, ${row.original.XPs ?? 0} XPs` : ' '}
-                        {["S", "CB", "LB", "DE", "DT"].includes(row.original.PositionCode) ? ` ${row.original.Tackles ?? 0} Tckls, ${row.original.Sacks ?? 0} Sacks` : ' '}
-                    </Typography>
+                    <FormattedPlayerStats player={row.original} />
                 )
             }];
             return allcolumns;

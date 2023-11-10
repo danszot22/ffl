@@ -4,8 +4,9 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from
 import { leagueTransactionsLoader } from "../../api/graphql";
 import { useState, useEffect } from "react";
 import PageToolbar from "../common/PageToolbar";
-import { convertDateToLocal, formatPlayerFullName } from "../../utils/helpers";
+import { convertDateToLocal, formatFantasyTeamName } from "../../utils/helpers";
 import withAuth from "../withAuth";
+import PlayerLink from "../common/PlayerLink";
 
 function Transactions({ league }) {
     const [transactions, setTransactions] = useState([]);
@@ -60,18 +61,14 @@ function Transactions({ league }) {
                                     {transaction.WaiverRequestId > 0 ? " (off waivers)" : " "}
                                 </TableCell>
                                 <TableCell>
-                                    {transaction.RosterPlayerAdded.Team?.TeamName} ({transaction.RosterPlayerAdded.Team?.OwnerName})
+                                    {formatFantasyTeamName(transaction.RosterPlayerAdded.Team)}
                                     {` added `}
-                                    <Link to={`/Player/${transaction.RosterPlayerAdded.Player.PlayerId}`} >
-                                        {formatPlayerFullName(transaction.RosterPlayerAdded.Player.Name, transaction.RosterPlayerAdded.Player.Position.PositionCode)}
-                                    </Link>
+                                    <PlayerLink playerId={transaction.RosterPlayerAdded.Player.PlayerId} playerName={transaction.RosterPlayerAdded.Player.Name} positionCode={transaction.RosterPlayerAdded.Player.Position.PositionCode} />
                                     {` ${transaction.RosterPlayerAdded.Player.Position.PositionCode}`}
                                     <br />
-                                    {transaction.RosterPlayerDeleted.Team?.TeamName} ({transaction.RosterPlayerDeleted.Team?.OwnerName})
+                                    {formatFantasyTeamName(transaction.RosterPlayerDeleted.Team)}
                                     {` dropped `}
-                                    <Link to={`/Player/${transaction.RosterPlayerDeleted.Player.PlayerId}`} >
-                                        {formatPlayerFullName(transaction.RosterPlayerDeleted.Player.Name, transaction.RosterPlayerDeleted.Player.Position.PositionCode)}
-                                    </Link>
+                                    <PlayerLink playerId={transaction.RosterPlayerDeleted.Player.PlayerId} playerName={transaction.RosterPlayerDeleted.Player.Name} positionCode={transaction.RosterPlayerDeleted.Player.Position.PositionCode} />
                                     {` ${transaction.RosterPlayerDeleted.Player.Position.PositionCode}`}
                                 </TableCell>
                                 <TableCell>

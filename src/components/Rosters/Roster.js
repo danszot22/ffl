@@ -1,6 +1,8 @@
-import { Paper, Link } from "@mui/material";
+import { Paper } from "@mui/material";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
-import { formatPlayerFullName } from "../../utils/helpers";
+import PlayerLink from "../common/PlayerLink";
+import PlayerImage from "../common/PlayerImage";
+import TeamLink from "../common/TeamLink";
 
 export default function Roster({ roster }) {
 
@@ -10,7 +12,7 @@ export default function Roster({ roster }) {
                 <TableHead>
                     <TableRow>
                         <TableCell colSpan={4}>
-                            <Link to={`/Team/${roster?.team.TeamId}`} >{roster?.team?.TeamName} ({roster?.team?.OwnerName})</Link>
+                            <TeamLink team={roster?.team} />
                         </TableCell>
                     </TableRow>
                 </TableHead>
@@ -19,32 +21,10 @@ export default function Roster({ roster }) {
                         <TableRow key={player.PlayerId}>
                             <TableCell>{player.PositionCode}</TableCell>
                             <TableCell>
-                                {player?.PositionCode?.startsWith('TM') ?
-                                    <img
-                                        alt={player?.DisplayCode}
-                                        height={50}
-                                        src={`https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/${player?.DisplayCode}.png&h=150&w=150`}
-                                        loading="lazy"
-                                        style={{ borderRadius: '50%' }}
-                                    /> : player.EspnPlayerId ?
-                                        <img
-                                            alt="?"
-                                            height={50}
-                                            src={`https://a.espncdn.com/combiner/i?img=/i/headshots/nfl/players/full/${player.EspnPlayerId}.png&h=120&w=120&scale=crop`}
-                                            loading="lazy"
-                                            style={{ borderRadius: '50%' }}
-                                        /> :
-                                        <img
-                                            alt="?"
-                                            height={50}
-                                            src={`https://a.espncdn.com/combiner/i?img=/i/headshots/nophoto.png&w=120&h=120&scale=crop`}
-                                            loading="lazy"
-                                            style={{ borderRadius: '50%' }}
-                                        />
-                                }
+                                <PlayerImage positionCode={player?.PositionCode} nflTeamCode={player?.DisplayCode} espnPlayerId={player.EspnPlayerId} height={50} />
                             </TableCell>
                             <TableCell>
-                                <Link to={`/Player/${player.PlayerId}`} >{formatPlayerFullName(player.PlayerName)}</Link>
+                                <PlayerLink playerId={player.PlayerId} playerName={player.PlayerName} positionCode={player.PositionCode} />
                             </TableCell>
                             <TableCell>{player.Name}</TableCell>
                         </TableRow>

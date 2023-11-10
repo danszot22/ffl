@@ -1,13 +1,13 @@
 import { teamFinancesLoader, teamPrizeLoader, transactionFeeLoader } from '../../api/graphql';
 import { useCallback, useMemo, useState, useEffect } from 'react';
 import Root from "../Root";
-import { Link } from "@mui/material";
 import { formatDollars } from "../../utils/helpers";
 import { mapTeamFinances } from "../../utils/parsers";
 import { StyledDataGrid } from "../common/styled";
 import FinanceToolbar from './FinanceToolbar';
 import PageToolbar from '../common/PageToolbar';
 import withAuth from '../withAuth';
+import TeamLink from '../common/TeamLink';
 
 function Finances({ league, user }) {
     const [teams, setTeams] = useState([]);
@@ -56,7 +56,7 @@ function Finances({ league, user }) {
             width: 300,
             editable: false,
             renderCell: (params) => (
-                <Link to={`/Team/${params.row.TeamId}`}>{params.row.TeamName} ({params.row.OwnerName})</Link>
+                <TeamLink team={params.row} />
             ),
         },
         {

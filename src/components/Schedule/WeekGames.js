@@ -1,6 +1,6 @@
-
-import { Paper, Link } from "@mui/material";
+import { Paper } from "@mui/material";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import TeamLink from "../common/TeamLink";
 
 export default function WeekGames({ week, games }) {
     return (
@@ -31,7 +31,7 @@ export default function WeekGames({ week, games }) {
                     {games.map((game) => (
                         <TableRow key={game.FantasyGameId}>
                             <TableCell sx={{ fontWeight: (game.AwayTeam.PointTotal > game.HomeTeam.PointTotal ? 'bold' : 'regular') }}>
-                                <Link to={`/Team/${game.AwayTeam.TeamId}`}>{game.AwayTeam.TeamName} ({game.AwayTeam.OwnerName})</Link>
+                                <TeamLink team={game.AwayTeam} />
                             </TableCell>
                             <TableCell align="right" sx={{ borderRight: 1, fontWeight: (game.AwayTeam.PointTotal > game.HomeTeam.PointTotal ? 'bold' : 'regular') }}>
                                 {game.AwayTeam.PointTotal > 0 ? game.AwayTeam.PointTotal.toFixed(1) : " "} {!game.Complete && game.AwayTeam.ProjectedTotal > 0 ? `(${game.AwayTeam.ProjectedTotal.toFixed(1)})` : " "}
@@ -40,7 +40,7 @@ export default function WeekGames({ week, games }) {
                                 {game.HomeTeam.PointTotal > 0 ? game.HomeTeam.PointTotal.toFixed(1) : " "} {!game.Complete && game.HomeTeam.ProjectedTotal > 0 ? `(${game.HomeTeam.ProjectedTotal.toFixed(1)})` : " "}
                             </TableCell>
                             <TableCell sx={{ fontWeight: (game.HomeTeam.PointTotal > game.AwayTeam.PointTotal ? 'bold' : 'regular') }} align="right">
-                                <Link to={`/Team/${game.HomeTeam.TeamId}`}>{game.HomeTeam.TeamName} ({game.HomeTeam.OwnerName})</Link>
+                                <TeamLink team={game.HomeTeam} />
                             </TableCell>
                         </TableRow>
                     ))}

@@ -4,7 +4,7 @@ import Logout from '@mui/icons-material/Logout';
 import { FantasyTeamContext, setLeague, setTeam, setUser } from '../../contexts/FantasyTeamContext';
 import { useNavigate } from 'react-router-dom';
 import { Password } from '@mui/icons-material';
-import { dispatchLeagueChange } from '../../utils/helpers';
+import { dispatchLeagueChange, formatFantasyTeamName } from '../../utils/helpers';
 
 export default function AccountMenu({ user, leagues, league, team }) {
     const [anchorEl, setAnchorEl] = useState(null);
@@ -95,7 +95,7 @@ export default function AccountMenu({ user, leagues, league, team }) {
                         fontWeight: 'bolder',
                         variant: 'body2',
                     }}
-                        primary={`${league?.LeagueName}`} secondary={team ? (`${team?.TeamName} (${team?.OwnerName})`) : null} />
+                        primary={`${league?.LeagueName}`} secondary={team ? (formatFantasyTeamName(team)) : null} />
                 </MenuItem>
                 <Divider />
                 <MenuItem to="/Account">

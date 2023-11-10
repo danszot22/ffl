@@ -3,6 +3,7 @@ import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import MenuList from './MenuList';
 import AccountMenu from './AccountMenu';
+import { formatFantasyTeamName } from '../../utils/helpers';
 
 export default function NavItems({ leagues, league, teams, team, isAuthenticated, user }) {
     return (
@@ -50,7 +51,7 @@ export default function NavItems({ leagues, league, teams, team, isAuthenticated
                         teams.filter((leagueTeam) => leagueTeam.TeamId !== team?.teamId)
                             .map((leagueTeam) => (
                                 <MenuItem key={leagueTeam.TeamId} to={`/Team/${leagueTeam.TeamId}`}>
-                                    {leagueTeam.TeamName} ({leagueTeam.OwnerName})
+                                    {formatFantasyTeamName(leagueTeam)}
                                 </MenuItem>))
                     }
                 </MenuList>

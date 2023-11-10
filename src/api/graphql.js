@@ -12,6 +12,7 @@ export const seasonStandingsLoader = async (year, leagueId) => {
                 Year
                 TeamId
                 Team {
+                    TeamId
                     Division
                     TeamName
                     OwnerName
@@ -841,6 +842,7 @@ export const teamPrizeLoader = async (league) => {
             PrizeAmount
             PrizeType
             Team {
+                TeamId
                 TeamName
                 OwnerName
             }

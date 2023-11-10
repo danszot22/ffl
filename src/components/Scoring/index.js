@@ -8,6 +8,7 @@ import { Button, ButtonGroup, Box, Typography, Skeleton, Modal, Table, TableRow,
 import { NflWeekContext } from "../../contexts/NflWeekContext";
 import PageToolbar from "../common/PageToolbar";
 import withAuth from "../withAuth";
+import { formatFantasyTeamName } from "../../utils/helpers";
 
 function Scoring({ league, team }) {
     const { state: nflWeekState } = useContext(NflWeekContext);
@@ -102,14 +103,14 @@ function Scoring({ league, team }) {
                                     </TableRow>
                                 </TableHead>
                                 <TableRow>
-                                    <TableCell>{`${game.HomeTeam?.TeamName} (${game.HomeTeam?.OwnerName})`}</TableCell>
+                                    <TableCell>{formatFantasyTeamName(game.HomeTeam)}</TableCell>
                                     <TableCell sx={{ textAlign: 'right' }}>{game.HomeTotal.toFixed(1)}</TableCell>
                                     {!summaryData.complete ?
                                         <TableCell sx={{ textAlign: 'right' }}>{`(${game.ProjectedHomeTotal.toFixed(1)})`}</TableCell>
                                         : null}
                                 </TableRow>
                                 <TableRow >
-                                    <TableCell>{`${game.AwayTeam?.TeamName} (${game.AwayTeam?.OwnerName})`}</TableCell>
+                                    <TableCell>{formatFantasyTeamName(game.AwayTeam)}</TableCell>
                                     <TableCell sx={{ textAlign: 'right' }}>{game.AwayTotal.toFixed(1)}</TableCell>
                                     {!summaryData.complete ?
                                         <TableCell sx={{ textAlign: 'right' }}>{`(${game.ProjectedAwayTotal.toFixed(1)})`}</TableCell>

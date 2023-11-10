@@ -4,7 +4,7 @@ import Root from "../Root";
 import PageToolbar from "../common/PageToolbar";
 import { Button, IconButton, Paper, Tooltip, Typography } from "@mui/material";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
-import { convertDateToLocal, tradeStatuses } from "../../utils/helpers";
+import { convertDateToLocal, formatFantasyTeamName, tradeStatuses } from "../../utils/helpers";
 import { Delete, ThumbDown, ThumbUp } from "@mui/icons-material";
 import withAuth from "../withAuth";
 
@@ -73,7 +73,7 @@ function TeamTrades({ team }) {
                             <TableRow key={trade.TradeId}>
                                 <TableCell>{convertDateToLocal(trade.TradeDate).toLocaleDateString()}</TableCell>
                                 <TableCell>
-                                    {trade.GivingTeam?.TeamName} ({trade.GivingTeam?.OwnerName}) <br />
+                                    {formatFantasyTeamName(trade.GivingTeam)}<br />
                                     {trade.TradeDetails.items?.map((detail) =>
                                         <Typography variant="caption" component="div" >
                                             {detail.GivingRosterPlayer.Player.Name} {detail.GivingRosterPlayer.Player.Position.PositionCode} {detail.GivingRosterPlayer.Player.NflTeam.DisplayCode}
@@ -81,7 +81,7 @@ function TeamTrades({ team }) {
                                     )}
                                 </TableCell>
                                 <TableCell>
-                                    {trade.ReceivingTeam?.TeamName} ({trade.ReceivingTeam?.OwnerName})<br />
+                                    {formatFantasyTeamName(trade.ReceivingTeam)}<br />
                                     {trade.TradeDetails.items?.map((detail) =>
                                         <Typography variant="caption" component="div" >
                                             {detail.ReceivingRosterPlayer.Player.Name} {detail.ReceivingRosterPlayer.Player.Position.PositionCode} {detail.ReceivingRosterPlayer.Player.NflTeam.DisplayCode}

@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { leaguePlayersLoader } from "../../api/graphql";
-import { formatPlayerFullName, formatPlayerName } from "../../utils/helpers";
 import { Card, CardContent, Table, TableRow, TableCell, TableHead, TableBody, Paper, Link } from "@mui/material";
 import withAuth from "../withAuth";
 import PlayerImage from "../common/PlayerImage";
 import FormattedPlayerStats from "../common/FormattedPlayerStats";
+import PlayerLink from "../common/PlayerLink";
 
 function GroupLeaders({ league, availability, spot }) {
     const [players, setPlayers] = useState([]);
@@ -55,8 +55,7 @@ function GroupLeaders({ league, availability, spot }) {
                                             <PlayerImage positionCode={player?.PositionCode} nflTeamCode={player?.DisplayCode} espnPlayerId={player.EspnPlayerId} />
                                         </TableCell>
                                         <TableCell>
-                                            <Link sx={{ display: { xs: 'block', sm: 'none' }, }} to={`/Player/${player.PlayerId}`}>{formatPlayerName(player.PlayerName, player?.PositionCode)}</Link>
-                                            <Link sx={{ display: { xs: 'none', sm: 'block' }, }} to={`/Player/${player.PlayerId}`}>{formatPlayerFullName(player.PlayerName)}</Link>
+                                            <PlayerLink playerId={player.PlayerId} playerName={player.PlayerName} positionCode={player.PositionCode} />
                                         </TableCell>
                                         <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' }, }} >{player.PositionCode}</TableCell>
                                         <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' }, }} >{player.DisplayCode}</TableCell>

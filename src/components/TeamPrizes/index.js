@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
-import { Paper, Link } from "@mui/material";
+import { Paper } from "@mui/material";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { teamPrizeLoader } from "../../api/graphql";
 import Root from "../Root";
 import { formatDollars } from "../../utils/helpers";
 import PageToolbar from "../common/PageToolbar";
 import withAuth from "../withAuth";
+import TeamLink from "../common/TeamLink";
 
 function TeamPrizes({ league }) {
     const [prizes, setPrizes] = useState([]);
@@ -51,7 +52,7 @@ function TeamPrizes({ league }) {
                             <TableRow key={`${prize.Week}-${prize.TeamId}`}>
                                 <TableCell>{prize.Week}</TableCell>
                                 <TableCell>
-                                    <Link to={`/Team/${prize.TeamId}`} >{prize.Team?.TeamName} ({prize.Team?.OwnerName})</Link>
+                                    <TeamLink team={prize.Team} />
                                 </TableCell>
                                 <TableCell>
                                     {prize.PrizeType === 0 ? "Weekly Winner" :

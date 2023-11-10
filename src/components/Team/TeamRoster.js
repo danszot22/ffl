@@ -1,10 +1,12 @@
-import { Paper, Link, Typography, Tooltip, Box, IconButton } from "@mui/material";
+import { Paper, Typography, Tooltip, Box, IconButton } from "@mui/material";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
-import { formatPlayerName, playerStatuses } from "../../utils/helpers";
+import { playerStatuses } from "../../utils/helpers";
 import { Delete, Info, ThumbDown } from "@mui/icons-material";
 import { StyledTableHeaderRow } from "../common/styled";
 import withAuth from "../withAuth";
 import PlayerImage from "../common/PlayerImage";
+import PlayerLink from "../common/PlayerLink";
+import FormattedPlayerStats from "../common/FormattedPlayerStats";
 
 function TeamRoster({ roster, teamDetails, team, isEditable }) {
 
@@ -50,7 +52,7 @@ function TeamRoster({ roster, teamDetails, team, isEditable }) {
                                 <PlayerImage positionCode={player?.PositionCode} nflTeamCode={player?.DisplayCode} espnPlayerId={player.EspnPlayerId} />
                             </TableCell>
                             <TableCell>
-                                <Link to={`/Player/${player.PlayerId}`} >{formatPlayerName(player.PlayerName, player.PositionCode)}</Link>
+                                <PlayerLink playerId={player.PlayerId} playerName={player.PlayerName} positionCode={player.PositionCode} xsOnly={true} />
                                 {` ${player.PositionCode} ${player.DisplayCode}`}
                                 <Typography sx={{ display: { xs: 'block', sm: 'none' }, }}>
                                     {player.StatusDescription?.length > 0 ?
@@ -68,13 +70,7 @@ function TeamRoster({ roster, teamDetails, team, isEditable }) {
                                 </Typography>
                             </TableCell>
                             <TableCell sx={{ display: { xs: 'none', md: 'table-cell' }, }} >
-                                <Typography variant="caption" >
-                                    {["TMQB", "QB"].includes(player.PositionCode) ? `${player.PassYds ?? 0} Yds, ${player.PassTds ?? 0} TDs, ${player.PassInts ?? 0} Ints` : ' '}
-                                    {["RB"].includes(player.PositionCode) ? `${player.RushingYds ?? 0} Yds, ${player.RushingTds ?? 0} TDs` : ' '}
-                                    {["WR", "TE"].includes(player.PositionCode) ? `${player.ReceivingYds ?? 0} Yds, ${player.ReceivingTds ?? 0} TDs` : ' '}
-                                    {["TMPK", "PK"].includes(player.PositionCode) ? ` ${player.FGYds ?? 0} FGYds, ${player.XPs ?? 0} XPs` : ' '}
-                                    {["S", "CB", "LB", "DE", "DT"].includes(player.PositionCode) ? ` ${player.Tackles ?? 0} Tckls, ${player.Sacks ?? 0} Sacks` : ' '}
-                                </Typography>
+                                <FormattedPlayerStats player={player} />
                             </TableCell>
                             <TableCell sx={{ display: { xs: 'none', md: 'table-cell' }, }}>
                                 {player.StatusDescription?.length > 0 ?

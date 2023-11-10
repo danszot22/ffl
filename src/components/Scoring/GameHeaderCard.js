@@ -1,4 +1,5 @@
 import { Card, CardContent, Table, TableRow, TableCell, TableHead, TableBody, Paper, Link } from "@mui/material";
+import { formatFantasyTeamName } from "../../utils/helpers";
 
 export default function GameHeaderCard({ game, handleOpen, showProjections }) {
 
@@ -15,14 +16,14 @@ export default function GameHeaderCard({ game, handleOpen, showProjections }) {
                         </TableHead>
                         <TableBody>
                             <TableRow>
-                                <TableCell>{`${game.HomeTeam?.TeamName} (${game.HomeTeam?.OwnerName})`}</TableCell>
+                                <TableCell>{formatFantasyTeamName(game.HomeTeam)}</TableCell>
                                 <TableCell sx={{ textAlign: 'right' }}>{game.HomeTotal.toFixed(1)}</TableCell>
                                 {showProjections ?
                                     <TableCell sx={{ textAlign: 'right' }}>{`(${game.ProjectedHomeTotal.toFixed(1)})`}</TableCell>
                                     : null}
                             </TableRow>
                             <TableRow>
-                                <TableCell>{`${game.AwayTeam?.TeamName} (${game.AwayTeam?.OwnerName})`}</TableCell>
+                                <TableCell>{formatFantasyTeamName(game.AwayTeam)}</TableCell>
                                 <TableCell sx={{ textAlign: 'right' }}>{game.AwayTotal.toFixed(1)}</TableCell>
                                 {showProjections ?
                                     <TableCell sx={{ textAlign: 'right' }}>{`(${game.ProjectedAwayTotal.toFixed(1)})`}</TableCell>

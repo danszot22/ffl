@@ -1,13 +1,14 @@
 import { useState, useEffect, useMemo } from "react";
-import { formatPlayerFullName, formatPlayerName, playerStatusCodes } from "../../utils/helpers";
+import { playerStatusCodes } from "../../utils/helpers";
 import Root from "../Root";
 import { MaterialReactTable } from 'material-react-table';
 import { leaguePlayersLoader, nflTeamsLoader } from "../../api/graphql";
-import { Box, Link, Typography, Button, useTheme, useMediaQuery } from "@mui/material";
+import { Box, Typography, Button, useTheme, useMediaQuery } from "@mui/material";
 import { useSearchParams, useParams } from 'react-router-dom';
 import PageToolbar from "../common/PageToolbar";
 import withAuth from "../withAuth";
 import PlayerImage from "../common/PlayerImage";
+import PlayerLink from "../common/PlayerLink";
 
 function PlayerList({ league, team }) {
     const theme = useTheme();
@@ -115,7 +116,6 @@ function PlayerList({ league, team }) {
         () => {
             let allcolumns = [
                 {
-                    accessorFn: (row) => formatPlayerFullName(row?.PlayerName), //accessorFn used to join multiple data into a single cell
                     id: 'PlayerName', //id is still required when using accessorFn instead of accessorKey
                     header: 'Name',
                     size: isBelowLarge ? 200 : 250,
@@ -143,7 +143,7 @@ function PlayerList({ league, team }) {
                                         gap: 1
                                     }}
                                 >
-                                    <Link to={`/Player/${row.original.PlayerId}`}>{formatPlayerName(row.original.PlayerName, row.original.PositionCode)}</Link>
+                                    <PlayerLink playerId={row.original.PlayerI} playerName={row.original.PlayerName} positionCode={row.original.PositionCode} />
                                     <Typography variant="caption">{playerStatusCodes[row.original.StatusCode]}</Typography>
                                 </Box>
                                 <Box

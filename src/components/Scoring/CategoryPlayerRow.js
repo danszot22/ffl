@@ -1,12 +1,13 @@
 import { StyledTableRow } from '../common/styled';
-import { Typography, TableCell, Link } from "@mui/material";
+import { Typography, TableCell } from "@mui/material";
 import { formatGameInfo } from '../../utils/helpers';
+import PlayerLink from '../common/PlayerLink';
 
 export default function CategoryPlayerRow({ row, showProjections, showGame }) {
     return (
         <StyledTableRow key={row.PlayerId}>
             <TableCell component="th" scope="row">
-                <Link to={`/Player/${row.PlayerId}`}>{row.Player.Name}</Link>
+                <PlayerLink playerId={row.PlayerId} playerName={row?.Player.Name} positionCode={row.Player?.Position?.PositionCode} variant={'caption'} />
             </TableCell>
             {showGame ? (
                 <TableCell>

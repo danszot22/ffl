@@ -1,10 +1,13 @@
-import { Paper, Link, Typography, Tooltip, Box, Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Skeleton } from "@mui/material";
+import { Paper, Typography, Tooltip, Box, Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Skeleton } from "@mui/material";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
-import { formatPlayerFullName, formatPlayerName, playerStatuses } from "../../utils/helpers";
+import { formatPlayerFullName, playerStatuses } from "../../utils/helpers";
 import { Info } from "@mui/icons-material";
 import { StyledTableHeaderRow } from "../common/styled";
 import { useState } from "react";
 import { getTransactionText } from "../../api/ffl";
+import PlayerImage from "../common/PlayerImage";
+import PlayerLink from "../common/PlayerLink";
+import FormattedPlayerStats from "../common/FormattedPlayerStats";
 
 export default function DropRosterPlayers({ roster, playerToAdd }) {
     const [open, setOpen] = useState(false);
@@ -103,42 +106,14 @@ export default function DropRosterPlayers({ roster, playerToAdd }) {
                         {roster?.map((player, index) => (
                             <TableRow sx={{ borderTop: index > 0 && player?.Group !== roster[index - 1]?.Group ? 3 : 1 }} key={player.PlayerId}>
                                 <TableCell>
-                                    {player?.PositionCode?.startsWith('TM') ?
-                                        <img
-                                            alt={player?.DisplayCode}
-                                            height={30}
-                                            src={`https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/${player?.DisplayCode}.png&h=150&w=150`}
-                                            loading="lazy"
-                                            style={{ borderRadius: '50%' }}
-                                        /> : player.EspnPlayerId ?
-                                            <img
-                                                alt="?"
-                                                height={30}
-                                                src={`https://a.espncdn.com/combiner/i?img=/i/headshots/nfl/players/full/${player.EspnPlayerId}.png&h=120&w=120&scale=crop`}
-                                                loading="lazy"
-                                                style={{ borderRadius: '50%' }}
-                                            /> :
-                                            <img
-                                                alt="?"
-                                                height={30}
-                                                src={`https://a.espncdn.com/combiner/i?img=/i/headshots/nophoto.png&w=120&h=120&scale=crop`}
-                                                loading="lazy"
-                                                style={{ borderRadius: '50%' }}
-                                            />
-                                    }
+                                    <PlayerImage positionCode={player?.PositionCode} nflTeamCode={player?.DisplayCode} espnPlayerId={player.EspnPlayerId} height={30} />
                                 </TableCell>
                                 <TableCell>
-                                    <Link to={`/Player/${player.PlayerId}`} >{formatPlayerName(player.PlayerName, player.PositionCode)}</Link>
+                                    <PlayerLink playerId={player.PlayerId} playerName={player.PlayerName} positionCode={player.PositionCode} />
                                     {` ${player.PositionCode} ${player.DisplayCode}`}
                                 </TableCell>
                                 <TableCell >
-                                    <Typography variant="caption">
-                                        {["TMQB", "QB"].includes(player.PositionCode) ? `${player.PassYds ?? 0} Yds, ${player.PassTds ?? 0} TDs, ${player.PassInts ?? 0} Ints` : ' '}
-                                        {["RB"].includes(player.PositionCode) ? `${player.RushingYds ?? 0} Yds, ${player.RushingTds ?? 0} TDs` : ' '}
-                                        {["WR", "TE"].includes(player.PositionCode) ? `${player.ReceivingYds ?? 0} Yds, ${player.ReceivingTds ?? 0} TDs` : ' '}
-                                        {["TMPK", "PK"].includes(player.PositionCode) ? ` ${player.FGYds ?? 0} FGYds, ${player.XPs ?? 0} XPs` : ' '}
-                                        {["S", "CB", "LB", "DE", "DT"].includes(player.PositionCode) ? ` ${player.Tackles ?? 0} Tckls, ${player.Sacks ?? 0} Sacks` : ' '}
-                                    </Typography>
+                                    <FormattedPlayerStats player={player} />
                                 </TableCell>
                                 <TableCell>
                                     {player.StatusDescription?.length > 0 ?

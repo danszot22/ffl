@@ -1,13 +1,14 @@
-import { formatPlayerName, formatGameInfo } from '../../utils/helpers';
+import { formatGameInfo } from '../../utils/helpers';
+import PlayerLink from '../common/PlayerLink';
 import { StyledTableRow } from '../common/styled';
-import { Typography, TableCell, Link } from "@mui/material";
+import { Typography, TableCell } from "@mui/material";
 
 export default function SummaryPlayerRow({ row, showProjections }) {
 
     return (
         <StyledTableRow key={row.PlayerId}>
             <TableCell variant="caption" scope="row">
-                <Link variant="caption" to={`/Player/${row.PlayerId}`}>{formatPlayerName(row.Player?.Name, row.Player?.Position?.PositionCode)}</Link>
+                <PlayerLink playerId={row.PlayerId} playerName={row?.Player.Name} positionCode={row.Player?.Position?.PositionCode} variant={'caption'} xsOnly={true} />
                 <Typography variant="caption"> {row.Player?.Position.PositionCode}</Typography>
             </TableCell>
             <TableCell>

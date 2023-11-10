@@ -1,9 +1,10 @@
-import { Link, List, ListItem, ListItemButton, ListItemIcon, ListItemText, ListSubheader, Typography } from "@mui/material";
-import { formatPlayerFullName } from "../../utils/helpers";
+import { List, ListItem, ListItemButton, ListItemIcon, ListItemText, ListSubheader, Typography } from "@mui/material";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import Menu from '@mui/icons-material/Menu';
 import Delete from "@mui/icons-material/Delete";
 import useMediaQuery from '@mui/material/useMediaQuery';
+import PlayerLink from "../common/PlayerLink";
+import { formatFantasyTeamName } from "../../utils/helpers";
 
 export default function TeamWaiverRequests({ waiverRequests, team, onDragEnd, handleDelete }) {
     const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
@@ -15,7 +16,7 @@ export default function TeamWaiverRequests({ waiverRequests, team, onDragEnd, ha
                     <List ref={provided.innerRef} {...provided.droppableProps}>
                         <ListSubheader>
                             <Typography sx={{ fontWeight: 700, }}>
-                                {team?.TeamName} - {team?.OwnerName}
+                                {formatFantasyTeamName(team)}
                             </Typography>
                         </ListSubheader>
                         {waiverRequests?.map((waiverRequest, index) => (
@@ -48,14 +49,10 @@ export default function TeamWaiverRequests({ waiverRequests, team, onDragEnd, ha
                                         </ListItemText>
                                         <ListItemText >
                                             {` Add `}
-                                            <Link to={`/Player/${waiverRequest.PlayerToAdd.PlayerId}`} >
-                                                {formatPlayerFullName(waiverRequest.PlayerToAdd.Name, waiverRequest.PlayerToAdd.Position.PositionCode)}
-                                            </Link>
+                                            <PlayerLink playerId={waiverRequest.PlayerToAdd.PlayerId} playerName={waiverRequest.PlayerToAdd.Name} positionCode={waiverRequest.PlayerToAdd.Position.PositionCode} />
                                             {` ${waiverRequest.PlayerToAdd.Position.PositionCode} ${waiverRequest.PlayerToAdd.NflTeam.DisplayCode}`}
                                             {` drop `}
-                                            <Link to={`/Player/${waiverRequest.RosterPlayerToDelete.Player.PlayerId}`} >
-                                                {formatPlayerFullName(waiverRequest.RosterPlayerToDelete.Player.Name, waiverRequest.RosterPlayerToDelete.Player.Position.PositionCode)}
-                                            </Link>
+                                            <PlayerLink playerId={waiverRequest.RosterPlayerToDelete.Player.PlayerId} playerName={waiverRequest.RosterPlayerToDelete.Player.Name} positionCode={waiverRequest.RosterPlayerToDelete.Player.Position.PositionCode} />
                                             {` ${waiverRequest.RosterPlayerToDelete.Player.Position.PositionCode} ${waiverRequest.RosterPlayerToDelete.Player.NflTeam.DisplayCode}`}
                                         </ListItemText>
                                         <ListItemButton sx={{ maxWidth: 50 }}>

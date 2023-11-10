@@ -1,4 +1,4 @@
-import { Paper, Box, Button, ButtonGroup, Typography, Skeleton, Grid, Tabs, Tab, Link } from "@mui/material";
+import { Paper, Box, Button, ButtonGroup, Typography, Skeleton, Grid, Tabs, Tab, FormControl, Select, MenuItem, InputLabel } from "@mui/material";
 import { Table, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { useState, useEffect, useContext } from 'react';
 import Root from '../Root';
@@ -10,6 +10,8 @@ import { NflWeekContext } from "../../contexts/NflWeekContext";
 import PageToolbar from "../common/PageToolbar";
 import LineupPlayers from "./LineupPlayers";
 import withAuth from "../withAuth";
+import TeamLink from "../common/TeamLink";
+import { formatFantasyTeamName } from "../../utils/helpers";
 
 function LineupList({ league, team, user }) {
     const { state: nflWeekState } = useContext(NflWeekContext);
@@ -49,6 +51,7 @@ function LineupList({ league, team, user }) {
     }
 
     const handleChange = (event, newValue) => {
+        console.log(newValue);
         setValue(newValue);
     };
 
@@ -56,12 +59,50 @@ function LineupList({ league, team, user }) {
         <Root>
             <PageToolbar title={'Lineups'} />
             <Grid sx={{ m: 1 }} container spacing={2} justifyContent="center" alignItems="center">
-                <ButtonGroup variant="outlined" aria-label="outlined primary button group">
+                <ButtonGroup sx={{ display: { xs: 'none', md: 'flex' } }} variant="outlined" aria-label="outlined primary button group">
                     <Typography p={1}>Week:</Typography>
                     {weeks.map((i) => <Button key={i} variant={week === i + 1 ? "contained" : "outlined"} onClick={() => handleClick(i + 1)}>{i + 1}</Button>)}
                 </ButtonGroup>
             </Grid>
-
+            <Box
+                sx={{
+                    justifyContent: 'center',
+                    flexGrow: 1,
+                    display: { xs: 'flex', md: 'none' },
+                    flexDirection: 'row',
+                    p: 1,
+                    gap: 1,
+                }}
+            >
+                <FormControl fullWidth>
+                    <InputLabel id="lineup-team-select-label">Team</InputLabel>
+                    <Select
+                        labelId="lineup-team-select-label"
+                        id="LineupTeam"
+                        value={value}
+                        label="Team"
+                        onChange={(event) => handleChange(event, event.target.value)}
+                    >
+                        {lineups.map((lineup, index) => (
+                            <MenuItem key={lineup.team.TeamId} value={index}>{`${lineup.team.OwnerName}`}</MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
+                <FormControl fullWidth>
+                    <InputLabel id="lineup-week-select-label">Week</InputLabel>
+                    <Select
+                        labelId="lineup-week-select-label"
+                        id="LineupWeek"
+                        value={week}
+                        label="Week"
+                        onChange={(event) => handleClick(event.target.value)}
+                    >
+                        {weeks.map((i) => (
+                            <MenuItem key={i} value={i + 1}>{i + 1}</MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
+            </Box>
             {
                 isLoading ? (
                     <Skeleton variant="rectangular" height={48} />
@@ -72,15 +113,15 @@ function LineupList({ league, team, user }) {
                             flexGrow: 1,
                             bgcolor: (theme) => theme.palette.mode === 'light' ? grey[100] : grey[700],
                             display: 'flex',
-                            flexDirection: { xs: 'column', sm: 'row' },
+                            flexDirection: { xs: 'column', md: 'row' },
                         }}
                     >
                         <Box
                             sx={{
-                                display: 'flex',
+                                display: { xs: 'none', md: 'flex' },
                                 alignItems: 'flex-start',
                                 flexDirection: 'column',
-                                p: 1,
+                                p: { xs: 0, md: 1 },
                                 m: 1,
                                 bgcolor: 'background.paper',
                                 borderRadius: 1,
@@ -97,7 +138,7 @@ function LineupList({ league, team, user }) {
                                 sx={{ borderRight: 1, borderColor: 'divider' }}
                             >
                                 {lineups.map((lineup, index) => (
-                                    <Tab key={lineup.team.TeamId} label={`${lineup.team.TeamName} (${lineup.team.OwnerName})`} {...a11yProps(index)} />
+                                    <Tab key={lineup.team.TeamId} label={formatFantasyTeamName(lineup.team)} {...a11yProps(index)} />
                                 ))}
                             </Tabs>
                         </Box>
@@ -107,14 +148,15 @@ function LineupList({ league, team, user }) {
                                     <Table size="small" sx={{ minWidth: 400 }} aria-label="simple table">
                                         <TableHead>
                                             <TableRow>
-                                                <TableCell colSpan={5}>
+                                                <TableCell sx={{ display: { xs: 'none', md: 'table-cell' }, }}></TableCell>
+                                                <TableCell colSpan={2}>
                                                     <Box
                                                         sx={{
                                                             display: 'flex',
                                                             alignItems: 'flex-start',
                                                             flexDirection: 'column',
                                                         }}>
-                                                        <Link to={`/Team/${selectedTeam?.TeamId}`}>{selectedTeam?.TeamName} ({selectedTeam?.OwnerName})</Link>
+                                                        <TeamLink team={selectedTeam} />
                                                         {!selectedTeam?.complete ?
                                                             <Typography variant="caption">Projected: {selectedTeam?.projectedScore.toFixed(1)} </Typography>
                                                             : null
@@ -129,6 +171,8 @@ function LineupList({ league, team, user }) {
                                                         }
                                                     </Box>
                                                 </TableCell>
+                                                <TableCell sx={{ display: { xs: 'none', md: 'table-cell' }, }}></TableCell>
+                                                <TableCell sx={{ display: { xs: 'none', md: 'table-cell' }, }}></TableCell>
                                                 <TableCell>
                                                     {(team?.TeamId === selectedTeam?.TeamId && nflWeekState.lineupWeek === week) ||
                                                         (user?.isAdmin || user?.isCommissioner) ?

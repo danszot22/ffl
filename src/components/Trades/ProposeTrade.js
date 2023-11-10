@@ -6,6 +6,7 @@ import { mapToRosterList } from "../../utils/parsers";
 import { Box, Button, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import TeamRoster from "./TeamRoster";
 import withAuth from "../withAuth";
+import { formatFantasyTeamName } from "../../utils/helpers";
 
 function ProposeTrade({ league, team }) {
     const [rosters, setRosters] = useState([]);
@@ -108,7 +109,7 @@ function ProposeTrade({ league, team }) {
                     label="Trade With"
                     onChange={handleChange}
                 >
-                    {teams.map((team) => (<MenuItem key={team.TeamId} value={team.TeamId}>{team.TeamName} ({team.OwnerName}) </MenuItem>))}
+                    {teams.map((team) => (<MenuItem key={team.TeamId} value={team.TeamId}>{formatFantasyTeamName(team)}</MenuItem>))}
                 </Select>
             </FormControl>
             <Box sx={{ mt: 2, mb: 2, display: 'flex', flexDirection: { sm: 'column', md: 'row' }, gap: 6 }}>

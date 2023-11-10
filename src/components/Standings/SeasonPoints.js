@@ -1,8 +1,9 @@
-import { Paper, Link, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
+import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import { formatDollars } from '../../utils/helpers';
 import { StyledTableRow } from '../common/styled';
 import { mapSeasonPoints } from '../../utils/parsers';
 import TableToolbar from './TableToolbar';
+import TeamLink from '../common/TeamLink';
 
 function SeasonPoints({ data }) {
     const points = mapSeasonPoints(data);
@@ -31,10 +32,7 @@ function SeasonPoints({ data }) {
                                 {point.rank}
                             </TableCell>
                             <TableCell sx={{ width: { xs: 150, md: 350 } }} >
-                                <Link to={`/Team/${point.TeamId}`} >
-                                    <Typography variant='inherit' sx={{ display: { xs: 'none', md: 'block' }, }}>{point.Team.TeamName} ({point.Team.OwnerName})</Typography>
-                                    <Typography variant='inherit' sx={{ display: { xs: 'block', md: 'none' }, }}>{point.Team.OwnerName}</Typography>
-                                </Link>
+                                <TeamLink team={point.Team} />
                             </TableCell>
                             <TableCell>
                                 {point.PointTotal}

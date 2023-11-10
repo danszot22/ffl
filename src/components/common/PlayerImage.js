@@ -3,7 +3,6 @@
 export default function PlayerImage({ positionCode, nflTeamCode, espnPlayerId, height = 30 }) {
     return (
         positionCode?.startsWith('TM') ?
-
             < img
                 alt={nflTeamCode}
                 height={height}
