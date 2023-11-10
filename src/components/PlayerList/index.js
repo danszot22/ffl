@@ -24,7 +24,7 @@ function PlayerList({ league, team }) {
 
     return (
         <Root>
-            <PageToolbar title={'Players test'} />
+            <PageToolbar title={'Players'} />
             <Box
                 sx={{
                     justifyContent: 'center',
