@@ -1,5 +1,5 @@
 import Root from "../Root";
-import { Paper, Link } from "@mui/material";
+import { Paper, Link, useTheme, useMediaQuery, Typography } from "@mui/material";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { leagueTransactionsLoader } from "../../api/graphql";
 import { useState, useEffect } from "react";
@@ -9,6 +9,8 @@ import withAuth from "../withAuth";
 import PlayerLink from "../common/PlayerLink";
 
 function Transactions({ league }) {
+    const theme = useTheme();
+    const isBelowMedium = useMediaQuery(theme.breakpoints.down('md'));
     const [transactions, setTransactions] = useState([]);
 
     useEffect(() => {
@@ -33,7 +35,7 @@ function Transactions({ league }) {
                 <Table size="small" aria-label="simple table">
                     <TableHead>
                         <TableRow>
-                            <TableCell>
+                            <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>
                                 Date
                             </TableCell>
                             <TableCell>
@@ -50,8 +52,13 @@ function Transactions({ league }) {
                     <TableBody>
                         {transactions.map((transaction) => (
                             <TableRow key={transaction.TransactionId}>
-                                <TableCell>{convertDateToLocal(transaction.TransactionDate).toLocaleDateString()}</TableCell>
+                                <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>
+                                    {convertDateToLocal(transaction.TransactionDate).toLocaleDateString()}
+                                </TableCell>
                                 <TableCell>
+                                    <Typography sx={{ display: { xs: 'block', md: 'none' } }}>
+                                        {convertDateToLocal(transaction.TransactionDate).toLocaleDateString()}
+                                    </Typography>
                                     {transaction.TransactionType === 0 ? "Unlimited" :
                                         transaction.TransactionType === 1 ? "FreeIR" :
                                             transaction.TransactionType === 2 ? "AddDrop" :
@@ -61,12 +68,12 @@ function Transactions({ league }) {
                                     {transaction.WaiverRequestId > 0 ? " (off waivers)" : " "}
                                 </TableCell>
                                 <TableCell>
-                                    {formatFantasyTeamName(transaction.RosterPlayerAdded.Team)}
+                                    {formatFantasyTeamName(transaction.RosterPlayerAdded.Team, isBelowMedium)}
                                     {` added `}
                                     <PlayerLink playerId={transaction.RosterPlayerAdded.Player.PlayerId} playerName={transaction.RosterPlayerAdded.Player.Name} positionCode={transaction.RosterPlayerAdded.Player.Position.PositionCode} />
                                     {` ${transaction.RosterPlayerAdded.Player.Position.PositionCode}`}
                                     <br />
-                                    {formatFantasyTeamName(transaction.RosterPlayerDeleted.Team)}
+                                    {formatFantasyTeamName(transaction.RosterPlayerDeleted.Team, isBelowMedium)}
                                     {` dropped `}
                                     <PlayerLink playerId={transaction.RosterPlayerDeleted.Player.PlayerId} playerName={transaction.RosterPlayerDeleted.Player.Name} positionCode={transaction.RosterPlayerDeleted.Player.Position.PositionCode} />
                                     {` ${transaction.RosterPlayerDeleted.Player.Position.PositionCode}`}

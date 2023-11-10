@@ -1,10 +1,13 @@
 import Root from "../Root";
 import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Box, Button, Checkbox, Divider, FormControlLabel, FormGroup, TextField } from "@mui/material";
+import { Box, Button, Checkbox, Divider, FormControlLabel, FormGroup, TextField, useMediaQuery, useTheme } from "@mui/material";
 import PageToolbar from "../common/PageToolbar";
 
 export default function EditRosterSettings() {
+    const theme = useTheme();
+    const isBelowMedium = useMediaQuery(theme.breakpoints.down('md'));
+
     const { state } = useLocation();
     const [settings, setSettings] = useState({ ...state.settings });
     const [fields, setFields] = useState([]);
@@ -91,7 +94,7 @@ export default function EditRosterSettings() {
 
     return (
         <Root>
-            <PageToolbar title={'Roster Settings'} />
+            <PageToolbar title={'League Roster Settings'} />
             <Box
                 sx={{
                     display: 'flex',
@@ -115,6 +118,7 @@ export default function EditRosterSettings() {
                             flexGrow: 1,
                         }}>
                             <TextField
+                                sx={{ width: isBelowMedium ? 125 : 250 }}
                                 id={fields[index][0]}
                                 label={labels[index]}
                                 value={fields[index][0] === "QB" ? (TMQB ? settings.TMQB : field[1]) :
@@ -127,6 +131,7 @@ export default function EditRosterSettings() {
                             />
                             {index !== fields.length - 1 ?
                                 <TextField
+                                    sx={{ width: isBelowMedium ? 100 : 250 }}
                                     id={fields[index + 1][0]}
                                     label={fields[index + 1] ? labels[index + 1] : ' '}
                                     value={fields[index][0] === "QB" ? settings.STMQB + fields[index + 1][1] :
@@ -142,21 +147,19 @@ export default function EditRosterSettings() {
                             }
                             {["QB"].includes(fields[index][0]) ?
                                 <FormGroup>
-                                    <FormControlLabel control={<Checkbox name='TMQB' checked={TMQB} onChange={() => handleChangeQB(!TMQB)} />} label="Team Quarterbacks" />
-                                </FormGroup> : ' '
+                                    <FormControlLabel control={<Checkbox name='TMQB' checked={TMQB} onChange={() => handleChangeQB(!TMQB)} />} label={isBelowMedium ? "Team QB" : "Team Quarterbacks"} />
+                                </FormGroup> :
+                                ["PK"].includes(fields[index][0]) ?
+                                    <FormGroup>
+                                        <FormControlLabel control={<Checkbox name='TMPK' checked={TMPK} onChange={() => handleChangePK(!TMPK)} />} label={isBelowMedium ? "Team PK" : "Team Kickers"} />
+                                    </FormGroup> :
+                                    ["WR"].includes(fields[index][0]) ?
+                                        <FormGroup>
+                                            <FormControlLabel control={<Checkbox name='TE' checked={TE} onChange={() => handleChangeTE(!TE)} />} label={isBelowMedium ? "Incl TE" : "Include Tight Ends"} />
+                                        </FormGroup> :
+                                        <FormGroup sx={{ width: 100 }}>
 
-                            }
-                            {["PK"].includes(fields[index][0]) ?
-                                <FormGroup>
-                                    <FormControlLabel control={<Checkbox name='TMPK' checked={TMPK} onChange={() => handleChangePK(!TMPK)} />} label="Team Kickers" />
-                                </FormGroup> : ' '
-
-                            }
-                            {["WR"].includes(fields[index][0]) ?
-                                <FormGroup>
-                                    <FormControlLabel control={<Checkbox name='TE' checked={TE} onChange={() => handleChangeTE(!TE)} />} label="Include Tight Ends" />
-                                </FormGroup> : ' '
-
+                                        </FormGroup>
                             }
                         </Box>
                         :

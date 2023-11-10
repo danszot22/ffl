@@ -2,13 +2,15 @@ import { useEffect, useState } from "react";
 import { teamTradesLoader } from "../../api/graphql";
 import Root from "../Root";
 import PageToolbar from "../common/PageToolbar";
-import { Button, IconButton, Paper, Tooltip, Typography } from "@mui/material";
+import { Button, IconButton, Paper, Tooltip, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
-import { convertDateToLocal, formatFantasyTeamName, tradeStatuses } from "../../utils/helpers";
+import { convertDateToLocal, formatFantasyTeamName, formatPlayerFullName, formatPlayerName, tradeStatuses } from "../../utils/helpers";
 import { Delete, ThumbDown, ThumbUp } from "@mui/icons-material";
 import withAuth from "../withAuth";
 
 function TeamTrades({ team }) {
+    const theme = useTheme();
+    const isBelowMedium = useMediaQuery(theme.breakpoints.down('md'));
     const [trades, setTrades] = useState([]);
 
     useEffect(() => {
@@ -49,46 +51,48 @@ function TeamTrades({ team }) {
                 <Table size="small" aria-label="simple table">
                     <TableHead>
                         <TableRow>
-                            <TableCell>
+                            <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>
                                 Trade Date
                             </TableCell>
-                            <TableCell>
-                                Team
-                            </TableCell>
-                            <TableCell>
-                                Team
+                            <TableCell colSpan={2}>
+                                <Button variant="contained" to="/ProposeTrade">
+                                    Propose Trade
+                                </Button>
                             </TableCell>
                             <TableCell>
                                 Status
                             </TableCell>
                             <TableCell>
-                                <Button variant="contained" to="/ProposeTrade">
-                                    Propose Trade
-                                </Button>
+
                             </TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {trades?.map((trade) => (
                             <TableRow key={trade.TradeId}>
-                                <TableCell>{convertDateToLocal(trade.TradeDate).toLocaleDateString()}</TableCell>
+                                <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>
+                                    {convertDateToLocal(trade.TradeDate).toLocaleDateString()}
+                                </TableCell>
                                 <TableCell>
-                                    {formatFantasyTeamName(trade.GivingTeam)}<br />
+                                    {formatFantasyTeamName(trade.GivingTeam, isBelowMedium)}
                                     {trade.TradeDetails.items?.map((detail) =>
                                         <Typography variant="caption" component="div" >
-                                            {detail.GivingRosterPlayer.Player.Name} {detail.GivingRosterPlayer.Player.Position.PositionCode} {detail.GivingRosterPlayer.Player.NflTeam.DisplayCode}
+                                            {isBelowMedium ? formatPlayerName(detail.GivingRosterPlayer.Player.Name, detail.GivingRosterPlayer.Player.Position.PositionCode) : formatPlayerFullName(detail.GivingRosterPlayer.Player.Name)} {detail.GivingRosterPlayer.Player.Position.PositionCode} {detail.GivingRosterPlayer.Player.NflTeam.DisplayCode}
                                         </Typography>
                                     )}
                                 </TableCell>
                                 <TableCell>
-                                    {formatFantasyTeamName(trade.ReceivingTeam)}<br />
+                                    {formatFantasyTeamName(trade.ReceivingTeam, isBelowMedium)}
                                     {trade.TradeDetails.items?.map((detail) =>
                                         <Typography variant="caption" component="div" >
-                                            {detail.ReceivingRosterPlayer.Player.Name} {detail.ReceivingRosterPlayer.Player.Position.PositionCode} {detail.ReceivingRosterPlayer.Player.NflTeam.DisplayCode}
+                                            {isBelowMedium ? formatPlayerName(detail.ReceivingRosterPlayer.Player.Name, detail.ReceivingRosterPlayer.Player.Position.PositionCode) : formatPlayerFullName(detail.ReceivingRosterPlayer.Player.Name)} {detail.ReceivingRosterPlayer.Player.Position.PositionCode} {detail.ReceivingRosterPlayer.Player.NflTeam.DisplayCode}
                                         </Typography>
                                     )}
                                 </TableCell>
                                 <TableCell>
+                                    <Typography sx={{ display: { xs: 'block', md: 'none' } }}>
+                                        {convertDateToLocal(trade.TradeDate).toLocaleDateString()}
+                                    </Typography>
                                     {tradeStatuses[trade.TradeStatus]}
                                 </TableCell>
                                 <TableCell>

@@ -8,8 +8,12 @@ import FinanceToolbar from './FinanceToolbar';
 import PageToolbar from '../common/PageToolbar';
 import withAuth from '../withAuth';
 import TeamLink from '../common/TeamLink';
+import { useMediaQuery, useTheme } from '@mui/material';
 
 function Finances({ league, user }) {
+    const theme = useTheme();
+    const isBelowMedium = useMediaQuery(theme.breakpoints.down('md'));
+
     const [teams, setTeams] = useState([]);
 
     useEffect(() => {
@@ -53,34 +57,34 @@ function Finances({ league, user }) {
             field: 'TeamName',
             headerName: 'Team',
             sortable: false,
-            width: 300,
+            width: isBelowMedium ? 100 : 300,
             editable: false,
             renderCell: (params) => (
                 <TeamLink team={params.row} />
             ),
         },
         {
-            field: 'EntryFee', width: 150, headerName: 'Entry Fee', sortable: false, editable: true,
+            field: 'EntryFee', width: isBelowMedium ? 75 : 150, headerName: 'Entry Fee', sortable: false, editable: true,
             valueFormatter: ({ value }) => formatDollars(value),
         },
         {
-            field: 'TransactionFees', width: 150, headerName: 'Transaction Fees', sortable: false, editable: false,
+            field: 'TransactionFees', width: isBelowMedium ? 75 : 150, headerName: 'Transaction Fees', sortable: false, editable: false,
             valueFormatter: ({ value }) => formatDollars(value),
         },
         {
-            field: 'FeesPaid', width: 150, headerName: 'Fees Paid', type: 'number', sortable: false, editable: true,
+            field: 'FeesPaid', width: isBelowMedium ? 75 : 150, headerName: 'Fees Paid', type: 'number', sortable: false, editable: true,
             valueFormatter: ({ value }) => formatDollars(value),
         },
         {
-            field: 'Winnings', width: 150, headerName: 'Winnings', type: 'number', sortable: false, editable: false,
+            field: 'Winnings', width: isBelowMedium ? 75 : 150, headerName: 'Winnings', type: 'number', sortable: false, editable: false,
             valueFormatter: ({ value }) => formatDollars(value),
         },
         {
-            field: 'WinningsPaid', width: 150, headerName: 'Winnings Paid', type: 'amount', sortable: false, editable: true,
+            field: 'WinningsPaid', width: isBelowMedium ? 75 : 150, headerName: 'Winnings Paid', type: 'amount', sortable: false, editable: true,
             valueFormatter: ({ value }) => formatDollars(value),
         },
         {
-            field: 'Balance', width: 150, headerName: 'Balance', type: 'number', sortable: false, editable: false,
+            field: 'Balance', width: isBelowMedium ? 75 : 150, headerName: 'Balance', type: 'number', sortable: false, editable: false,
             valueFormatter: ({ value }) => formatDollars(value),
             valueGetter: (params) => {
                 return `${(params.row.EntryFee + params.row.TransactionFees - params.row.FeesPaid) - (params.row.Winnings - params.row.WinningsPaid)}`

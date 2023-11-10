@@ -31,7 +31,7 @@ function SeasonPoints({ data }) {
                             <TableCell>
                                 {point.rank}
                             </TableCell>
-                            <TableCell sx={{ width: { xs: 150, md: 350 } }} >
+                            <TableCell sx={{ width: { md: 350 } }} >
                                 <TeamLink team={point.Team} />
                             </TableCell>
                             <TableCell>

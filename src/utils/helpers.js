@@ -46,8 +46,8 @@ export function formatPlayerFullName(name) {
     return nameParts[1].trim() + " " + nameParts[0];
 }
 
-export function formatFantasyTeamName(team) {
-    return `${team?.TeamName} (${team?.OwnerName})`;
+export function formatFantasyTeamName(team, excludeTeamName) {
+    return excludeTeamName ? team?.OwnerName : `${team?.TeamName} (${team?.OwnerName})`;
 }
 
 export function formatGameTime(nflGame) {

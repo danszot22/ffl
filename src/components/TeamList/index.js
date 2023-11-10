@@ -6,10 +6,13 @@ import TeamToolbar from './TeamToolbar';
 import ManagerList from './ManagerList';
 import { teamsLoader } from '../../api/graphql';
 import PageToolbar from '../common/PageToolbar';
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField, useMediaQuery, useTheme } from '@mui/material';
 import withAuth from '../withAuth';
 
 function TeamList({ league, user }) {
+    const theme = useTheme();
+    const isBelowMedium = useMediaQuery(theme.breakpoints.down('md'));
+
     const [teams, setTeams] = useState([]);
     const [selectedTeam, setSelectedTeam] = useState({});
     const [open, setOpen] = useState(false);
@@ -98,10 +101,10 @@ function TeamList({ league, user }) {
     };
 
     const columns = [
-        { field: 'Division', width: 100, headerName: 'Division', sortable: false, editable: false },
-        { field: 'TeamName', width: 240, headerName: 'Name', sortable: false, editable: true },
-        { field: 'OwnerName', width: 240, headerName: 'Owner', sortable: false, editable: true },
-        { field: 'AvlAddDrops', width: 100, headerName: '#Add/Drops', type: 'number', sortable: false, editable: true, },
+        { field: 'Division', width: isBelowMedium ? 30 : 100, headerName: 'Division', sortable: false, editable: false },
+        { field: 'TeamName', width: isBelowMedium ? 80 : 240, headerName: 'Name', sortable: false, editable: true },
+        { field: 'OwnerName', width: isBelowMedium ? 80 : 240, headerName: 'Owner', sortable: false, editable: true },
+        { field: 'AvlAddDrops', width: isBelowMedium ? 30 : 100, headerName: '#Add/Drops', type: 'number', sortable: false, editable: true, },
         {
             field: 'managers',
             headerName: 'Managers',
@@ -115,7 +118,7 @@ function TeamList({ league, user }) {
             field: 'actions',
             type: 'actions',
             headerName: 'Actions',
-            width: 100,
+            width: isBelowMedium ? 75 : 100,
             cellClassName: 'actions',
             getActions: ({ row }) => {
                 const actions = (user?.isAdmin || user?.isCommissioner) ?

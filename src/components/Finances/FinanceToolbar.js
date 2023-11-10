@@ -40,8 +40,8 @@ function FinanceToolbar(props) {
             sx={{
                 display: 'flex',
                 alignItems: 'flex-start',
-                flexDirection: { xs: 'column', sm: 'row' },
-                pt: { sm: 1 },
+                flexDirection: 'row',
+                pt: { xs: 1 },
                 pl: { sm: 1 },
                 pr: { xs: 1, sm: 1, },
             }}
