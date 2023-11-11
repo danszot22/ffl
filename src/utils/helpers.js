@@ -20,10 +20,10 @@ export const tradeStatuses = ["Proposed", "Accepted", "Rejected", "Approved", "D
 
 export function convertDateToLocal(date) {
     const gameDate = new Date(date);
-    const offset = -gameDate.getTimezoneOffset();
-    const gameDateLocal = new Date(gameDate.getTime() + offset * 60000);
-
-    return gameDateLocal;
+    // const offset = -gameDate.getTimezoneOffset();
+    // const gameDateLocal = new Date(gameDate.getTime() + offset * 60000);
+    // console.log(gameDate, offset, gameDateLocal);
+    return gameDate;
 }
 
 export function formatPercent(percentage) {
@@ -52,9 +52,7 @@ export function formatFantasyTeamName(team, excludeTeamName) {
 
 export function formatGameTime(nflGame) {
     if (nflGame?.NotPlayed) {
-        const gameDate = new Date(nflGame.GameDate);
-        const offset = -gameDate.getTimezoneOffset();
-        const gameDateLocal = new Date(gameDate.getTime() + offset * 60000);
+        const gameDateLocal = convertDateToLocal(nflGame.GameDate);
 
         const day = weekDays[gameDateLocal.getDay()];
         const hours = gameDateLocal.getHours().toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false });
