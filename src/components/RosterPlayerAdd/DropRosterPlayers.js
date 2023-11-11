@@ -1,13 +1,10 @@
-import { Paper, Typography, Tooltip, Box, Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Skeleton } from "@mui/material";
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
-import { formatPlayerFullName, playerStatuses } from "../../utils/helpers";
-import { Info } from "@mui/icons-material";
+import { Paper, Typography, Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Skeleton } from "@mui/material";
+import { Table, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import { formatPlayerFullName } from "../../utils/helpers";
 import { StyledTableHeaderRow } from "../common/styled";
 import { useState } from "react";
 import { getTransactionText } from "../../api/ffl";
-import PlayerImage from "../common/PlayerImage";
-import PlayerLink from "../common/PlayerLink";
-import FormattedPlayerStats from "../common/FormattedPlayerStats";
+import TeamRosterPlayers from "../common/TeamRosterPlayers";
 
 export default function DropRosterPlayers({ roster, playerToAdd }) {
     const [open, setOpen] = useState(false);
@@ -88,10 +85,10 @@ export default function DropRosterPlayers({ roster, playerToAdd }) {
                             <TableCell>
                                 Name
                             </TableCell>
-                            <TableCell>
+                            <TableCell sx={{ display: { xs: 'none', md: 'table-cell' }, }}>
                                 Stats
                             </TableCell>
-                            <TableCell>
+                            <TableCell sx={{ display: { xs: 'none', md: 'table-cell' }, }}>
                                 Status
                             </TableCell>
                             <TableCell>
@@ -102,42 +99,7 @@ export default function DropRosterPlayers({ roster, playerToAdd }) {
                             </TableCell>
                         </TableRow>
                     </TableHead>
-                    <TableBody>
-                        {roster?.map((player, index) => (
-                            <TableRow sx={{ borderTop: index > 0 && player?.Group !== roster[index - 1]?.Group ? 3 : 1 }} key={player.PlayerId}>
-                                <TableCell>
-                                    <PlayerImage positionCode={player?.PositionCode} nflTeamCode={player?.DisplayCode} espnPlayerId={player.EspnPlayerId} height={30} />
-                                </TableCell>
-                                <TableCell>
-                                    <PlayerLink playerId={player.PlayerId} playerName={player.PlayerName} positionCode={player.PositionCode} />
-                                    {` ${player.PositionCode} ${player.DisplayCode}`}
-                                </TableCell>
-                                <TableCell >
-                                    <FormattedPlayerStats player={player} />
-                                </TableCell>
-                                <TableCell>
-                                    {player.StatusDescription?.length > 0 ?
-                                        (<Tooltip title={player.StatusDescription}>
-                                            <Box sx={{
-                                                display: 'flex',
-                                            }}>
-                                                <Typography variant="caption" sx={{ pr: 1 }}>
-                                                    {playerStatuses[player.StatusCode]}
-                                                </Typography>
-                                                <Info />
-                                            </Box>
-                                        </Tooltip>) : null
-                                    }
-                                </TableCell>
-                                <TableCell>
-                                    {player.ByeWeek}
-                                </TableCell>
-                                <TableCell>
-                                    <Button variant="contained" color="error" onClick={() => handleClickOpen(player)}>Drop</Button>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
+                    <TeamRosterPlayers roster={roster} handleClick={handleClickOpen} />
                 </Table>
             </TableContainer>
         </>)
