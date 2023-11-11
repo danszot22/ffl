@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
 import { leaguePlayersLoader } from "../api/graphql";
 
-function usePlayerTableLoader(id, searchParams, leagueId) {
-    const [availability, setAvailability] = useState(searchParams.has("availability") ? searchParams.get("availability") : "All");
-    const spot = searchParams.has("spot") ? searchParams.get("spot") : "All";
+function usePlayerTableLoader(id, initialSpot, initialAvailability, leagueId) {
+    const [availability, setAvailability] = useState(initialAvailability);
+    const spot = initialSpot;
 
     const [nameFilter, setNameFilter] = useState(' ');
     const [positionFilter, setPositionFilter] = useState('All');
     const [nflTeamFilter, setNflTeamFilter] = useState('All');
     const [summaryType, setSummaryType] = useState(1);
+    const [positions, setPositions] = useState();
 
     const [isError, setIsError] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -33,9 +34,9 @@ function usePlayerTableLoader(id, searchParams, leagueId) {
     useEffect(() => {
         setNameFilter(' ');
         setNflTeamFilter('All');
-        setPositionFilter('All');
+        setPositionFilter(positions ? positions.join(',') : 'All');
         setSummaryType(1);
-        setAvailability(searchParams.has("availability") ? searchParams.get("availability") : "All");
+        setAvailability(initialAvailability);
         columnFilters.forEach((columnFilter) => {
             if (columnFilter.id === "Availability") {
                 setAvailability(columnFilter.value);
@@ -55,8 +56,9 @@ function usePlayerTableLoader(id, searchParams, leagueId) {
             }
         })
     }, [
+        positions,
         columnFilters,
-        searchParams
+        initialAvailability,
     ]);
 
     useEffect(() => {
@@ -89,6 +91,7 @@ function usePlayerTableLoader(id, searchParams, leagueId) {
     ]);
 
     return {
+        setNameFilter, setPositions,
         availability, spot, summaryType, positionFilter, setPositionFilter, nflTeamFilter, setNflTeamFilter,
         players, rowCount, isError, isLoading, isRefetching, columnFilters, setColumnFilters, pagination, setPagination, sorting, setSorting,
     }

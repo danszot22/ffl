@@ -112,7 +112,7 @@ function ProposeTrade({ league, team }) {
                     {teams.map((team) => (<MenuItem key={team.TeamId} value={team.TeamId}>{formatFantasyTeamName(team)}</MenuItem>))}
                 </Select>
             </FormControl>
-            <Box sx={{ mt: 2, mb: 2, display: 'flex', flexDirection: { sm: 'column', md: 'row' }, gap: 6 }}>
+            <Box sx={{ mt: 2, mb: 2, display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 6 }}>
                 <TeamRoster roster={teamRoster} handlePlayerChange={handlePlayerChange} />
                 <TeamRoster roster={proposedTeamRoster} handlePlayerChange={handlePlayerChange} />
             </Box>

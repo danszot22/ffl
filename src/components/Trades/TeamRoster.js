@@ -1,4 +1,4 @@
-import { Paper, Typography } from "@mui/material";
+import { Paper, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { formatFantasyTeamName, playerStatuses } from "../../utils/helpers";
 import { FormGroup, Checkbox } from "@mui/material";
@@ -6,6 +6,8 @@ import PlayerImage from "../common/PlayerImage";
 import PlayerLink from "../common/PlayerLink";
 
 export default function TeamRoster({ roster, handlePlayerChange }) {
+    const theme = useTheme();
+    const isBelowMedium = useMediaQuery(theme.breakpoints.down('md'));
 
     return (
         <TableContainer sx={{ border: 1, }} component={Paper}>
@@ -13,7 +15,7 @@ export default function TeamRoster({ roster, handlePlayerChange }) {
                 <TableHead>
                     <TableRow>
                         <TableCell colSpan="2">
-                            {formatFantasyTeamName(roster?.team)}
+                            {roster?.team ? formatFantasyTeamName(roster?.team, isBelowMedium) : null}
                         </TableCell>
                         <TableCell>
                             Name

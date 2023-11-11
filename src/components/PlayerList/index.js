@@ -19,7 +19,10 @@ function PlayerList({ league, team }) {
         columnFilters, setColumnFilters,
         pagination, setPagination,
         sorting, setSorting,
-    } = usePlayerTableLoader(id, searchParams, league?.LeagueId);
+    } = usePlayerTableLoader(id,
+        searchParams.has("spot") ? searchParams.get("spot") : "All",
+        searchParams.has("availability") ? searchParams.get("availability") : "All",
+        league?.LeagueId);
     const { columns, positions, nflTeams } = usePlayerTableColumns(spot);
 
     return (

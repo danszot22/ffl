@@ -1,228 +1,27 @@
-import { useState, useEffect, useMemo } from "react";
-import { formatPlayerFullName, playerStatusCodes } from "../../utils/helpers";
+import { useState } from "react";
+import { formatPlayerFullName } from "../../utils/helpers";
 import { MaterialReactTable } from 'material-react-table';
-import { leaguePlayersLoader, nflTeamsLoader } from "../../api/graphql";
-import { getPositionsToAdd, getTransactionText } from "../../api/ffl";
-import { Box, Typography, Button, Skeleton, DialogTitle, DialogContent, DialogContentText, DialogActions, Dialog } from "@mui/material";
+import { getTransactionText } from "../../api/ffl";
+import { Box, Typography, Button, Skeleton, DialogTitle, DialogContent, DialogContentText, DialogActions, Dialog, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import { alpha } from '@mui/material/styles';
-import PlayerImage from "../common/PlayerImage";
-import PlayerLink from "../common/PlayerLink";
-import FormattedPlayerStats from "../common/FormattedPlayerStats";
+import usePlayerTableLoader from "../../hooks/usePlayerTableLoader";
+import usePlayerTableColumns from "../../hooks/usePlayerTableColumns";
 
-export default function AddPlayers({ teamId, rosterPlayerToDrop, leagueId }) {
+export default function AddPlayers({ teamId, rosterPlayerToDrop, leagueId, }) {
     const [open, setOpen] = useState(false);
     const [selectedPlayer, setSelectedPlayer] = useState({});
     const [transactionText, setTransactionText] = useState('');
 
-    const [nflTeams, setNflTeams] = useState([]);
-    const [nameFilter, setNameFilter] = useState(' ');
-    const [nflTeamFilter, setNflTeamFilter] = useState('All');
-    const [positionFilter, setPositionFilter] = useState(' ');
-    const [positions, setPositions] = useState([]);
-
-    const [players, setPlayers] = useState([]);
-    const [isError, setIsError] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
-    const [isRefetching, setIsRefetching] = useState(false);
-    const [isLoadingPositions, setIsLoadingPositions] = useState(false);
-    const [rowCount, setRowCount] = useState(0);
-
-    const [columnFilters, setColumnFilters] = useState([]);
-    const [sorting, setSorting] = useState([]);
-    const [pagination, setPagination] = useState({
-        pageIndex: 0,
-        pageSize: 20,
-    });
-
-    useEffect(() => {
-        const fetchData = async () => {
-            setIsLoadingPositions(true);
-            if (rosterPlayerToDrop && rosterPlayerToDrop.PlayerId) {
-                const result = await getPositionsToAdd(leagueId, teamId, rosterPlayerToDrop.PlayerId);
-                setPositions(result);
-                setPositionFilter(result.join(','));
-            }
-            setIsLoadingPositions(false);
-
-        }
-        fetchData();
-    }, [
-        rosterPlayerToDrop,
-        teamId,
-        leagueId
-    ]);
-
-    useEffect(() => {
-        setNameFilter(' ');
-        setNflTeamFilter('All');
-        setPositionFilter(positions.join(','));
-        columnFilters.forEach((columnFilter) => {
-            if (columnFilter.id === "PlayerName") {
-                setNameFilter(columnFilter.value);
-            }
-            if (columnFilter.id === "NflTeamName") {
-                setNflTeamFilter(columnFilter.value);
-            }
-            if (columnFilter.id === "PositionCode") {
-                setPositionFilter(columnFilter.value);
-            }
-        })
-    }, [
-        positions,
-        columnFilters
-    ]);
-
-    useEffect(() => {
-        const fetchTeams = async () => {
-            const response = await nflTeamsLoader();
-            setNflTeams(response);
-        }
-        fetchTeams();
-    }, []);
-
-    useEffect(() => {
-        const fetchPlayers = async () => {
-            setIsLoading(true);
-            setIsRefetching(true);
-            try {
-                const response = await leaguePlayersLoader(leagueId, "All", "Available", pagination.pageIndex + 1, pagination.pageSize, 1,
-                    positionFilter, nflTeamFilter, nameFilter,
-                    sorting?.length > 0 ? sorting[0].id : "Points",
-                    sorting?.length > 0 ? (sorting[0].desc ? "DESC" : "ASC") : "DESC");
-                setPlayers(response);
-                setRowCount(response[0]?.TotalRows);
-            } catch (error) {
-                setIsError(true);
-                console.error(error);
-                return;
-            }
-            setIsError(false);
-            setIsLoading(false);
-            setIsRefetching(false);
-        }
-        fetchPlayers();
-    }, [
-        pagination.pageIndex,
-        pagination.pageSize,
-        sorting,
-        leagueId,
-        nameFilter, positionFilter, nflTeamFilter,
-    ]);
-
-    const columns = useMemo(
-        () => {
-            let allcolumns = [
-                {
-                    accessorFn: (row) => row.RowNumber,
-                    id: "RowNumber",
-                    header: "#",
-                    size: 50,
-                    enableSorting: false,
-                    enableColumnFilter: false,
-                },
-                {
-                    id: 'PlayerName', //id is still required when using accessorFn instead of accessorKey
-                    header: 'Name',
-                    size: 250,
-                    enableSorting: false,
-                    Cell: ({ renderedCellValue, row }) => (
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '1rem',
-                            }}
-                        >
-                            <PlayerImage positionCode={row.original?.PositionCode} nflTeamCode={row.original?.DisplayCode} espnPlayerId={row.original.EspnPlayerId} height={30} />
-                            <PlayerLink playerId={row.original.PlayerId} playerName={row?.original.PlayerName} positionCode={row.original?.PositionCode} />
-                            <Typography variant="caption">{playerStatusCodes[row.original.StatusCode]}</Typography>
-                        </Box>
-                    ),
-                },
-                {
-                    accessorFn: (row) => row.Name != null ? `${row.Name}` : 'Free Agent',
-                    id: 'NflTeamName',
-                    header: 'Team',
-                    size: 200,
-                    enableSorting: false,
-                    filterVariant: 'select',
-                    filterSelectOptions: ['All', ...nflTeams],
-                    Cell: ({ renderedCellValue, row }) => (
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '1rem',
-                            }}
-                        >
-                            {
-                                row.original.DisplayCode ?
-                                    <img
-                                        alt={row.original.DisplayCode}
-                                        height={30}
-                                        src={`https://a.espncdn.com/combiner/i?img=/i/teamlogos/nfl/500/${row.original.DisplayCode}.png&h=150&w=150`}
-                                        loading="lazy"
-                                        style={{ borderRadius: '50%' }}
-                                    /> :
-                                    <img
-                                        alt="Free Agent"
-                                        height={30}
-                                        src='https://secure.espncdn.com/combiner/i?img=/i/teamlogos/default-team-logo-500.png&h=150&w=150'
-                                        loading="lazy"
-                                        style={{ borderRadius: '50%' }} />
-                            }
-                            {/* using renderedCellValue instead of cell.getValue() preserves filter match highlighting */}
-                            <span>{renderedCellValue}</span>
-                        </Box>
-                    ),
-                },
-                {
-                    accessorFn: (row) => row.PositionCode != null ? `${row.PositionCode}` : ' ',
-                    id: 'PositionCode',
-                    header: 'Position',
-                    size: 50,
-                    enableSorting: false,
-                    filterVariant: 'select',
-                    filterSelectOptions: positions,
-                },
-                {
-                    accessorFn: (row) => row.OwnerName != null ? `${row.OwnerName}` : 'Available',
-                    id: 'Availability',
-                    header: 'Type',
-                    size: 150,
-                    enableSorting: false,
-                    enableColumnFilter: false,
-                },
-                {
-                    accessorFn: (row) => row.StatusDescription,
-                    id: 'Status',
-                    header: 'Status',
-                    size: 200,
-                    enableColumnFilter: false,
-                },
-                {
-                    accessorFn: (row) => row.Points,
-                    id: 'Points',
-                    header: 'Points',
-                    size: 50,
-                    enableColumnFilter: false,
-                }
-            ];
-            allcolumns = [...allcolumns,
-            {
-                id: 'Stats',
-                header: 'Stats',
-                size: 200,
-                enableSorting: false,
-                enableColumnFilter: false,
-                Cell: ({ renderedCellValue, row }) => (
-                    <FormattedPlayerStats player={row.original} />
-                )
-            }];
-            return allcolumns;
-        },
-        [nflTeams, positions],
-    );
+    const {
+        nflTeamFilter, setNflTeamFilter,
+        positionFilter, setPositionFilter,
+        isError, isLoading, isRefetching,
+        players, rowCount,
+        columnFilters, setColumnFilters,
+        pagination, setPagination,
+        sorting, setSorting,
+    } = usePlayerTableLoader(1, "All", "Available", leagueId);
+    const { columns, positions, nflTeams, isLoadingPositions } = usePlayerTableColumns("All", leagueId, teamId, rosterPlayerToDrop, setPositionFilter);
 
     const handleClose = () => {
         setOpen(false);
@@ -253,47 +52,89 @@ export default function AddPlayers({ teamId, rosterPlayerToDrop, leagueId }) {
             {isLoadingPositions ?
                 <Skeleton sx={{ p: 1 }} variant="rectangular" height={40}>Loading...</Skeleton>
                 :
-                <MaterialReactTable columns={columns} data={players} getRowId={(row) => row.PlayerId}
-                    manualFiltering
-                    manualPagination
-                    manualSorting
-                    enableRowActions
-                    initialState={{ showColumnFilters: true }}
-                    muiToolbarAlertBannerProps={
-                        isError
-                            ? {
-                                color: 'error',
-                                children: 'Error loading data',
-                            }
-                            : undefined
-                    }
-                    renderRowActions={({ row, table }) => (
-                        <Box sx={{ display: 'flex', gap: '1rem' }}>
-                            {!row.original.OwnerName ?
-                                <Button variant="contained" color="success" onClick={() => handleClickOpen(row.original)}>
-                                    Add
-                                </Button> : null
-                            }
-                        </Box>
-                    )}
-                    renderTopToolbar={({ table }) => (
-                        <Typography sx={{ p: 1, m: 1, backgroundColor: theme => alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity), }}>Add Player</Typography>
-                    )}
-                    isLoading={isLoading}
-                    isRefetching={isRefetching}
-                    onColumnFiltersChange={setColumnFilters}
-                    onPaginationChange={setPagination}
-                    onSortingChange={setSorting}
-                    rowCount={rowCount}
-                    state={{
-                        columnFilters,
-                        isLoading,
-                        pagination,
-                        showAlertBanner: isError,
-                        showProgressBars: isRefetching,
-                        showSkeletons: isLoading || isRefetching,
-                        sorting,
-                    }} />}
+                <>
+                    <Box
+                        sx={{
+                            justifyContent: 'center',
+                            flexGrow: 1,
+                            display: { xs: 'flex', md: 'none' },
+                            flexDirection: 'row',
+                            p: 1,
+                            gap: 1,
+                        }}
+                    >
+                        <FormControl fullWidth>
+                            <InputLabel id="lineup-team-select-label">Pro Team</InputLabel>
+                            <Select
+                                labelId="pro-team-select-label"
+                                id="ProTeam"
+                                label="Pro Team"
+                                value={nflTeamFilter}
+                                onChange={(event) => setNflTeamFilter(event.target.value)}
+                            >
+                                {nflTeams?.map((nflteam, index) => (
+                                    <MenuItem key={nflteam} value={nflteam}>{`${nflteam}`}</MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                        <FormControl fullWidth>
+                            <InputLabel id="position-select-label">Position</InputLabel>
+                            <Select
+                                labelId="position-select-label"
+                                id="position"
+                                label="Position"
+                                value={positionFilter}
+                                onChange={(event) => setPositionFilter(event.target.value)}
+                            >
+                                {positions?.map((i) => (
+                                    <MenuItem key={i} value={i}>{i}</MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    </Box>
+
+                    <MaterialReactTable columns={columns} data={players} getRowId={(row) => row.PlayerId}
+                        manualFiltering
+                        manualPagination
+                        manualSorting
+                        enableRowActions
+                        initialState={{ showColumnFilters: true }}
+                        muiToolbarAlertBannerProps={
+                            isError
+                                ? {
+                                    color: 'error',
+                                    children: 'Error loading data',
+                                }
+                                : undefined
+                        }
+                        renderRowActions={({ row, table }) => (
+                            <Box sx={{ display: 'flex', gap: '1rem' }}>
+                                {!row.original.OwnerName ?
+                                    <Button variant="contained" color="success" onClick={() => handleClickOpen(row.original)}>
+                                        Add
+                                    </Button> : null
+                                }
+                            </Box>
+                        )}
+                        renderTopToolbar={({ table }) => (
+                            <Typography sx={{ p: 1, m: 1, backgroundColor: theme => alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity), }}>Add Player</Typography>
+                        )}
+                        isLoading={isLoading}
+                        isRefetching={isRefetching}
+                        onColumnFiltersChange={setColumnFilters}
+                        onPaginationChange={setPagination}
+                        onSortingChange={setSorting}
+                        rowCount={rowCount}
+                        state={{
+                            columnFilters,
+                            isLoading,
+                            pagination,
+                            showAlertBanner: isError,
+                            showProgressBars: isRefetching,
+                            showSkeletons: isLoading || isRefetching,
+                            sorting,
+                        }} />
+                </>}
             <Dialog
                 open={open}
                 onClose={handleClose}

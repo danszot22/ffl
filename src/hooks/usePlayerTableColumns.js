@@ -6,8 +6,9 @@ import PlayerLink from "../components/common/PlayerLink";
 import FormattedPlayerStats from "../components/common/FormattedPlayerStats";
 import { playerStatusCodes } from "../utils/helpers";
 import { nflTeamsLoader } from "../api/graphql";
+import { getPositionsToAdd } from "../api/ffl";
 
-function usePlayerTableColumns(spot) {
+function usePlayerTableColumns(spot, leagueId, teamId, rosterPlayerToDrop, setPositionFilter) {
     const theme = useTheme();
     const isXs = useMediaQuery(theme.breakpoints.only('xs'));
     const isAboveSmall = useMediaQuery(theme.breakpoints.up('sm'));
@@ -15,13 +16,34 @@ function usePlayerTableColumns(spot) {
     const isBelowLarge = useMediaQuery(theme.breakpoints.down('lg'));
     const [nflTeams, setNflTeams] = useState([]);
     const [positions, setPositions] = useState([]);
+    const [isLoadingPositions, setIsLoadingPositions] = useState(false);
 
     useEffect(() => {
-        setPositions(spot === "DF" ? ['All', 'DE', 'CB', 'S', 'LB'] :
-            spot === "R" ? ['All', 'WR', 'TE'] :
-                spot === "All" ? ['All', 'TMQB', 'RB', 'WR', 'TE', 'TMPK', 'DE', 'CB', 'S', 'LB'] :
-                    [spot]);
-    }, [spot]);
+        const fetchData = async () => {
+            setIsLoadingPositions(true);
+            if (rosterPlayerToDrop && rosterPlayerToDrop.PlayerId) {
+                const result = await getPositionsToAdd(leagueId, teamId, rosterPlayerToDrop.PlayerId);
+                setPositions(result);
+                setPositionFilter(result.join(','));
+            }
+            setIsLoadingPositions(false);
+
+        }
+        if (rosterPlayerToDrop && rosterPlayerToDrop.PlayerId) {
+            fetchData();
+        }
+        else {
+            setPositions(spot === "DF" ? ['All', 'DE', 'CB', 'S', 'LB'] :
+                spot === "R" ? ['All', 'WR', 'TE'] :
+                    spot === "All" ? ['All', 'TMQB', 'RB', 'WR', 'TE', 'TMPK', 'DE', 'CB', 'S', 'LB'] :
+                        [spot]);
+        }
+    }, [spot,
+        rosterPlayerToDrop,
+        teamId,
+        leagueId,
+        setPositionFilter
+    ]);
 
     useEffect(() => {
         const fetchTeams = async () => {
@@ -142,6 +164,7 @@ function usePlayerTableColumns(spot) {
                     header: 'Type',
                     size: 150,
                     enableSorting: false,
+                    enableColumnFilter: !rosterPlayerToDrop,
                     filterVariant: 'select',
                     filterSelectOptions: ['All', 'Available'],
                 }];
@@ -312,11 +335,11 @@ function usePlayerTableColumns(spot) {
             }
             return allcolumns;
         },
-        [spot, nflTeams, positions, isXs, isAboveSmall, isAboveMedium, isBelowLarge],
+        [spot, rosterPlayerToDrop, nflTeams, positions, isXs, isAboveSmall, isAboveMedium, isBelowLarge],
     );
 
     return {
-        columns, nflTeams, positions,
+        columns, nflTeams, positions, isLoadingPositions,
     }
 }
 
