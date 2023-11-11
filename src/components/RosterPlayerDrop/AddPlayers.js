@@ -57,7 +57,7 @@ export default function AddPlayers({ teamId, rosterPlayerToDrop, leagueId, }) {
                         sx={{
                             justifyContent: 'center',
                             flexGrow: 1,
-                            display: { xs: 'flex', md: 'none' },
+                            display: { xs: 'flex', sm: 'none' },
                             flexDirection: 'row',
                             p: 1,
                             gap: 1,
