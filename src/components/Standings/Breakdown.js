@@ -56,14 +56,14 @@ function Breakdown({ league, team }) {
                             <CustomTabPanel key={category.key} value={value} index={index}>
                                 <PanelToolbar title={category.title} showProjections={false} />
                                 <TableContainer component={Paper}>
-                                    <Table size="small" sx={{ minWidth: 400 }} aria-label="simple table">
+                                    <Table size="small" sx={{ minWidth: { xs: 250, md: 400 } }} aria-label="simple table">
                                         <TableHead>
                                             <TableRow>
-                                                <TableCell colSpan={2}>Team</TableCell>
-                                                <TableCell align="right">Points</TableCell>
-                                                <TableCell align="right">Bonus</TableCell>
+                                                <TableCell>Team</TableCell>
+                                                <TableCell align="right">Pts + Bonus</TableCell>
+                                                <TableCell align="right" sx={{ display: { xs: 'none', md: 'table-cell' } }} >Bonus</TableCell>
                                                 <TableCell align="right">Amount</TableCell>
-                                                <TableCell align="right">Top Starter</TableCell>
+                                                <TableCell align="right" sx={{ display: { xs: 'none', md: 'table-cell' } }} >Top Starter</TableCell>
                                             </TableRow>
                                         </TableHead>
                                         <TableBody>

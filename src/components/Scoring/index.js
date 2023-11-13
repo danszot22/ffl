@@ -4,13 +4,15 @@ import { mapCategoryScoring, mapTeamScoringTotals, mapFantasyGames } from "../..
 import ScoringTabs from "./ScoringTabs";
 import GameHeaderCard from "./GameHeaderCard";
 import { scoringLoader, fantasyGameLoader, lineupsLoader, nflGamesLoader } from "../../api/graphql";
-import { Button, ButtonGroup, Box, Typography, Skeleton, Modal, Table, TableRow, TableCell, Paper, TableHead } from "@mui/material";
+import { Button, ButtonGroup, Box, Typography, Skeleton, Modal, Table, TableRow, TableCell, Paper, TableHead, FormControl, InputLabel, Select, MenuItem, useTheme, useMediaQuery } from "@mui/material";
 import { NflWeekContext } from "../../contexts/NflWeekContext";
 import PageToolbar from "../common/PageToolbar";
 import withAuth from "../withAuth";
 import { formatFantasyTeamName } from "../../utils/helpers";
 
 function Scoring({ league, team }) {
+    const theme = useTheme();
+    const isBelowMedium = useMediaQuery(theme.breakpoints.down('md'));
     const { state: nflWeekState } = useContext(NflWeekContext);
 
     const [summaryData, setSummaryData] = useState([]);
@@ -40,7 +42,7 @@ function Scoring({ league, team }) {
     }, [week, league]);
 
     useEffect(() => {
-        setWeeks([...Array(nflWeekState.lineupWeek).keys()]);
+        setWeeks([...Array(nflWeekState.lineupWeek).keys()]?.sort((a, b) => b - a));
         setWeek(nflWeekState.lastScoredWeek);
     }, [nflWeekState]);
 
@@ -52,10 +54,10 @@ function Scoring({ league, team }) {
     }, [league, team, fantasyGames]);
 
     return (
-        <Root title={'Scoring'}>
+        <Root title={`Scoring - Week ${week}`} subtitle={`Updated: ${summaryData.createdDate?.toLocaleDateString()} ${summaryData.createdDate?.toLocaleTimeString()}`}>
             <PageToolbar title={'Scoring'} />
-            <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'column', md: 'row' }, justifyContent: 'center' }} >
-                <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }} >
+            <Box sx={{ pt: 1, display: 'flex', flexDirection: { xs: 'column', sm: 'column', md: 'row' }, justifyContent: 'center' }} >
+                <Box sx={{ display: { xs: 'none', md: 'flex' }, flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }} >
                     <ButtonGroup sx={{ mt: 1 }} variant="outlined" aria-label="outlined primary button group">
                         <Typography p={1}>Week:</Typography>
                         {weeks.map((i) => <Button key={i} variant={week === i + 1 ? "contained" : "outlined"} onClick={() => handleClick(i + 1)}>{i + 1}</Button>)}
@@ -64,6 +66,20 @@ function Scoring({ league, team }) {
                         Updated: <Typography variant="caption" component="span">{summaryData.createdDate?.toLocaleDateString()} {summaryData.createdDate?.toLocaleTimeString()}</Typography>
                     </Typography>
                 </Box>
+                <FormControl fullWidth>
+                    <InputLabel id="week-select-label">Week</InputLabel>
+                    <Select
+                        labelId="week-select-label"
+                        id="Week"
+                        value={week}
+                        label="Week"
+                        onChange={(event) => handleClick(event.target.value)}
+                    >
+                        {weeks.map((i) => (
+                            <MenuItem key={i} value={i + 1}>{i + 1}</MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
                 {teamFantasyGame && !isLoading ?
                     (
                         <GameHeaderCard handleOpen={handleOpen} game={teamFantasyGame} showProjections={!summaryData.complete} />
@@ -92,6 +108,8 @@ function Scoring({ league, team }) {
                     border: '2px solid #000',
                     boxShadow: 24,
                     p: 1,
+                    minWidth: '75%',
+                    minHeight: '50%'
                 }}>
                     <Typography>Game Results</Typography>
                     {fantasyGames.map((game) =>
@@ -103,14 +121,14 @@ function Scoring({ league, team }) {
                                     </TableRow>
                                 </TableHead>
                                 <TableRow>
-                                    <TableCell>{formatFantasyTeamName(game.HomeTeam)}</TableCell>
+                                    <TableCell>{formatFantasyTeamName(game.HomeTeam, isBelowMedium)}</TableCell>
                                     <TableCell sx={{ textAlign: 'right' }}>{game.HomeTotal.toFixed(1)}</TableCell>
                                     {!summaryData.complete ?
                                         <TableCell sx={{ textAlign: 'right' }}>{`(${game.ProjectedHomeTotal.toFixed(1)})`}</TableCell>
                                         : null}
                                 </TableRow>
                                 <TableRow >
-                                    <TableCell>{formatFantasyTeamName(game.AwayTeam)}</TableCell>
+                                    <TableCell>{formatFantasyTeamName(game.AwayTeam, isBelowMedium)}</TableCell>
                                     <TableCell sx={{ textAlign: 'right' }}>{game.AwayTotal.toFixed(1)}</TableCell>
                                     {!summaryData.complete ?
                                         <TableCell sx={{ textAlign: 'right' }}>{`(${game.ProjectedAwayTotal.toFixed(1)})`}</TableCell>

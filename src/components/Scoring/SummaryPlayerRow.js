@@ -1,17 +1,24 @@
 import { formatGameInfo } from '../../utils/helpers';
 import PlayerLink from '../common/PlayerLink';
 import { StyledTableRow } from '../common/styled';
-import { Typography, TableCell } from "@mui/material";
+import { Typography, TableCell, Box } from "@mui/material";
 
 export default function SummaryPlayerRow({ row, showProjections }) {
 
     return (
         <StyledTableRow key={row.PlayerId}>
             <TableCell variant="caption" scope="row">
-                <PlayerLink playerId={row.PlayerId} playerName={row?.Player.Name} positionCode={row.Player?.Position?.PositionCode} variant={'caption'} xsOnly={true} />
-                <Typography variant="caption"> {row.Player?.Position.PositionCode}</Typography>
+                <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                    <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1 }}>
+                        <PlayerLink playerId={row.PlayerId} playerName={row?.Player.Name} positionCode={row.Player?.Position?.PositionCode} variant={'caption'} xsOnly={true} />
+                        <Typography variant="caption"> {row.Player?.Position.PositionCode}</Typography>
+                    </Box>
+                    {row.NflGame.GameDate ? <Typography sx={{ display: { xs: 'block', md: 'none' } }} color={row.NflGame?.NotPlayed ? "error.dark" : row.NflGame?.Playing ? "warning.dark" : ""} variant="caption">
+                        {formatGameInfo(row.Player.NflTeam?.NflTeamId, row.NflGame)}
+                    </Typography> : <Typography variant="caption">Bye</Typography>}
+                </Box>
             </TableCell>
-            <TableCell>
+            <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>
                 {row.NflGame.GameDate ?
                     <Typography color={row.NflGame?.NotPlayed ? "error.light" : row.NflGame?.Playing ? "warning.light" : ""} variant="caption">
                         {formatGameInfo(row.Player.NflTeam?.NflTeamId, row.NflGame)}
@@ -44,7 +51,7 @@ export default function SummaryPlayerRow({ row, showProjections }) {
                     </>
                 ) : null}
             </TableCell>
-            <TableCell>
+            <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>
                 {row.NflGame.GameDate ? (
                     <Typography variant="caption">
                         {["QB", "WR", "TE"].includes(row.Player.Position.PositionCode) ? `${row.RushYds ?? 0} RushYds, ${row.RushTds ?? 0} TDs` : ' '}

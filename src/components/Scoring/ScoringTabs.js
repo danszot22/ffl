@@ -9,6 +9,7 @@ import { a11yProps, CustomTabPanel } from "../common/CustomTabPanel";
 function ScoringTabs({ team, data, summaryData, week, showProjections }) {
     const theme = useTheme();
     const isMedium = useMediaQuery(theme.breakpoints.down('lg'))
+    const isBelowMedium = useMediaQuery(theme.breakpoints.down('md'))
 
     const [value, setValue] = useState(0);
 
@@ -37,14 +38,14 @@ function ScoringTabs({ team, data, summaryData, week, showProjections }) {
                 <CustomTabPanel key={category.key} value={value} index={index + 1}>
                     <PanelToolbar title={category.title} showProjections={showProjections} />
                     <TableContainer component={Paper}>
-                        <Table size="small" sx={{ minWidth: 400 }} aria-label="simple table">
+                        <Table size="small" sx={{ minWidth: { xs: 250, md: 400 } }} aria-label="simple table">
                             <TableHead>
                                 <TableRow>
-                                    <TableCell colSpan={2}>Team</TableCell>
-                                    <TableCell align="right">Points</TableCell>
-                                    <TableCell align="right">Bonus</TableCell>
-                                    <TableCell align="right">Amount {showProjections ? "(Proj)" : null}</TableCell>
-                                    <TableCell align="right">Top Starter</TableCell>
+                                    <TableCell>Team</TableCell>
+                                    <TableCell align="right">Pts + Bonus</TableCell>
+                                    <TableCell align="right" sx={{ display: { xs: 'none', md: 'table-cell' } }} >Bonus</TableCell>
+                                    <TableCell align="right">Amount {showProjections && !isBelowMedium ? "(Proj)" : null}</TableCell>
+                                    <TableCell align="right" sx={{ display: { xs: 'none', md: 'table-cell' } }}>Top Starter</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>

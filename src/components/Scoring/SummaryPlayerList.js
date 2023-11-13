@@ -8,7 +8,7 @@ export default function SummaryPlayerList({ players, showProjections, title }) {
                 <TableHead>
                     <TableRow>
                         <TableCell>{title}</TableCell>
-                        <TableCell colSpan={3}>Game</TableCell>
+                        <TableCell colSpan={3}>Game Info</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
