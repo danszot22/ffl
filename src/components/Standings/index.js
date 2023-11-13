@@ -22,7 +22,7 @@ function Standings({ league, team }) {
     ]);
 
     return (
-        <Root>
+        <Root title={'Season Standings'}>
             <PageToolbar title={'Season Standings'} />
             {standings ?
                 <Grid container spacing={6}>

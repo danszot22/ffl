@@ -29,7 +29,7 @@ function RosterPlayerAdd({ league, team }) {
     }, [league?.LeagueId, team?.TeamId, playerId]);
 
     return (
-        <Root>
+        <Root title={'Add Player'}>
             <PageToolbar title={'Add Player'} />
             <Box
                 sx={{

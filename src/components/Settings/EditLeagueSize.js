@@ -79,7 +79,7 @@ function EditLeagueSize({ league }) {
     };
 
     return (
-        <Root>
+        <Root title={'Change League Size'}>
             <PageToolbar title={'Change League Size'} />
             <Box sx={{
                 display: 'flex',

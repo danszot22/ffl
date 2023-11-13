@@ -144,7 +144,7 @@ function TeamList({ league, user }) {
         }];
 
     return (
-        <Root>
+        <Root title={'Teams'}>
             <PageToolbar title={'Teams'} />
             <StyledDataGrid
                 getRowId={(row) => row.TeamId}

@@ -25,7 +25,7 @@ function RowGroup({ children }) {
 export default function Leaders() {
 
     return (
-        <Root>
+        <Root title={'Statistical Leaders'} >
             <PageToolbar title={'Statistical Leaders'} />
             <RowGroup>
                 <GroupLeaders availability={'All'} spot={'TMQB'} />

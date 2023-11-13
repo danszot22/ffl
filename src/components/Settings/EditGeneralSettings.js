@@ -48,7 +48,7 @@ export default function EditGeneralSettings() {
     };
 
     return (
-        <Root>
+        <Root title={'General Settings'}>
             <PageToolbar title={'General Settings'} />
             <Box sx={{
                 display: 'flex',

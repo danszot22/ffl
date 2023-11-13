@@ -33,7 +33,7 @@ export default function EditPrizeSettings() {
     };
 
     return (
-        <Root>
+        <Root title={'Prize Settings'}>
             <PageToolbar title={'Prize Settings'} />
             <Box sx={{
                 display: 'flex',

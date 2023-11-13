@@ -7,8 +7,9 @@ export default function PageToolbar(props) {
     return (
         <Toolbar
             sx={{
-                pl: { sm: 1 },
-                pr: { xs: 1, sm: 1 },
+                display: { xs: 'none', md: 'block' },
+                pl: 1,
+                pr: 1,
                 backgroundColor: theme => alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
             }}
         >

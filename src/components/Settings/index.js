@@ -46,7 +46,7 @@ function Settings({ league, user }) {
     }
 
     return (
-        <Root>
+        <Root title={'Settings'}>
             <PageToolbar title={'Settings'} />
             <Box
                 sx={{

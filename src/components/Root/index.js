@@ -19,7 +19,7 @@ const Item = styled(Paper)(({ theme }) => ({
 
 }));
 
-function Root({ children }) {
+function Root({ children, title, subtitle }) {
     const { dispatch: nflWeekDispatch } = useContext(NflWeekContext);
 
     useEffect(() => {
@@ -34,7 +34,7 @@ function Root({ children }) {
 
     return (
         <>
-            <Navigation />
+            <Navigation title={title} subtitle={subtitle} />
             <Item>
                 {children}
             </Item>

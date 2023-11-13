@@ -27,7 +27,7 @@ function TeamPrizes({ league }) {
     ]);
 
     return (
-        <Root>
+        <Root title={'Team Prizes'}>
             <PageToolbar title={'Team Prizes'} />
             <TableContainer component={Paper}>
                 <Table size="small" aria-label="simple table">

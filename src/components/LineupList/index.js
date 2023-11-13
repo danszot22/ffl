@@ -56,7 +56,7 @@ function LineupList({ league, team, user }) {
     };
 
     return (
-        <Root>
+        <Root title={'Lineups'}>
             <PageToolbar title={'Lineups'} />
             <Grid sx={{ m: 1 }} container spacing={2} justifyContent="center" alignItems="center">
                 <ButtonGroup sx={{ display: { xs: 'none', md: 'flex' } }} variant="outlined" aria-label="outlined primary button group">

@@ -52,7 +52,7 @@ function Scoring({ league, team }) {
     }, [league, team, fantasyGames]);
 
     return (
-        <Root>
+        <Root title={'Scoring'}>
             <PageToolbar title={'Scoring'} />
             <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'column', md: 'row' }, justifyContent: 'center' }} >
                 <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }} >

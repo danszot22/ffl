@@ -187,7 +187,7 @@ function LineupEdit({ league, team }) {
     };
 
     return (
-        <Root>
+        <Root title={'Edit Lineup'} subtitle={roster?.team ? `${formatFantasyTeamName(roster?.team)} - Week ${week}` : ''}>
             <PageToolbar title={'Edit Lineup'} subtitle={roster?.team ? `${formatFantasyTeamName(roster?.team)} - Week ${week}` : ''} />
             <TableContainer component={Paper}>
                 <Table size="small" aria-label="simple table">

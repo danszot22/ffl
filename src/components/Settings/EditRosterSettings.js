@@ -93,7 +93,7 @@ export default function EditRosterSettings() {
     }, [settings]);
 
     return (
-        <Root>
+        <Root title={'League Roster Settings'} >
             <PageToolbar title={'League Roster Settings'} />
             <Box
                 sx={{

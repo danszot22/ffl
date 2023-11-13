@@ -6,7 +6,7 @@ export default function PlayoffBracket() {
     const firstRoundGames = 4;
 
     return (
-        <Root>
+        <Root title={'Playoff Bracket'}>
             <PageToolbar title={'Playoff Bracket'} />
             <div>
                 <small>Playoff Seeding based on following tie-breaker formula: </small>

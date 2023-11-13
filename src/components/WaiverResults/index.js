@@ -34,7 +34,7 @@ function WaiverResults({ league }) {
     ]);
 
     return (
-        <Root>
+        <Root title={'Wavier Results'} >
             <PageToolbar title={'Wavier Results'} />
             <TableContainer component={Paper}>
                 <Table size="small" aria-label="simple table">

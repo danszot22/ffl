@@ -98,7 +98,7 @@ function ProposeTrade({ league, team }) {
     };
 
     return (
-        <Root>
+        <Root title="Propose Trade" >
             <PageToolbar title="Propose Trade" />
             <FormControl sx={{ mt: 2 }} fullWidth>
                 <InputLabel id="demo-simple-select-label">Trade With</InputLabel>

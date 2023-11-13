@@ -23,7 +23,7 @@ function RosterPlayerDrop({ league, team }) {
     ]);
 
     return (
-        <Root>
+        <Root title={'Drop Player'}>
             <PageToolbar title={'Drop Player'} />
             <Box
                 sx={{

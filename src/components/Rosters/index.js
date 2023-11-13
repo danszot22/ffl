@@ -27,7 +27,7 @@ function Rosters({ league, team }) {
     ]);
 
     return (
-        <Root>
+        <Root title={'League Rosters'}>
             <PageToolbar title={'League Rosters'} />
             <div style={{ width: '100%' }}>
                 <Box sx={{

@@ -45,7 +45,7 @@ function TeamTrades({ team }) {
         //TODO : Call API
     };
     return (
-        <Root>
+        <Root title={'Team Trades'}>
             <PageToolbar title={'Team Trades'} />
             <TableContainer component={Paper}>
                 <Table size="small" aria-label="simple table">

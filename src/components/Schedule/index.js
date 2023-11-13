@@ -26,7 +26,7 @@ function Schedule({ league }) {
     );
 
     return (
-        <Root>
+        <Root title={'Schedule'}>
             <PageToolbar title={'Schedule'} />
             {
                 Object.values(schedule).map((gameWeek) => {

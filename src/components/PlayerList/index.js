@@ -27,7 +27,7 @@ function PlayerList({ league, team }) {
     const { columns, positions, nflTeams } = usePlayerTableColumns(spot);
 
     return (
-        <Root>
+        <Root title={'Players'}>
             <PageToolbar title={'Players'} />
             <Box
                 sx={{

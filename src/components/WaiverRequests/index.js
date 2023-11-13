@@ -48,7 +48,7 @@ function WaiverRequests({ team }) {
     };
 
     return (
-        <Root>
+        <Root title={'Waiver Requests'}>
             <PageToolbar title={'Waiver Requests'} />
             <div style={{ width: '100%' }}>
                 <TeamWaiverRequests waiverRequests={waivers} team={teamDetails} onDragEnd={handleDragEnd} handleDelete={handleDelete} />

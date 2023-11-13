@@ -43,7 +43,7 @@ function Account({ user }) {
     };
 
     return (
-        <Root>
+        <Root title={'Account Profile'}>
             <PageToolbar title={'Account Profile'} />
             {accountDetails ?
                 <Box sx={{

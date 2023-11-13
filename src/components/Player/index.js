@@ -44,7 +44,7 @@ export default function Player() {
     }, [id]);
 
     return (
-        <Root>
+        <Root title={'Player Details'} >
             <PageToolbar title={'Player Details'} />
             <Box
                 sx={{

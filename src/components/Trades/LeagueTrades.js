@@ -39,7 +39,7 @@ function LeagueTrades({ league, user }) {
     };
 
     return (
-        <Root>
+        <Root title={'League Trades'}>
             <PageToolbar title={'League Trades'} />
             <TableContainer component={Paper}>
                 <Table size="small" aria-label="simple table">

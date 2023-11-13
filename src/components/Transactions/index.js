@@ -29,7 +29,7 @@ function Transactions({ league }) {
     ]);
 
     return (
-        <Root>
+        <Root title={'Transactions'}>
             <PageToolbar title={'Transactions'} />
             <TableContainer component={Paper}>
                 <Table size="small" aria-label="simple table">

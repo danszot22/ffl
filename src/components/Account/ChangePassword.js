@@ -22,7 +22,7 @@ function ChangePassword({ user }) {
     }
 
     return (
-        <Root>
+        <Root title={"Change Password"}>
             <PageToolbar title={"Change Password"} />
             <Box sx={{
                 display: 'flex',

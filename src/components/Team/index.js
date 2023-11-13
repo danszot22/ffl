@@ -53,7 +53,7 @@ function Team({ league, team, user }) {
     }
 
     return (
-        <Root>
+        <Root title={'Team Details'}>
             <PageToolbar title={'Team Details'} />
             <Box sx={{
                 display: 'flex',

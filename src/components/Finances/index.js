@@ -93,7 +93,7 @@ function Finances({ league, user }) {
     ];
 
     return (
-        <Root>
+        <Root title={'Finances'}>
             <PageToolbar title={'Finances'} />
             <StyledDataGrid
                 getRowId={(row) => row.TeamId}

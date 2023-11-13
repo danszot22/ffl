@@ -34,7 +34,7 @@ function Breakdown({ league, team }) {
     }, [league]);
 
     return (
-        <Root>
+        <Root title={'Season Breakdown'} >
             <TableToolbar title={'Season Breakdown'} />
             {
                 isLoading ? (
