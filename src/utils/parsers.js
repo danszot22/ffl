@@ -102,7 +102,7 @@ export function mapCategoryScoring(data) {
                     BonusTotal: !pointVersion.Projected ? fantasyPoint.BonusTotal : 0,
                     StatisticalTotal: !pointVersion.Projected ? fantasyPoint.StatisticalTotal : 0,
                     ProjStatisticalTotal: pointVersion.Projected ? fantasyPoint.StatisticalTotal : 0,
-                    Team: { ...fantasyPoint.Team },
+                    Team: { ...fantasyPoint.Team, TeamId: fantasyPoint.TeamId },
                     TeamId: fantasyPoint.TeamId,
                     Bench: fantasyPoint.StarterOrBench === 1 ? mapPlayerCategoryTotal([], pointVersion.Projected, fantasyPoint.PlayerStatistic.items) : [],
                     Starters: fantasyPoint.StarterOrBench === 0 ? mapPlayerCategoryTotal([], pointVersion.Projected, fantasyPoint.PlayerStatistic.items) : [],
@@ -275,7 +275,7 @@ export function mapTeamScoringTotals(data, lineups, nflGames) {
             if (!teamTotalMap[fantasyPoint.TeamId]) {
                 teamTotalMap[fantasyPoint.TeamId] = {
                     key: fantasyPoint.TeamId,
-                    team: { ...fantasyPoint.Team },
+                    team: { ...fantasyPoint.Team, TeamId: fantasyPoint.TeamId },
                     total: 0,
                     projectedTotal: 0,
                     Starters: [],
