@@ -15,7 +15,7 @@ export default function SummaryPlayerRow({ row, showProjections }) {
                     </Box>
                     {row.NflGame.GameDate ? <Typography sx={{ display: { xs: 'block', md: 'none' } }} color={row.NflGame?.NotPlayed ? "error.dark" : row.NflGame?.Playing ? "warning.dark" : ""} variant="caption">
                         {formatGameInfo(row.Player.NflTeam?.NflTeamId, row.NflGame)}
-                    </Typography> : <Typography variant="caption">Bye</Typography>}
+                    </Typography> : <Typography sx={{ display: { xs: 'block', md: 'none' } }} variant="caption">Bye</Typography>}
                 </Box>
             </TableCell>
             <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>
