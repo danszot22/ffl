@@ -13,7 +13,6 @@ function Standings({ league, team }) {
     useEffect(() => {
         const fetchData = async (year, leagueId) => {
             const response = await seasonStandingsLoader(year, leagueId);
-            console.log(response);
             setStandings(response);
         }
         fetchData(2023, league?.LeagueId);

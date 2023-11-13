@@ -20,7 +20,7 @@ export default function TeamRosterPlayers({ roster, teamDetails, team, isEditabl
                         {` ${player.PositionCode} ${player.DisplayCode}`}
                         <Typography sx={{ display: { xs: 'block', sm: 'none' }, }}>
                             {player.StatusDescription?.length > 0 ?
-                                (<Tooltip title={player.StatusDescription}>
+                                (<Tooltip component="span" title={player.StatusDescription}>
                                     <Box sx={{
                                         display: 'flex',
                                     }}>
@@ -38,7 +38,7 @@ export default function TeamRosterPlayers({ roster, teamDetails, team, isEditabl
                     </TableCell>
                     <TableCell sx={{ display: { xs: 'none', md: 'table-cell' }, }}>
                         {player.StatusDescription?.length > 0 ?
-                            (<Tooltip title={player.StatusDescription}>
+                            (<Tooltip component="span" title={player.StatusDescription}>
                                 <Box sx={{
                                     display: 'flex',
                                 }}>

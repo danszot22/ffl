@@ -105,7 +105,7 @@ function ProposeTrade({ league, team }) {
                 <Select
                     labelId="trade-with-select-label"
                     id="trade-with-select"
-                    value={proposedTeam}
+                    value={proposedTeam?.TeamId > 0 ? proposedTeam : ''}
                     label="Trade With"
                     onChange={handleChange}
                 >

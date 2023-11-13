@@ -108,7 +108,7 @@ export default function EditRosterSettings() {
                 }}>
                 {fields.map((field, index) => {
                     return index % 2 === 0 ?
-                        <Box sx={{
+                        <Box key={index} sx={{
                             display: 'flex',
                             flexDirection: 'row',
                             gap: 2,

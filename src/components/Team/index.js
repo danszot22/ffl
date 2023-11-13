@@ -26,7 +26,7 @@ function Team({ league, team, user }) {
             else
                 navigate('/Team');
         }
-    }, [navigate, team.TeamId, league?.LeagueId, teamDetails?.LeagueId]);
+    }, [navigate, team?.TeamId, league?.LeagueId, teamDetails?.LeagueId]);
 
     useEffect(() => {
         const fetchTeam = async (teamId) => {

@@ -20,7 +20,7 @@ function Scoring({ league, team }) {
     const [fantasyGames, setFantasyGames] = useState([]);
     const [teamFantasyGame, setTeamFantasyGame] = useState({});
     const [isLoading, setIsLoading] = useState(true);
-    const [week, setWeek] = useState();
+    const [week, setWeek] = useState(1);
     const [weeks, setWeeks] = useState([]);
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
@@ -43,7 +43,8 @@ function Scoring({ league, team }) {
 
     useEffect(() => {
         setWeeks([...Array(nflWeekState.lineupWeek).keys()]?.sort((a, b) => b - a));
-        setWeek(nflWeekState.lastScoredWeek);
+        if (nflWeekState?.lastScoredWeek)
+            setWeek(nflWeekState.lastScoredWeek);
     }, [nflWeekState]);
 
     const handleClick = (selectedWeek) => {

@@ -76,7 +76,7 @@ function TeamTrades({ team }) {
                                 <TableCell>
                                     {formatFantasyTeamName(trade.GivingTeam, isBelowMedium)}
                                     {trade.TradeDetails.items?.map((detail) =>
-                                        <Typography variant="caption" component="div" >
+                                        <Typography key={detail.GivingRosterPlayerId} variant="caption" component="div" >
                                             {isBelowMedium ? formatPlayerName(detail.GivingRosterPlayer.Player.Name, detail.GivingRosterPlayer.Player.Position.PositionCode) : formatPlayerFullName(detail.GivingRosterPlayer.Player.Name)} {detail.GivingRosterPlayer.Player.Position.PositionCode} {detail.GivingRosterPlayer.Player.NflTeam.DisplayCode}
                                         </Typography>
                                     )}
@@ -84,7 +84,7 @@ function TeamTrades({ team }) {
                                 <TableCell>
                                     {formatFantasyTeamName(trade.ReceivingTeam, isBelowMedium)}
                                     {trade.TradeDetails.items?.map((detail) =>
-                                        <Typography variant="caption" component="div" >
+                                        <Typography key={detail.ReceivingRosterPlayerId} variant="caption" component="div" >
                                             {isBelowMedium ? formatPlayerName(detail.ReceivingRosterPlayer.Player.Name, detail.ReceivingRosterPlayer.Player.Position.PositionCode) : formatPlayerFullName(detail.ReceivingRosterPlayer.Player.Name)} {detail.ReceivingRosterPlayer.Player.Position.PositionCode} {detail.ReceivingRosterPlayer.Player.NflTeam.DisplayCode}
                                         </Typography>
                                     )}

@@ -48,7 +48,7 @@ function TeamPrizes({ league }) {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {prizes.map((prize) => (
+                        {prizes?.map((prize) => (
                             <TableRow key={`${prize.Week}-${prize.TeamId}`}>
                                 <TableCell>{prize.Week}</TableCell>
                                 <TableCell>

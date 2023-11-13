@@ -45,10 +45,10 @@ function PlayerList({ league, team }) {
                         labelId="pro-team-select-label"
                         id="ProTeam"
                         label="Pro Team"
-                        value={nflTeamFilter}
+                        value={nflTeams?.length > 0 ? nflTeamFilter : ''}
                         onChange={(event) => setNflTeamFilter(event.target.value)}
                     >
-                        {nflTeams?.map((nflteam, index) => (
+                        {['All', ...nflTeams]?.map((nflteam, index) => (
                             <MenuItem key={nflteam} value={nflteam}>{`${nflteam}`}</MenuItem>
                         ))}
                     </Select>
@@ -59,7 +59,7 @@ function PlayerList({ league, team }) {
                         labelId="position-select-label"
                         id="position"
                         label="Position"
-                        value={positionFilter}
+                        value={positions.length > 0 ? positionFilter : ''}
                         onChange={(event) => setPositionFilter(event.target.value)}
                     >
                         {positions?.map((i) => (

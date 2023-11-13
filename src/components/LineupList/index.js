@@ -17,8 +17,8 @@ function LineupList({ league, team, user }) {
     const { state: nflWeekState } = useContext(NflWeekContext);
 
     const [isLoading, setIsLoading] = useState(true);
-    const [week, setWeek] = useState();
-    const [selectedTeam, setSelectedTeam] = useState(null);
+    const [week, setWeek] = useState('');
+    const [selectedTeam, setSelectedTeam] = useState('');
     const [weeks, setWeeks] = useState([]);
     const [lineups, setLineups] = useState([]);
     const [value, setValue] = useState(0);
@@ -38,7 +38,8 @@ function LineupList({ league, team, user }) {
 
     useEffect(() => {
         setWeeks([...Array(nflWeekState.lineupWeek).keys()]);
-        setWeek(nflWeekState.lineupWeek);
+        if (nflWeekState?.lineupWeek)
+            setWeek(nflWeekState.lineupWeek);
     }, [nflWeekState]);
 
     useEffect(() => {
@@ -79,7 +80,7 @@ function LineupList({ league, team, user }) {
                     <Select
                         labelId="lineup-team-select-label"
                         id="LineupTeam"
-                        value={value}
+                        value={lineups?.length > 0 ? value : ''}
                         label="Team"
                         onChange={(event) => handleChange(event, event.target.value)}
                     >
@@ -93,7 +94,7 @@ function LineupList({ league, team, user }) {
                     <Select
                         labelId="lineup-week-select-label"
                         id="LineupWeek"
-                        value={week}
+                        value={week > 0 ? week : ''}
                         label="Week"
                         onChange={(event) => handleClick(event.target.value)}
                     >

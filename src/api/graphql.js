@@ -850,7 +850,7 @@ export const teamPrizeLoader = async (league) => {
         }
     }`);
 
-    return response.data.data.teamPrizes?.items;
+    return response.data.data?.teamPrizes?.items;
 
 }
 
@@ -901,7 +901,7 @@ export const rosterSettingsLoader = async (league) => {
         }
     }`);
 
-    return response.data.data.rosterFormats?.items[0];
+    return response.data.data?.rosterFormats?.items[0];
 }
 
 export const leaguePrizeSettingsLoader = async (league) => {
@@ -924,7 +924,7 @@ export const leaguePrizeSettingsLoader = async (league) => {
         }
     }`);
 
-    return response.data.data.prizeSettings?.items[0];
+    return response.data.data?.prizeSettings?.items[0];
 }
 
 export const leagueCommissionerLoader = async (league) => {
@@ -943,7 +943,7 @@ export const leagueCommissionerLoader = async (league) => {
         }
     }`);
 
-    return response.data.data.leagueCommissioners?.items;
+    return response.data.data?.leagueCommissioners?.items;
 }
 
 export const siteScheduleLoader = async () => {
@@ -1274,6 +1274,7 @@ export const teamTradesLoader = async (team, status) => {
                 }
                 TradeDetails {
                     items {
+                        GivingRosterPlayerId
                         GivingRosterPlayer {
                             Player {
                                 Name
@@ -1286,6 +1287,7 @@ export const teamTradesLoader = async (team, status) => {
                                 }
                             }
                         }
+                        ReceivingRosterPlayerId
                         ReceivingRosterPlayer{
                             Player {
                                 Name

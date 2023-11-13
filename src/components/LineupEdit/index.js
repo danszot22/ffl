@@ -219,7 +219,7 @@ function LineupEdit({ league, team }) {
                                 <TableCell sx={{ p: 0 }}>
                                     <FormGroup>
                                         <Checkbox onChange={handleChange}
-                                            name={rosterPlayer.RosterPlayerId} disabled={nflWeekState?.lineupWeek !== week || (rosterPlayer.NflGame.GameDate && !rosterPlayer.NflGame.NotPlayed)} checked={rosterPlayer.Starting} />
+                                            name={'' + rosterPlayer.RosterPlayerId} disabled={nflWeekState?.lineupWeek !== week || (rosterPlayer.NflGame.GameDate && !rosterPlayer.NflGame.NotPlayed)} checked={rosterPlayer.Starting} />
                                     </FormGroup>
                                 </TableCell>
                                 <TableCell>
@@ -277,8 +277,8 @@ function LineupEdit({ league, team }) {
                                         Cancel
                                     </Button>
                                     <FormControl required error={errorList.length > 0} sx={{ display: { xs: 'inline', md: 'none' }, }}>
-                                        {errorList.map(error =>
-                                            <FormHelperText>{error}</FormHelperText>
+                                        {errorList.map((error, index) =>
+                                            <FormHelperText key={index}>{error}</FormHelperText>
                                         )}
                                     </FormControl>
                                 </Box>
@@ -286,8 +286,8 @@ function LineupEdit({ league, team }) {
                             </TableCell>
                             <TableCell colSpan={3} sx={{ display: { xs: 'none', md: 'table-cell' }, }}>
                                 <FormControl required error={errorList.length > 0}>
-                                    {errorList.map(error =>
-                                        <FormHelperText>{error}</FormHelperText>
+                                    {errorList.map((error, index) =>
+                                        <FormHelperText key={index}>{error}</FormHelperText>
                                     )}
                                 </FormControl>
                             </TableCell>

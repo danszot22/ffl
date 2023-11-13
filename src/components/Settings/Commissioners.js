@@ -50,7 +50,7 @@ export default function Commissioners({ commissioners, handleDelete, isEditable 
                     </TableHead>
                     <TableBody>
                         {
-                            commissioners.map((commissioner) => {
+                            commissioners?.map((commissioner) => {
                                 return (
                                     <StyledTableRow key={commissioner.Email}>
                                         <TableCell>

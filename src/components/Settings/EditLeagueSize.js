@@ -108,11 +108,11 @@ function EditLeagueSize({ league }) {
                     <Select
                         labelId="schedule-select-label"
                         id="schedule-select"
-                        value={regularSchedule ? regularSchedule : ''}
+                        value={regularSchedules?.length > 0 ? regularSchedule : ''}
                         label="Regular Season Schedule"
                         onChange={(event) => setRegularSchedule(event.target.value)}
                     >
-                        {regularSchedules?.map((regularSchedule) => <MenuItem value={regularSchedule.ScheduleId}>{regularSchedule.Description}</MenuItem>)}
+                        {regularSchedules?.map((regularSchedule) => <MenuItem key={regularSchedule.ScheduleId} value={regularSchedule.ScheduleId}>{regularSchedule.Description}</MenuItem>)}
                     </Select>
                 </FormControl>
                 <FormControl fullWidth>
@@ -120,11 +120,11 @@ function EditLeagueSize({ league }) {
                     <Select
                         labelId="playoff-schedule-select-label"
                         id="playoff-schedule-select"
-                        value={playoffSchedule ? playoffSchedule : ''}
+                        value={playoffSchedules?.length > 0 ? playoffSchedule : ''}
                         label="Playoff Schedule"
                         onChange={(event) => setPlayoffSchedule(event.target.value)}
                     >
-                        {playoffSchedules?.map((playoffSchedule) => <MenuItem value={playoffSchedule.ScheduleId}>{playoffSchedule.Description}</MenuItem>)}
+                        {playoffSchedules?.map((playoffSchedule) => <MenuItem key={playoffSchedule.ScheduleId} value={playoffSchedule.ScheduleId}>{playoffSchedule.Description}</MenuItem>)}
                     </Select>
                 </FormControl>
             </Box>

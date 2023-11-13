@@ -31,7 +31,7 @@ export default function TeamRoster({ roster, handlePlayerChange }) {
                             <TableCell>
                                 <FormGroup>
                                     <Checkbox onChange={handlePlayerChange}
-                                        name={rosterPlayer.RosterPlayerId} />
+                                        name={'' + rosterPlayer.RosterPlayerId} />
                                 </FormGroup>
                             </TableCell>
                             <TableCell>
