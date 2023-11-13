@@ -66,7 +66,7 @@ function Scoring({ league, team }) {
                         Updated: <Typography variant="caption" component="span">{summaryData.createdDate?.toLocaleDateString()} {summaryData.createdDate?.toLocaleTimeString()}</Typography>
                     </Typography>
                 </Box>
-                <FormControl fullWidth>
+                <FormControl fullWidth sx={{ display: { xs: 'block', md: 'none' } }}>
                     <InputLabel id="week-select-label">Week</InputLabel>
                     <Select
                         labelId="week-select-label"
