@@ -18,7 +18,7 @@ export default function ExpandableCategoryRow({ team, row, showProjections, show
     return (
         <>
             <StyledExpandableTableRow onClick={() => setOpen(!open)} key={row.TeamId} sx={{ '& > *': { borderBottom: 'unset' } }}>
-                <TableCell component="th" scope="row">
+                <TableCell>
                     <TeamLink team={row.Team} variant="inherit" sx={{ fontWeight: row.TeamId === team ? 600 : 0 }} shortName={isBelowMedium} />
                 </TableCell>
                 <TableCell align="right">
@@ -28,8 +28,10 @@ export default function ExpandableCategoryRow({ team, row, showProjections, show
                 </TableCell>
                 <TableCell align="right" sx={{ display: { xs: 'none', md: 'table-cell' } }} ><Typography variant="inherit" sx={{ fontWeight: row.TeamId === team ? 600 : 0 }}>{row.BonusTotal}</Typography></TableCell>
                 <TableCell align="right">
-                    <Link variant="inherit" sx={{ fontWeight: row.TeamId === team ? 600 : 0 }} onClick={() => setOpen(!open)}>
-                        {row.StatisticalTotal} {showProjections && !isBelowMedium ? `(${row.ProjStatisticalTotal})` : null}
+                    <Link variant="inherit" sx={{ fontWeight: (row.TeamId === team ? 600 : 0) }} onClick={() => setOpen(!open)}>
+                        <Typography variant="inherit" sx={{ color: theme => theme.palette.mode === 'dark' ? '#90caf9' : '' }}>
+                            {row.StatisticalTotal} {showProjections && !isBelowMedium ? `(${row.ProjStatisticalTotal})` : null}
+                        </Typography>
                     </Link>
                 </TableCell>
                 {

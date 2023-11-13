@@ -66,20 +66,23 @@ function Scoring({ league, team }) {
                         Updated: <Typography variant="caption" component="span">{summaryData.createdDate?.toLocaleDateString()} {summaryData.createdDate?.toLocaleTimeString()}</Typography>
                     </Typography>
                 </Box>
-                <FormControl fullWidth sx={{ display: { xs: 'block', md: 'none' } }}>
-                    <InputLabel id="week-select-label">Week</InputLabel>
-                    <Select
-                        labelId="week-select-label"
-                        id="Week"
-                        value={week}
-                        label="Week"
-                        onChange={(event) => handleClick(event.target.value)}
-                    >
-                        {weeks.map((i) => (
-                            <MenuItem key={i} value={i + 1}>{i + 1}</MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
+                <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+                    <FormControl fullWidth>
+                        <InputLabel id="week-select-label">Week</InputLabel>
+                        <Select
+                            labelId="week-select-label"
+                            id="Week"
+                            value={week}
+                            label="Week"
+                            onChange={(event) => handleClick(event.target.value)}
+                        >
+                            {weeks.map((i) => (
+                                <MenuItem key={i} value={i + 1}>{i + 1}</MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                </Box>
+
                 {teamFantasyGame && !isLoading ?
                     (
                         <GameHeaderCard handleOpen={handleOpen} game={teamFantasyGame} showProjections={!summaryData.complete} />
