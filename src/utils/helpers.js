@@ -35,6 +35,8 @@ export function formatDollars(amount) {
 }
 
 export function formatPlayerName(name, position) {
+    if (!name) return ' ';
+
     const nameParts = name.split(",");
     if (position.startsWith("TM"))
         return nameParts[0];
