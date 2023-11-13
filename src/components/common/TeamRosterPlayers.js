@@ -1,7 +1,7 @@
 import { Typography, Tooltip, Box, IconButton } from "@mui/material";
 import { TableBody, TableCell, TableRow } from "@mui/material";
 import { playerStatuses } from "../../utils/helpers";
-import { Delete, Info, ThumbDown } from "@mui/icons-material";
+import { Delete, Info, PersonRemove } from "@mui/icons-material";
 import PlayerImage from "../common/PlayerImage";
 import PlayerLink from "../common/PlayerLink";
 import FormattedPlayerStats from "../common/FormattedPlayerStats";
@@ -57,7 +57,7 @@ export default function TeamRosterPlayers({ roster, teamDetails, team, isEditabl
                         {team?.TeamId === teamDetails?.TeamId ?
                             <Tooltip title="Drop">
                                 <IconButton variant="contained" color="error" onClick={() => handleClick(player)}>
-                                    <ThumbDown />
+                                    <PersonRemove />
                                 </IconButton>
                             </Tooltip>
                             : null}

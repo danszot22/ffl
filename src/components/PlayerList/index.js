@@ -1,11 +1,12 @@
 import { MaterialReactTable } from 'material-react-table';
-import { Box, Typography, Button, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import { Box, Typography, FormControl, InputLabel, Select, MenuItem, Tooltip, IconButton } from "@mui/material";
 import { useSearchParams, useParams } from 'react-router-dom';
 import PageToolbar from "../common/PageToolbar";
 import withAuth from "../withAuth";
 import Root from "../Root";
 import usePlayerTableColumns from "../../hooks/usePlayerTableColumns";
 import usePlayerTableLoader from "../../hooks/usePlayerTableLoader";
+import { PersonAdd, PersonRemove } from '@mui/icons-material';
 
 function PlayerList({ league, team }) {
     const [searchParams] = useSearchParams();
@@ -75,6 +76,12 @@ function PlayerList({ league, team }) {
                 manualPagination
                 manualSorting
                 enableRowActions
+                displayColumnDefOptions={{
+                    'mrt-row-actions': {
+                        header: '',
+                        size: 50
+                    },
+                }}
                 initialState={{ showColumnFilters: true }}
                 muiToolbarAlertBannerProps={
                     isError
@@ -87,12 +94,19 @@ function PlayerList({ league, team }) {
                 renderRowActions={({ row, table }) => (
                     <Box sx={{ display: 'flex', gap: '1rem' }}>
                         {!row.original.OwnerName ?
-                            <Button variant="contained" color="success"
-                                to={`/RosterPlayer/Add/${row.original.PlayerId}`}>Add</Button> : null
+                            <Tooltip title="Add">
+                                <IconButton color="success" to={`/RosterPlayer/Add/${row.original.PlayerId}`}>
+                                    <PersonAdd />
+                                </IconButton>
+                            </Tooltip>
+                            : null
                         }
                         {row.original.TeamId && row.original.TeamId === team?.TeamId ?
-                            <Button variant="contained" color="error"
-                                to={`/RosterPlayer/Drop/${row.original.TeamId}/${row.original.RosterPlayerId}`}>Drop</Button> : null
+                            <Tooltip title="Drop">
+                                <IconButton color="error" to={`/RosterPlayer/Drop/${row.original.TeamId}/${row.original.PlayerId}`}>
+                                    <PersonRemove />
+                                </IconButton>
+                            </Tooltip> : null
                         }
                     </Box>
                 )}

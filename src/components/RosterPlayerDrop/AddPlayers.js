@@ -2,10 +2,11 @@ import { useState } from "react";
 import { formatPlayerFullName } from "../../utils/helpers";
 import { MaterialReactTable } from 'material-react-table';
 import { getTransactionText } from "../../api/ffl";
-import { Box, Typography, Button, Skeleton, DialogTitle, DialogContent, DialogContentText, DialogActions, Dialog, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import { Box, Typography, Button, Skeleton, DialogTitle, DialogContent, DialogContentText, DialogActions, Dialog, FormControl, InputLabel, Select, MenuItem, Tooltip, IconButton } from "@mui/material";
 import { alpha } from '@mui/material/styles';
 import usePlayerTableLoader from "../../hooks/usePlayerTableLoader";
 import usePlayerTableColumns from "../../hooks/usePlayerTableColumns";
+import { PersonAdd } from "@mui/icons-material";
 
 export default function AddPlayers({ teamId, rosterPlayerToDrop, leagueId, }) {
     const [open, setOpen] = useState(false);
@@ -110,9 +111,12 @@ export default function AddPlayers({ teamId, rosterPlayerToDrop, leagueId, }) {
                         renderRowActions={({ row, table }) => (
                             <Box sx={{ display: 'flex', gap: '1rem' }}>
                                 {!row.original.OwnerName ?
-                                    <Button variant="contained" color="success" onClick={() => handleClickOpen(row.original)}>
-                                        Add
-                                    </Button> : null
+                                    <Tooltip title="Add">
+                                        <IconButton color="success" onClick={() => handleClickOpen(row.original)}>
+                                            <PersonAdd />
+                                        </IconButton>
+                                    </Tooltip>
+                                    : null
                                 }
                             </Box>
                         )}
