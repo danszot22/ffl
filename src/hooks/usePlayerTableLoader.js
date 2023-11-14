@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
 import { leaguePlayersLoader } from "../api/graphql";
+import { useMediaQuery, useTheme } from "@mui/material";
 
 function usePlayerTableLoader(id, initialSpot, initialAvailability, leagueId) {
+    const theme = useTheme();
+    const isAboveMedium = useMediaQuery(theme.breakpoints.up('md'));
+
     const [availability, setAvailability] = useState(initialAvailability);
     const spot = initialSpot;
 
@@ -20,7 +24,7 @@ function usePlayerTableLoader(id, initialSpot, initialAvailability, leagueId) {
     const [sorting, setSorting] = useState([]);
     const [pagination, setPagination] = useState({
         pageIndex: 0,
-        pageSize: 20,
+        pageSize: isAboveMedium ? 20 : 5,
     });
 
     const [players, setPlayers] = useState([]);
@@ -92,7 +96,7 @@ function usePlayerTableLoader(id, initialSpot, initialAvailability, leagueId) {
 
     return {
         setNameFilter, setPositions,
-        availability, spot, summaryType, positionFilter, setPositionFilter, nflTeamFilter, setNflTeamFilter,
+        availability, spot, summaryType, positionFilter, setPositionFilter, nflTeamFilter, setNflTeamFilter, setSummaryType,
         players, rowCount, isError, isLoading, isRefetching, columnFilters, setColumnFilters, pagination, setPagination, sorting, setSorting,
     }
 }

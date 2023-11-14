@@ -11,7 +11,7 @@ import { PersonAdd, PersonRemove } from '@mui/icons-material';
 function PlayerList({ league, team }) {
     const [searchParams] = useSearchParams();
     const { id } = useParams();
-    const {
+    const { setSummaryType,
         nflTeamFilter, setNflTeamFilter,
         positionFilter, setPositionFilter,
         availability, spot, summaryType,
@@ -24,7 +24,7 @@ function PlayerList({ league, team }) {
         searchParams.has("spot") ? searchParams.get("spot") : "All",
         searchParams.has("availability") ? searchParams.get("availability") : "All",
         league?.LeagueId);
-    const { columns, positions, nflTeams } = usePlayerTableColumns(spot);
+    const { columns, positions, nflTeams, summaryTypes } = usePlayerTableColumns(spot);
 
     return (
         <Root title={'Players'}>
@@ -67,6 +67,20 @@ function PlayerList({ league, team }) {
                         ))}
                     </Select>
                 </FormControl>
+                <FormControl fullWidth>
+                    <InputLabel id="position-select-label">Stat Type</InputLabel>
+                    <Select
+                        labelId="position-select-label"
+                        id="position"
+                        label="Position"
+                        value={summaryTypes?.length > 0 ? summaryType : ''}
+                        onChange={(event) => setSummaryType(event.target.value)}
+                    >
+                        {summaryTypes?.map((summaryType) => (
+                            <MenuItem key={summaryType.id} value={summaryType.id}>{summaryType.value}</MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
             </Box>
             <MaterialReactTable columns={columns} data={players} getRowId={(row) => row.PlayerId}
                 muiTableBodyCellProps={{
@@ -76,6 +90,7 @@ function PlayerList({ league, team }) {
                 manualPagination
                 manualSorting
                 enableRowActions
+                enableRowNumbers
                 displayColumnDefOptions={{
                     'mrt-row-actions': {
                         header: '',

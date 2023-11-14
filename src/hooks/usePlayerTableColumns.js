@@ -3,7 +3,6 @@ import { useMediaQuery, useTheme } from "@mui/material";
 import { Box, Typography } from "@mui/material";
 import PlayerImage from "../components/common/PlayerImage";
 import PlayerLink from "../components/common/PlayerLink";
-import FormattedPlayerStats from "../components/common/FormattedPlayerStats";
 import { playerStatusCodes } from "../utils/helpers";
 import { nflTeamsLoader } from "../api/graphql";
 import { getPositionsToAdd } from "../api/ffl";
@@ -17,6 +16,7 @@ function usePlayerTableColumns(spot, leagueId, teamId, rosterPlayerToDrop, setPo
     const [nflTeams, setNflTeams] = useState([]);
     const [positions, setPositions] = useState([]);
     const [isLoadingPositions, setIsLoadingPositions] = useState(false);
+    const [summaryTypes, setSummaryTypes] = useState([]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -51,6 +51,7 @@ function usePlayerTableColumns(spot, leagueId, teamId, rosterPlayerToDrop, setPo
             setNflTeams(response);
         }
         fetchTeams();
+        setSummaryTypes([{ id: 1, value: 'Season' }, { id: 2, value: 'Last 2 Weeks' }, { id: 3, value: 'Last 4 Weeks' }, { id: 5, value: 'Weekly Projections' }]);
     }, []);
 
     const columns = useMemo(
@@ -60,8 +61,9 @@ function usePlayerTableColumns(spot, leagueId, teamId, rosterPlayerToDrop, setPo
                     accessorFn: (row) => row.PlayerName,
                     id: 'PlayerName', //id is still required when using accessorFn instead of accessorKey
                     header: 'Name',
-                    size: isBelowLarge ? 200 : 250,
+                    size: isBelowLarge ? 150 : 250,
                     enableSorting: false,
+                    enableColumnFilter: isAboveMedium,
                     Cell: ({ renderedCellValue, row }) => (
                         <Box
                             sx={{
@@ -186,41 +188,39 @@ function usePlayerTableColumns(spot, leagueId, teamId, rosterPlayerToDrop, setPo
                 id: 'Points',
                 header: 'Points',
                 size: 50,
+                enableColumnFilter: isAboveSmall,
                 filterVariant: 'select',
-                filterSelectOptions: ['Last 2 Weeks', 'Last 4 Weeks', 'Season', 'Weekly Projections'],
-                Cell: ({ renderedCellValue, row }) => (
-                    <Box sx={{ display: 'flex', flexDirection: 'column' }} >
-                        {row.original.Points}
-                        <FormattedPlayerStats player={row.original} sx={{ display: { md: 'none' } }} />
-                    </Box>
-                )
+                filterSelectOptions: summaryTypes,
+                Cell: ({ renderedCellValue, row }) =>
+                    row.original.Points
+
             }];
-            if (spot === "TMQB" && (isAboveMedium)) {
+            if (spot === "TMQB") {
                 allcolumns = [...allcolumns,
                 {
                     accessorFn: (row) => row.PassYds,
                     id: "PassYds",
                     header: "PassYds",
-                    size: 150,
+                    size: isAboveMedium ? 150 : 50,
                     enableColumnFilter: false,
                 },
                 {
                     accessorFn: (row) => row.PassTds,
                     id: "PassTds",
                     header: "PassTds",
-                    size: 150,
+                    size: isAboveMedium ? 150 : 50,
                     enableColumnFilter: false,
                 },
                 {
                     accessorFn: (row) => row.PassInts,
                     id: "PassInts",
                     header: "PassInts",
-                    size: 150,
+                    size: isAboveMedium ? 150 : 50,
                     enableColumnFilter: false,
                 },
                 ]
             }
-            if (spot === "TMPK" && (isAboveMedium)) {
+            if (spot === "TMPK") {
                 allcolumns = [...allcolumns,
                 {
                     accessorFn: (row) => row.FGYds,
@@ -238,7 +238,7 @@ function usePlayerTableColumns(spot, leagueId, teamId, rosterPlayerToDrop, setPo
                 },
                 ]
             }
-            if ((spot === "RB" || spot === "TMQB") && isAboveMedium) {
+            if (spot === "RB" || (spot === "TMQB" && isAboveMedium)) {
                 allcolumns = [...allcolumns,
                 {
                     accessorFn: (row) => row.RushingYds,
@@ -256,7 +256,7 @@ function usePlayerTableColumns(spot, leagueId, teamId, rosterPlayerToDrop, setPo
                 },
                 ]
             }
-            if ((spot === "RB" || spot === "R") && isAboveMedium) {
+            if (spot === "R" || (spot === "RB" && isAboveMedium)) {
                 allcolumns = [...allcolumns,
                 {
                     accessorFn: (row) => row.ReceivingYds,
@@ -274,46 +274,48 @@ function usePlayerTableColumns(spot, leagueId, teamId, rosterPlayerToDrop, setPo
                 },
                 ]
             }
-            if (spot === "DF" && (isAboveMedium)) {
+            if (spot === "DF") {
                 allcolumns = [...allcolumns,
                 {
                     accessorFn: (row) => row.Tackles,
                     id: "Tackles",
-                    header: "Tackles",
-                    size: 150,
-                    enableColumnFilter: false,
-                },
-                {
-                    accessorFn: (row) => row.Solo,
-                    id: "Solo",
-                    header: "Solo",
-                    size: 150,
+                    header: isAboveMedium ? "Tackles" : "Tckl",
+                    size: isAboveMedium ? 150 : 50,
                     enableColumnFilter: false,
                 },
                 {
                     accessorFn: (row) => row.Sacks,
                     id: "Sacks",
                     header: "Sacks",
-                    size: 150,
+                    size: isAboveMedium ? 150 : 50,
                     enableColumnFilter: false,
-                },
-                {
-                    accessorFn: (row) => row.DefInts,
-                    id: "DefInts",
-                    header: "DefInts",
-                    size: 150,
-                    enableColumnFilter: false,
-                },
-                {
-                    accessorFn: (row) => row.DefTds,
-                    id: "DefTds",
-                    header: "DefTds",
-                    size: 150,
-                    enableColumnFilter: false,
-                },
-                ]
+                }];
+                if (isAboveMedium) {
+                    allcolumns = [...allcolumns,
+                    {
+                        accessorFn: (row) => row.Solo,
+                        id: "Solo",
+                        header: "Solo",
+                        size: isAboveMedium ? 150 : 50,
+                        enableColumnFilter: false,
+                    },
+                    {
+                        accessorFn: (row) => row.DefInts,
+                        id: "DefInts",
+                        header: "DefInts",
+                        size: 150,
+                        enableColumnFilter: false,
+                    },
+                    {
+                        accessorFn: (row) => row.DefTds,
+                        id: "DefTds",
+                        header: "DefTds",
+                        size: 150,
+                        enableColumnFilter: false,
+                    }]
+                }
             }
-            if (spot === "All" && (isAboveMedium)) {
+            if (spot === "All") {
                 allcolumns = [...allcolumns,
                 {
                     id: 'Stats',
@@ -335,11 +337,11 @@ function usePlayerTableColumns(spot, leagueId, teamId, rosterPlayerToDrop, setPo
             }
             return allcolumns;
         },
-        [spot, rosterPlayerToDrop, nflTeams, positions, isXs, isAboveSmall, isAboveMedium, isBelowLarge],
+        [spot, rosterPlayerToDrop, nflTeams, positions, summaryTypes, isXs, isAboveSmall, isAboveMedium, isBelowLarge],
     );
 
     return {
-        columns, nflTeams, positions, isLoadingPositions,
+        columns, nflTeams, positions, summaryTypes, isLoadingPositions,
     }
 }
 
