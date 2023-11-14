@@ -9,6 +9,7 @@ import { NflWeekContext } from "../../contexts/NflWeekContext";
 import PageToolbar from "../common/PageToolbar";
 import withAuth from "../withAuth";
 import { formatFantasyTeamName } from "../../utils/helpers";
+import { useQuery } from "@tanstack/react-query";
 
 function Scoring({ league, team }) {
     const theme = useTheme();
@@ -27,25 +28,27 @@ function Scoring({ league, team }) {
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
+    const fetchScoring = async (leagueId, scoringWeek) => {
+        const response = await scoringLoader(leagueId, scoringWeek);
+        const lineupResponse = await lineupsLoader(leagueId, scoringWeek);
+        const nflGameResponse = await nflGamesLoader(scoringWeek);
+        setSummaryData(mapTeamScoringTotals(response, lineupResponse, nflGameResponse));
+        setCategoryData(mapCategoryScoring(response));
+        const responseGames = await fantasyGameLoader(leagueId, scoringWeek);
+        setFantasyGames(mapFantasyGames(responseGames));
+        setIsLoading(false);
+    };
+
+    useQuery({
+        queryKey: ['scoring', league?.LeagueId, week],
+        queryFn: () => fetchScoring(league?.LeagueId, week),
+        refetchInterval: 30000,
+    });
+
     useEffect(() => {
         if (summaryData?.totals?.length > 0)
             setUpdatedOn(`${summaryData?.createdDate?.toLocaleDateString()} ${summaryData?.createdDate?.toLocaleTimeString()}`);
     }, [summaryData]);
-
-    useEffect(() => {
-        const fetchScoring = async (leagueId, scoringWeek) => {
-            setIsLoading(true);
-            const response = await scoringLoader(leagueId, scoringWeek);
-            const lineupResponse = await lineupsLoader(leagueId, scoringWeek);
-            const nflGameResponse = await nflGamesLoader(scoringWeek);
-            setSummaryData(mapTeamScoringTotals(response, lineupResponse, nflGameResponse));
-            setCategoryData(mapCategoryScoring(response));
-            const responseGames = await fantasyGameLoader(leagueId, scoringWeek);
-            setFantasyGames(mapFantasyGames(responseGames));
-            setIsLoading(false);
-        }
-        fetchScoring(league?.LeagueId, week);
-    }, [week, league]);
 
     useEffect(() => {
         setWeeks([...Array(nflWeekState.lineupWeek).keys()]?.sort((a, b) => b - a));
@@ -54,6 +57,7 @@ function Scoring({ league, team }) {
     }, [nflWeekState]);
 
     const handleClick = (selectedWeek) => {
+        setIsLoading(true);
         setWeek(selectedWeek);
     }
     useEffect(() => {
