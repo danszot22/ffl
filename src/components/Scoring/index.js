@@ -16,15 +16,21 @@ function Scoring({ league, team }) {
     const { state: nflWeekState } = useContext(NflWeekContext);
 
     const [summaryData, setSummaryData] = useState([]);
-    const [categoryData, setCategoryData] = useState([]);
+    const [categoryData, setCategoryData] = useState({});
     const [fantasyGames, setFantasyGames] = useState([]);
     const [teamFantasyGame, setTeamFantasyGame] = useState({});
     const [isLoading, setIsLoading] = useState(true);
-    const [week, setWeek] = useState(1);
+    const [updatedOn, setUpdatedOn] = useState('');
+    const [week, setWeek] = useState();
     const [weeks, setWeeks] = useState([]);
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
+
+    useEffect(() => {
+        if (summaryData?.totals?.length > 0)
+            setUpdatedOn(`${summaryData?.createdDate?.toLocaleDateString()} ${summaryData?.createdDate?.toLocaleTimeString()}`);
+    }, [summaryData]);
 
     useEffect(() => {
         const fetchScoring = async (leagueId, scoringWeek) => {
@@ -55,7 +61,7 @@ function Scoring({ league, team }) {
     }, [league, team, fantasyGames]);
 
     return (
-        <Root title={`Scoring - Week ${week}`} subtitle={`Updated: ${summaryData.createdDate?.toLocaleDateString()} ${summaryData.createdDate?.toLocaleTimeString()}`}>
+        <Root title={`Scoring - Week ${week}`} subtitle={`Updated: ${updatedOn}`}>
             <PageToolbar title={'Scoring'} />
             <Box sx={{ pt: 1, display: 'flex', flexDirection: { xs: 'column', sm: 'column', md: 'row' }, justifyContent: 'center' }} >
                 <Box sx={{ display: { xs: 'none', md: 'flex' }, flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }} >
@@ -64,7 +70,7 @@ function Scoring({ league, team }) {
                         {weeks.map((i) => <Button key={i} variant={week === i + 1 ? "contained" : "outlined"} onClick={() => handleClick(i + 1)}>{i + 1}</Button>)}
                     </ButtonGroup>
                     <Typography variant="subtitle2" component="span" >
-                        Updated: <Typography variant="caption" component="span">{summaryData.createdDate?.toLocaleDateString()} {summaryData.createdDate?.toLocaleTimeString()}</Typography>
+                        Updated: <Typography variant="caption" component="span">{updatedOn}</Typography>
                     </Typography>
                 </Box>
                 <Box sx={{ display: { xs: 'block', md: 'none' } }}>
@@ -73,7 +79,7 @@ function Scoring({ league, team }) {
                         <Select
                             labelId="week-select-label"
                             id="Week"
-                            value={week}
+                            value={week ? week : ''}
                             label="Week"
                             onChange={(event) => handleClick(event.target.value)}
                         >

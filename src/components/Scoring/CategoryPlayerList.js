@@ -1,5 +1,6 @@
 import { Paper, Table, TableBody, TableCell, TableHead, TableRow, useMediaQuery, useTheme } from "@mui/material";
 import CategoryPlayerRow from './CategoryPlayerRow';
+import { StyledTableHeaderRow } from "../common/styled";
 
 export default function CategoryPlayerList({ players, showProjections, title, showGame }) {
     const theme = useTheme();
@@ -9,7 +10,7 @@ export default function CategoryPlayerList({ players, showProjections, title, sh
         <Paper elevation={3} >
             <Table size="small" aria-label="players">
                 <TableHead>
-                    <TableRow>
+                    <StyledTableHeaderRow>
                         <TableCell>{title}</TableCell>
                         {showGame && isAboveSmall ? (
                             <TableCell>Game</TableCell>
@@ -18,7 +19,7 @@ export default function CategoryPlayerList({ players, showProjections, title, sh
                         {showProjections && isAboveSmall ? (
                             <TableCell align="right">Projected</TableCell>
                         ) : null}
-                    </TableRow>
+                    </StyledTableHeaderRow>
                 </TableHead>
                 <TableBody>
                     {players?.length > 0 ? players.map((player) => (

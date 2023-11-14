@@ -88,9 +88,10 @@ export default function ExpandableCategoryRow({ team, row, showProjections, show
                         minWidth: '75%',
                     }}
                 >
-                    <CategoryPlayerList title={`${formatFantasyTeamName(row.Team, true)}'s starters`} players={row.Starters} showProjections={showProjections} showGame={showGame} />
-                    {row.Bench ? <CategoryPlayerList title={`${formatFantasyTeamName(row.Team, true)}'s Bench`} players={row.Bench} showProjections={showProjections} showGame={showGame} /> : null}
-
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                        <CategoryPlayerList title={`${formatFantasyTeamName(row.Team, true)}'s Starters`} players={row.Starters} showProjections={showProjections} showGame={showGame} />
+                        {row.Bench ? <CategoryPlayerList title={`${formatFantasyTeamName(row.Team, true)}'s Bench`} players={row.Bench} showProjections={showProjections} showGame={showGame} /> : null}
+                    </Box>
                 </Box>
             </Modal> : null}
         </>
