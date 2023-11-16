@@ -1,32 +1,11 @@
-import { Paper, Typography, TableFooter, Box } from "@mui/material";
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
-import { playerStatuses, formatGameInfo, formatFantasyTeamName } from "../../utils/helpers";
-import Root from "../Root";
 import { NflWeekContext } from "../../contexts/NflWeekContext";
 import { useSearchParams, useParams } from "react-router-dom";
-import { leaguePlayersLoader, scoringLoader, nflGamesLoader, leagueSettingsLoader, teamLineupLoader } from "../../api/graphql";
+import { leaguePlayersLoader, scoringLoader, nflGamesLoader, rosterSettingsLoader, teamLineupLoader } from "../../api/graphql";
 import { useEffect, useState, useContext } from "react";
 import { mapTeamScoringTotals, mapRosterToTeamLineup, mapLineupToTeamLineup } from "../../utils/parsers";
-import { FormGroup, Checkbox, Button, FormHelperText, FormControl } from "@mui/material";
-import PageToolbar from "../common/PageToolbar";
 import withAuth from "../withAuth";
-import PlayerImage from "../common/PlayerImage";
-import PlayerLink from "../common/PlayerLink";
-
-function ProjectedStats({ rosterPlayer, variant, sx }) {
-    return (
-        rosterPlayer.NflGame.NotPlayed ? (
-            <Typography sx={sx} variant={variant} component={"div"}>
-                Proj:
-                {["TMQB", "QB"].includes(rosterPlayer.Player.Position.PositionCode) ? ` ${rosterPlayer.ProjPassYds ?? 0} Yds, ${rosterPlayer.ProjPassTds ?? 0} TDs, ${rosterPlayer.ProjPassInts ?? 0} Ints` : ' '}
-                {["RB"].includes(rosterPlayer.Player.Position.PositionCode) ? `${rosterPlayer.ProjRushYds ?? 0} Yds, ${rosterPlayer.ProjRushTds ?? 0} TDs` : ' '}
-                {["WR", "TE"].includes(rosterPlayer.Player.Position.PositionCode) ? `${rosterPlayer.ProjRecYds ?? 0} Yds, ${rosterPlayer.ProjRecTds ?? 0} TDs` : ' '}
-                {["TMPK", "PK"].includes(rosterPlayer.Player.Position.PositionCode) ? ` ${rosterPlayer.ProjFgYds ?? 0} FGYds, ${rosterPlayer.ProjXPs ?? 0} XPs` : ' '}
-                {["S", "CB", "LB", "DE", "DT"].includes(rosterPlayer.Player.Position.PositionCode) ? ` ${rosterPlayer.ProjTackles ?? 0} Tcks, ${rosterPlayer.ProjSacks ?? 0} Sacks` : ' '}
-            </Typography>
-        ) : null
-    )
-}
+import { useQuery } from "@tanstack/react-query";
+import LineupTable from "./LineupTable";
 
 function LineupEdit({ league, team }) {
     const { id } = useParams();
@@ -36,47 +15,88 @@ function LineupEdit({ league, team }) {
     const [week, setWeek] = useState(searchParams.has("week") ? +searchParams.get("week") : nflWeekState?.lineupWeek);
     const [settings, setSettings] = useState({});
     const [errorList, setErrorList] = useState([]);
+    const [teamRoster, setTeamRoster] = useState([]);
+    const [teamScoring, setTeamScoring] = useState([]);
 
     useEffect(() => {
         if (!searchParams.has("week"))
             setWeek(nflWeekState.lineupWeek);
     }, [searchParams, nflWeekState]);
 
-    useEffect(() => {
-        const fetchData = async (leagueId, teamId, lineupWeek) => {
-            const responseSettings = await leagueSettingsLoader(leagueId);
-            setSettings(responseSettings);
-            const scoringResponse = await scoringLoader(leagueId, lineupWeek);
-            const scoring = mapTeamScoringTotals(scoringResponse).totals.find(total => total?.key === teamId);
-            const response = await leaguePlayersLoader(leagueId, "All", "OnRosters", 1, 1000, 1, "All", "All", " ", "PositionId", "ASC");
-            const teamRoster = response.filter(rosterPlayer => rosterPlayer?.TeamId === teamId);
-            const nflGameResponse = await nflGamesLoader(lineupWeek);
-            const lineupResponse = await teamLineupLoader(teamId, lineupWeek);
-            if (nflWeekState && lineupWeek && lineupWeek < nflWeekState.lineupWeek) {
-                setRoster(mapLineupToTeamLineup(lineupResponse, nflGameResponse));
-            }
-            else {
-                setRoster(mapRosterToTeamLineup(teamRoster, scoring, nflGameResponse, lineupResponse));
-            }
-            if (nflWeekState?.lineupWeek > week) {
-                setErrorList([`Deadline has passed. Lineups are locked for week ${week}.`]);
-            }
-            else if (nflWeekState?.lineupWeek < week) {
-                setErrorList([`Future week lineups cannot be set.`]);
-            }
-            else {
-                setErrorList([]);
-            }
-        }
+    const { data: nflGameResponse } = useQuery({
+        queryKey: ['nflGames', week],
+        queryFn: async () => {
+            if (!week) return [];
+            return await nflGamesLoader(week);
+        },
+        refetchInterval: 30 * 1000, //30 seconds
+    });
 
-        fetchData(league?.LeagueId, Number.isInteger(+id) ? +id : team?.TeamId, week);
-    }, [
-        id,
-        team?.TeamId,
-        league?.LeagueId,
-        week,
-        nflWeekState
-    ]);
+    const { data: lineupResponse } = useQuery({
+        queryKey: ['teamLineup', Number.isInteger(+id) ? +id : team?.TeamId, week],
+        queryFn: async () => {
+            if (!week) return [];
+            return await teamLineupLoader(Number.isInteger(+id) ? +id : team?.TeamId, week);
+        },
+        refetchInterval: 30 * 1000, //30 seconds
+    });
+
+    const { data: scoringResponse } = useQuery({
+        queryKey: ['scoring', league?.LeagueId, week],
+        queryFn: async () => {
+            if (!week) return [];
+            return await scoringLoader(league?.LeagueId, week);
+        },
+        refetchInterval: 30 * 1000, //30 seconds
+    });
+    useEffect(() => {
+        setTeamScoring(mapTeamScoringTotals(scoringResponse).totals.find(total => total?.key === (Number.isInteger(+id) ? +id : team?.TeamId)));
+    }, [scoringResponse, id, team?.TeamId]);
+
+    const { data: leagueRostersResponse } = useQuery({
+        queryKey: ['leagueRosters', league?.LeagueId, week],
+        queryFn: async () => {
+            if (!week) return [];
+            return await leaguePlayersLoader(league?.LeagueId, "All", "OnRosters", 1, 1000, 1, "All", "All", " ", "PositionId", "ASC");
+        },
+        refetchInterval: 30 * 1000, //30 seconds
+    });
+    useEffect(() => {
+        if (leagueRostersResponse)
+            setTeamRoster(leagueRostersResponse.filter(rosterPlayer => rosterPlayer?.TeamId === (Number.isInteger(+id) ? +id : team?.TeamId)));
+    }, [leagueRostersResponse, id, team?.TeamId]);
+
+    const { data: settingsResponse } = useQuery({
+        queryKey: ['rosterSettings', league?.LeagueId],
+        queryFn: async () => {
+            return await rosterSettingsLoader(league?.LeagueId);
+        },
+        refetchInterval: 5 * 60 * 1000, // 5 minutes
+    });
+    useEffect(() => {
+        setSettings(settingsResponse);
+    }, [settingsResponse]);
+
+    useEffect(() => {
+        if (nflWeekState && week && week < nflWeekState.lineupWeek) {
+            setRoster(mapLineupToTeamLineup(lineupResponse, nflGameResponse));
+        }
+        else {
+            setRoster(mapRosterToTeamLineup(teamRoster, teamScoring, nflGameResponse, lineupResponse));
+        }
+    }, [nflWeekState, nflWeekState?.lineupWeek, week, teamRoster, teamScoring, nflGameResponse, lineupResponse]);
+
+    useEffect(() => {
+        if (nflWeekState?.lineupWeek > week) {
+            setErrorList([`Deadline has passed. Lineups are locked for week ${week}.`]);
+        }
+        else if (nflWeekState?.lineupWeek < week) {
+            setErrorList([`Future week lineups cannot be set.`]);
+        }
+        else {
+            setErrorList([]);
+        }
+    }, [nflWeekState?.lineupWeek, week]);
 
     const validateLineup = (rs) => {
         let errors = [];
@@ -187,115 +207,8 @@ function LineupEdit({ league, team }) {
     };
 
     return (
-        <Root title={'Edit Lineup'} subtitle={roster?.team ? `${formatFantasyTeamName(roster?.team)} - Week ${week}` : ''}>
-            <PageToolbar title={'Edit Lineup'} subtitle={roster?.team ? `${formatFantasyTeamName(roster?.team)} - Week ${week}` : ''} />
-            <TableContainer component={Paper}>
-                <Table size="small" aria-label="simple table">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>
-
-                            </TableCell>
-                            <TableCell>
-
-                            </TableCell>
-                            <TableCell>
-                                Name
-                            </TableCell>
-                            <TableCell sx={{ display: { xs: 'none', md: 'table-cell' }, }}>
-                                Status
-                            </TableCell>
-                            <TableCell>
-                                Game
-                            </TableCell>
-                            <TableCell sx={{ display: { xs: 'none', md: 'table-cell' }, }}>
-                                Projections
-                            </TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {roster?.Players.map((rosterPlayer, index) => (
-                            <TableRow sx={{ borderTop: index > 0 && rosterPlayer.Player?.Position?.Group !== roster?.Players[index - 1].Player?.Position?.Group ? 3 : 1 }} key={rosterPlayer.RosterPlayerId}>
-                                <TableCell sx={{ p: 0 }}>
-                                    <FormGroup>
-                                        <Checkbox onChange={handleChange}
-                                            name={'' + rosterPlayer.RosterPlayerId} disabled={nflWeekState?.lineupWeek !== week || (rosterPlayer.NflGame.GameDate && !rosterPlayer.NflGame.NotPlayed)} checked={rosterPlayer.Starting} />
-                                    </FormGroup>
-                                </TableCell>
-                                <TableCell>
-                                    <PlayerImage positionCode={rosterPlayer.Player?.Position?.PositionCode}
-                                        nflTeamCode={rosterPlayer.Player?.NflTeam?.DisplayCode}
-                                        espnPlayerId={rosterPlayer.Player?.EspnPlayerId}
-                                        height={40} />
-                                </TableCell>
-                                <TableCell>
-                                    <PlayerLink playerId={rosterPlayer.PlayerId} playerName={rosterPlayer.Player?.Name} positionCode={rosterPlayer.Player?.Position?.PositionCode} />
-                                    {` ${rosterPlayer.Player?.Position?.PositionCode} ${rosterPlayer.Player?.NflTeam?.DisplayCode}`}
-                                    <ProjectedStats rosterPlayer={rosterPlayer} variant={"caption"} sx={{ display: { xs: 'block', md: 'none' }, }} />
-                                    <Typography variant="caption" sx={{ display: { xs: 'block', md: 'none' }, pr: 1 }}>
-                                        {rosterPlayer.Player?.Status?.StatusDescription}
-                                    </Typography>
-                                </TableCell>
-                                <TableCell sx={{ maxWidth: 300, display: { xs: 'none', md: 'table-cell' }, }}>
-                                    <Typography variant="caption" sx={{ pr: 1 }}>
-                                        {playerStatuses[rosterPlayer.Player?.Status?.StatusCode]}
-                                    </Typography>
-                                    <Typography variant="caption" sx={{ pr: 1 }}>
-                                        {rosterPlayer.Player?.Status?.StatusDescription}
-                                    </Typography>
-                                </TableCell>
-                                <TableCell>
-                                    {formatGameInfo(rosterPlayer.Player.NflTeam?.NflTeamId, rosterPlayer.NflGame)}
-                                </TableCell>
-                                <TableCell sx={{ display: { xs: 'none', md: 'table-cell' }, }}>
-                                    <ProjectedStats rosterPlayer={rosterPlayer} />
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                    <TableFooter>
-                        <TableRow>
-                            <TableCell colSpan={3}>
-                                <Box sx={{
-                                    display: 'flex',
-                                    flexDirection: 'row',
-                                    alignItems: 'flex-start',
-                                }}>
-                                    <Button
-                                        variant="contained"
-                                        sx={{ ml: 1 }}
-                                        onClick={handleSave}
-                                        disabled={errorList.length > 0}
-                                    >
-                                        Save
-                                    </Button>
-                                    <Button
-                                        variant="contained"
-                                        sx={{ ml: 1 }}
-                                        to={`/Lineups`}
-                                    >
-                                        Cancel
-                                    </Button>
-                                    <FormControl required error={errorList.length > 0} sx={{ display: { xs: 'inline', md: 'none' }, }}>
-                                        {errorList.map((error, index) =>
-                                            <FormHelperText key={index}>{error}</FormHelperText>
-                                        )}
-                                    </FormControl>
-                                </Box>
-
-                            </TableCell>
-                            <TableCell colSpan={3} sx={{ display: { xs: 'none', md: 'table-cell' }, }}>
-                                <FormControl required error={errorList.length > 0}>
-                                    {errorList.map((error, index) =>
-                                        <FormHelperText key={index}>{error}</FormHelperText>
-                                    )}
-                                </FormControl>
-                            </TableCell>
-                        </TableRow>
-                    </TableFooter>
-                </Table>
-            </TableContainer>
-        </Root>)
+        <LineupTable roster={roster} week={week} errorList={errorList} handleSave={handleSave} handleChange={handleChange} currentWeek={nflWeekState?.lineupWeek} />
+    )
 }
 
 export default withAuth(LineupEdit);

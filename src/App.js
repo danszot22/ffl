@@ -13,16 +13,16 @@ function App() {
   const queryClient = new QueryClient()
 
   return (
-    <FantasyTeamProvider>
-      <NflWeekProvider>
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
-          <QueryClientProvider client={queryClient}>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <QueryClientProvider client={queryClient}>
+        <FantasyTeamProvider>
+          <NflWeekProvider>
             <RouterProvider router={router} />
-          </QueryClientProvider>
-        </ThemeProvider>
-      </NflWeekProvider>
-    </FantasyTeamProvider>
+          </NflWeekProvider>
+        </FantasyTeamProvider>
+      </QueryClientProvider>
+    </ThemeProvider>
   );
 }
 

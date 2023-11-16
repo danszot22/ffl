@@ -28,22 +28,54 @@ function Scoring({ league, team }) {
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
-    const fetchScoring = async (leagueId, scoringWeek) => {
-        const response = await scoringLoader(leagueId, scoringWeek);
-        const lineupResponse = await lineupsLoader(leagueId, scoringWeek);
-        const nflGameResponse = await nflGamesLoader(scoringWeek);
-        setSummaryData(mapTeamScoringTotals(response, lineupResponse, nflGameResponse));
-        setCategoryData(mapCategoryScoring(response));
-        const responseGames = await fantasyGameLoader(leagueId, scoringWeek);
-        setFantasyGames(mapFantasyGames(responseGames));
-        setIsLoading(false);
-    };
-
-    useQuery({
-        queryKey: ['scoring', league?.LeagueId, week],
-        queryFn: () => fetchScoring(league?.LeagueId, week),
-        refetchInterval: 30000,
+    const { data: fantasyGameResponse } = useQuery({
+        queryKey: ['fantasyGames', league?.LeagueId, week],
+        queryFn: async () => {
+            if (!week) return [];
+            return await fantasyGameLoader(league?.LeagueId, week);
+        },
+        refetchInterval: 30 * 1000, //30 seconds
     });
+
+    useEffect(() => {
+        setFantasyGames(mapFantasyGames(fantasyGameResponse));
+    }, [fantasyGameResponse]);
+
+    const { data: nflGameResponse } = useQuery({
+        queryKey: ['nflGames', week],
+        queryFn: async () => {
+            if (!week) return [];
+            return await nflGamesLoader(week);
+        },
+        refetchInterval: 30 * 1000, //30 seconds
+    });
+
+    const { data: lineupResponse } = useQuery({
+        queryKey: ['lineups', league?.LeagueId, week],
+        queryFn: async () => {
+            if (!week) return [];
+            return await lineupsLoader(league?.LeagueId, week);
+        },
+        refetchInterval: 30 * 1000, //30 seconds
+    });
+
+    const { data: scoringResponse } = useQuery({
+        queryKey: ['scoring', league?.LeagueId, week],
+        queryFn: async () => {
+            if (!week) return [];
+            return await scoringLoader(league?.LeagueId, week);
+        },
+        refetchInterval: 30 * 1000, //30 seconds
+    });
+
+    useEffect(() => {
+        setCategoryData(mapCategoryScoring(scoringResponse));
+    }, [scoringResponse]);
+
+    useEffect(() => {
+        setSummaryData(mapTeamScoringTotals(scoringResponse, lineupResponse, nflGameResponse));
+        setIsLoading(false);
+    }, [scoringResponse, lineupResponse, nflGameResponse]);
 
     useEffect(() => {
         if (summaryData?.totals?.length > 0)
