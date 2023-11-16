@@ -1,11 +1,10 @@
 import { NflWeekContext } from "../../contexts/NflWeekContext";
 import { useSearchParams, useParams } from "react-router-dom";
-import { leaguePlayersLoader, scoringLoader, nflGamesLoader, rosterSettingsLoader, teamLineupLoader } from "../../api/graphql";
 import { useEffect, useState, useContext } from "react";
 import { mapTeamScoringTotals, mapRosterToTeamLineup, mapLineupToTeamLineup } from "../../utils/parsers";
 import withAuth from "../withAuth";
-import { useQuery } from "@tanstack/react-query";
 import LineupTable from "./LineupTable";
+import useTeamLineupData from "../../hooks/useTeamLineupData";
 
 function LineupEdit({ league, team }) {
     const { id } = useParams();
@@ -18,73 +17,39 @@ function LineupEdit({ league, team }) {
     const [teamRoster, setTeamRoster] = useState([]);
     const [teamScoring, setTeamScoring] = useState([]);
 
+    const {
+        rosterSettingData,
+        nflGameData,
+        teamLineupData,
+        scoringData,
+        leagueRosterData } = useTeamLineupData(league?.LeagueId, Number.isInteger(+id) ? +id : team?.TeamId, week);
+
     useEffect(() => {
         if (!searchParams.has("week"))
             setWeek(nflWeekState.lineupWeek);
     }, [searchParams, nflWeekState]);
 
-    const { data: nflGameResponse } = useQuery({
-        queryKey: ['nflGames', week],
-        queryFn: async () => {
-            if (!week) return [];
-            return await nflGamesLoader(week);
-        },
-        refetchInterval: 30 * 1000, //30 seconds
-    });
-
-    const { data: lineupResponse } = useQuery({
-        queryKey: ['teamLineup', Number.isInteger(+id) ? +id : team?.TeamId, week],
-        queryFn: async () => {
-            if (!week) return [];
-            return await teamLineupLoader(Number.isInteger(+id) ? +id : team?.TeamId, week);
-        },
-        refetchInterval: 30 * 1000, //30 seconds
-    });
-
-    const { data: scoringResponse } = useQuery({
-        queryKey: ['scoring', league?.LeagueId, week],
-        queryFn: async () => {
-            if (!week) return [];
-            return await scoringLoader(league?.LeagueId, week);
-        },
-        refetchInterval: 30 * 1000, //30 seconds
-    });
     useEffect(() => {
-        setTeamScoring(mapTeamScoringTotals(scoringResponse).totals.find(total => total?.key === (Number.isInteger(+id) ? +id : team?.TeamId)));
-    }, [scoringResponse, id, team?.TeamId]);
+        setTeamScoring(mapTeamScoringTotals(scoringData).totals.find(total => total?.key === (Number.isInteger(+id) ? +id : team?.TeamId)));
+    }, [scoringData, id, team?.TeamId]);
 
-    const { data: leagueRostersResponse } = useQuery({
-        queryKey: ['leagueRosters', league?.LeagueId, week],
-        queryFn: async () => {
-            if (!week) return [];
-            return await leaguePlayersLoader(league?.LeagueId, "All", "OnRosters", 1, 1000, 1, "All", "All", " ", "PositionId", "ASC");
-        },
-        refetchInterval: 30 * 1000, //30 seconds
-    });
     useEffect(() => {
-        if (leagueRostersResponse)
-            setTeamRoster(leagueRostersResponse.filter(rosterPlayer => rosterPlayer?.TeamId === (Number.isInteger(+id) ? +id : team?.TeamId)));
-    }, [leagueRostersResponse, id, team?.TeamId]);
+        if (leagueRosterData)
+            setTeamRoster(leagueRosterData.filter(rosterPlayer => rosterPlayer?.TeamId === (Number.isInteger(+id) ? +id : team?.TeamId)));
+    }, [leagueRosterData, id, team?.TeamId]);
 
-    const { data: settingsResponse } = useQuery({
-        queryKey: ['rosterSettings', league?.LeagueId],
-        queryFn: async () => {
-            return await rosterSettingsLoader(league?.LeagueId);
-        },
-        refetchInterval: 5 * 60 * 1000, // 5 minutes
-    });
     useEffect(() => {
-        setSettings(settingsResponse);
-    }, [settingsResponse]);
+        setSettings(rosterSettingData);
+    }, [rosterSettingData]);
 
     useEffect(() => {
         if (nflWeekState && week && week < nflWeekState.lineupWeek) {
-            setRoster(mapLineupToTeamLineup(lineupResponse, nflGameResponse));
+            setRoster(mapLineupToTeamLineup(teamLineupData, nflGameData));
         }
         else {
-            setRoster(mapRosterToTeamLineup(teamRoster, teamScoring, nflGameResponse, lineupResponse));
+            setRoster(mapRosterToTeamLineup(teamRoster, teamScoring, nflGameData, teamLineupData));
         }
-    }, [nflWeekState, nflWeekState?.lineupWeek, week, teamRoster, teamScoring, nflGameResponse, lineupResponse]);
+    }, [nflWeekState, nflWeekState?.lineupWeek, week, teamRoster, teamScoring, nflGameData, teamLineupData]);
 
     useEffect(() => {
         if (nflWeekState?.lineupWeek > week) {
