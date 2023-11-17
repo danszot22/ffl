@@ -79,7 +79,7 @@ function RosterPlayerAdd({ league, team }) {
             {isLoading ?
                 <Skeleton sx={{ p: 1 }} variant="rectangular" height={40}>Analyzing Roster...</Skeleton>
                 :
-                <DropRosterPlayers roster={rosterPlayers} playerToAdd={player} />}
+                <DropRosterPlayers leagueId={league?.LeagueId} roster={rosterPlayers} playerToAdd={player} />}
         </Root>
 
     )

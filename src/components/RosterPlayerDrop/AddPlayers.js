@@ -1,17 +1,21 @@
 import { useState } from "react";
 import { formatPlayerFullName } from "../../utils/helpers";
 import { MaterialReactTable } from 'material-react-table';
-import { getTransactionText } from "../../api/ffl";
+import { getTransactionText, updateRoster } from "../../api/ffl";
 import { Box, Typography, Button, Skeleton, DialogTitle, DialogContent, DialogContentText, DialogActions, Dialog, FormControl, InputLabel, Select, MenuItem, Tooltip, IconButton } from "@mui/material";
 import { alpha } from '@mui/material/styles';
 import usePlayerTableLoader from "../../hooks/usePlayerTableLoader";
 import usePlayerTableColumns from "../../hooks/usePlayerTableColumns";
 import { PersonAdd } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 
 export default function AddPlayers({ teamId, rosterPlayerToDrop, leagueId, }) {
+    const navigate = useNavigate();
     const [open, setOpen] = useState(false);
     const [selectedPlayer, setSelectedPlayer] = useState({});
     const [transactionText, setTransactionText] = useState('');
+    const [errorText, setErrorText] = useState('');
+    const [isUpdating, setIsUpdating] = useState(false);
 
     const {
         nflTeamFilter, setNflTeamFilter,
@@ -27,6 +31,7 @@ export default function AddPlayers({ teamId, rosterPlayerToDrop, leagueId, }) {
     const handleClose = () => {
         setOpen(false);
         setSelectedPlayer({});
+        setErrorText('');
     };
 
     const handleClickOpen = (playerToAdd) => {
@@ -35,17 +40,23 @@ export default function AddPlayers({ teamId, rosterPlayerToDrop, leagueId, }) {
 
         const fetchText = async (nflTeamId, rosterPlayerId) => {
             const response = await getTransactionText(nflTeamId, rosterPlayerId);
-            setTransactionText(response);
+            if (!response?.Message) {
+                setTransactionText(response);
+            }
         }
         fetchText(playerToAdd.NflTeamId, rosterPlayerToDrop?.RosterPlayerId);
     };
 
-    function handleClickConfirm() {
-        console.log(rosterPlayerToDrop.TeamId, rosterPlayerToDrop.RosterPlayerId, selectedPlayer);
-
-        setOpen(false);
-        setSelectedPlayer({});
-        //TODO : Call API
+    const handleClickConfirm = async () => {
+        setIsUpdating(true);
+        const result = await updateRoster(leagueId, rosterPlayerToDrop.TeamId, selectedPlayer.PlayerId, rosterPlayerToDrop.RosterPlayerId);
+        setIsUpdating(false);
+        if (result?.Message) {
+            setErrorText(result?.Message);
+        }
+        else {
+            navigate(`/Team`);
+        }
     }
 
     return (
@@ -163,11 +174,14 @@ export default function AddPlayers({ teamId, rosterPlayerToDrop, leagueId, }) {
                                 {transactionText}
                             </Typography>
                         }
+                        <Typography color="error" component="div">
+                            {errorText}
+                        </Typography>
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose}>Cancel</Button>
-                    <Button disabled={transactionText.length === 0} onClick={handleClickConfirm} autoFocus>
+                    <Button disabled={isUpdating || transactionText.length === 0} onClick={handleClickConfirm} autoFocus>
                         Confirm
                     </Button>
                 </DialogActions>

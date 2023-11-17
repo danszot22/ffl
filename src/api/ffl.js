@@ -33,3 +33,13 @@ export const getPositionsToAdd = async (leagueId, teamId, playerId) => {
         });
     return result?.data;
 }
+
+export const updateRoster = async (leagueId, teamId, playerId, rosterPlayerId) => {
+    const result =
+        await fflapi
+            .post(`/rosterPlayer/${leagueId}/${rosterPlayerId}/`, { teamId, playerId })
+            .catch((error) => {
+                return error?.response;
+            });
+    return result?.data;
+}

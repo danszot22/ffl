@@ -397,6 +397,7 @@ export const playerLoader = async (player) => {
     const response = await postToApi(`{
         players ( filter: {PlayerId: { eq: ${player} } } ) {
           items {
+            PlayerId
             EspnPlayerId
             Name
             NflTeam {
@@ -749,7 +750,7 @@ export const leaguePlayersLoader = async (league, spotCode = 'ALL', availability
         }
       }`);
 
-    return response.data.data.executeGetLeaguePlayersWithStatistics;
+    return response?.data?.data?.executeGetLeaguePlayersWithStatistics;
 }
 
 export const playersLoader = async ({ pagination, columnFilters, globalFilter, endCursor, sorting }, useCursor) => {

@@ -3,13 +3,17 @@ import { Table, TableCell, TableContainer, TableHead, TableRow } from "@mui/mate
 import { formatPlayerFullName } from "../../utils/helpers";
 import { StyledTableHeaderRow } from "../common/styled";
 import { useState } from "react";
-import { getTransactionText } from "../../api/ffl";
+import { getTransactionText, updateRoster } from "../../api/ffl";
 import TeamRosterPlayers from "../common/TeamRosterPlayers";
+import { useNavigate } from "react-router-dom";
 
-export default function DropRosterPlayers({ roster, playerToAdd }) {
+export default function DropRosterPlayers({ leagueId, roster, playerToAdd }) {
+    const navigate = useNavigate();
     const [open, setOpen] = useState(false);
     const [selectedRosterPlayer, setSelectedRosterPlayer] = useState({});
     const [transactionText, setTransactionText] = useState('');
+    const [errorText, setErrorText] = useState('');
+    const [isUpdating, setIsUpdating] = useState(false);
 
     const handleClickOpen = (rosterPlayerToDrop) => {
         setOpen(true);
@@ -17,7 +21,9 @@ export default function DropRosterPlayers({ roster, playerToAdd }) {
 
         const fetchText = async (nflTeamId, rosterPlayerId) => {
             const response = await getTransactionText(nflTeamId, rosterPlayerId);
-            setTransactionText(response);
+            if (!response?.Message) {
+                setTransactionText(response);
+            }
         }
         fetchText(playerToAdd.NflTeam?.NflTeamId, rosterPlayerToDrop?.RosterPlayerId);
     };
@@ -25,14 +31,19 @@ export default function DropRosterPlayers({ roster, playerToAdd }) {
     const handleClose = () => {
         setOpen(false);
         setSelectedRosterPlayer({});
+        setErrorText('');
     };
 
-    function handleClickConfirm() {
-        console.log(selectedRosterPlayer.TeamId, selectedRosterPlayer.RosterPlayerId, playerToAdd);
-
-        setOpen(false);
-        setSelectedRosterPlayer({});
-        //TODO : Call API
+    const handleClickConfirm = async () => {
+        setIsUpdating(true);
+        const result = await updateRoster(leagueId, selectedRosterPlayer.TeamId, playerToAdd.PlayerId, selectedRosterPlayer.RosterPlayerId);
+        setIsUpdating(false);
+        if (result?.Message) {
+            setErrorText(result?.Message);
+        }
+        else {
+            navigate(`/Team`);
+        }
     }
 
     return (
@@ -61,11 +72,14 @@ export default function DropRosterPlayers({ roster, playerToAdd }) {
                                 {transactionText}
                             </Typography>
                         }
+                        <Typography color="error" component="div">
+                            {errorText}
+                        </Typography>
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose}>Cancel</Button>
-                    <Button disabled={transactionText.length === 0} onClick={handleClickConfirm} autoFocus>
+                    <Button disabled={isUpdating || transactionText.length === 0} onClick={handleClickConfirm} autoFocus>
                         Confirm
                     </Button>
                 </DialogActions>

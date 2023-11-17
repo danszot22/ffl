@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Root from "../Root";
 import { leaguePlayersLoader, } from "../../api/graphql";
@@ -8,6 +8,7 @@ import AddPlayers from "./AddPlayers";
 import withAuth from "../withAuth";
 
 function RosterPlayerDrop({ league, team }) {
+    const navigate = useNavigate();
     const { rosterPlayerId } = useParams();
     const [rosterPlayer, setRosterPlayer] = useState();
 
@@ -16,10 +17,16 @@ function RosterPlayerDrop({ league, team }) {
             const response = await leaguePlayersLoader(league?.LeagueId, "All", "OnRosters", 1, 1000, 1, "All", "All", " ", "PositionId", "ASC");
             setRosterPlayer(response.find(rosterPlayer => rosterPlayer?.RosterPlayerId === +rosterPlayerId));
         }
-        fetchData();
+        if (rosterPlayerId) {
+            fetchData();
+        }
+        else {
+            navigate('/Team');
+        }
     }, [
         rosterPlayerId,
-        league?.LeagueId
+        league?.LeagueId,
+        navigate
     ]);
 
     return (
