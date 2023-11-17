@@ -39,8 +39,8 @@ const fflInterceptors = (navigate) => {
                     return axios(originalRequest);
                 } catch (error) {
                     // Handle refresh token error or redirect to login
-                    console.log("request failed");
-                    navigate(`/Login`);
+                    console.log("request failed", error);
+                    navigate(`/Login?error=${error?.code}`);
                 }
             }
 

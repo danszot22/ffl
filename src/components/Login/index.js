@@ -3,15 +3,16 @@ import { useContext, useEffect, useState } from "react"
 import { authenticateLogin } from "../../api/authenticate";
 import { FantasyTeamContext } from "../../contexts/FantasyTeamContext";
 import { jwtDecode } from "jwt-decode";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { dispatchTokenData } from "../../utils/helpers";
 import PageToolbar from "../common/PageToolbar";
 
 export default function Login() {
+    const [searchParams] = useSearchParams();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [token, setToken] = useState('');
-    const [error, setError] = useState(null);
+    const [error, setError] = useState(searchParams.has("error") ? 'There was a problem with your previous request. Please Login' : null);
 
     const { dispatch } = useContext(FantasyTeamContext);
     const navigate = useNavigate();
