@@ -495,6 +495,66 @@ function mapPositionGroup(positionCode) {
                     ["RB"].includes(positionCode) ? "Running Backs" : " ";
 }
 
+function mapLineupPlayer(lineupPlayer, playerScore, rosterPlayer, nflGame) {
+    return {
+        Starting: lineupPlayer?.Starter ? lineupPlayer?.Starter : false,
+        ...playerScore,
+        PlayerId: rosterPlayer.PlayerId,
+        RosterPlayerId: rosterPlayer.RosterPlayerId,
+        Player: {
+            EspnPlayerId: rosterPlayer?.EspnPlayerId ? rosterPlayer?.EspnPlayerId :
+                rosterPlayer?.Player?.EspnPlayerId,
+            Name: rosterPlayer?.PlayerName ? rosterPlayer?.PlayerName : rosterPlayer?.Player?.Name,
+            Position: {
+                PositionId: rosterPlayer?.PositionId ? rosterPlayer?.PositionId :
+                    rosterPlayer?.Player?.Position?.PositionId,
+                PositionCode: rosterPlayer?.PositionCode ? rosterPlayer?.PositionCode :
+                    rosterPlayer?.Player?.Position?.PositionCode,
+                Group: mapPositionGroup(rosterPlayer?.PositionCode ? rosterPlayer?.PositionCode :
+                    rosterPlayer?.Player?.Position?.PositionCode),
+            },
+            NflTeam: {
+                NflTeamId: rosterPlayer?.NflTeamId ? rosterPlayer?.NflTeamId :
+                    rosterPlayer?.Player?.NflTeam?.NflTeamId,
+                DisplayCode: rosterPlayer?.DisplayCode ? rosterPlayer?.DisplayCode :
+                    rosterPlayer?.Player?.NflTeam?.DisplayCode,
+            },
+            Status: {
+                StatusCode: rosterPlayer.StatusCode,
+                StatusDescription: rosterPlayer.StatusDescription,
+            }
+        },
+        NflGame: {
+            ...mapNflGame(nflGame)
+        },
+    };
+}
+
+function getLineupPlayerData(nflGames, rosterPlayer, lineup, teamScore) {
+
+    const nflGame = nflGames?.find((nflGame) => {
+        return nflGame.HomeTeam?.NflTeamId === rosterPlayer.NflTeamId ||
+            nflGame.AwayTeam?.NflTeamId === rosterPlayer.NflTeamId ||
+            nflGame.HomeTeam?.NflTeamId === rosterPlayer?.Player?.NflTeam?.NflTeamId ||
+            nflGame.AwayTeam?.NflTeamId === rosterPlayer?.Player?.NflTeam?.NflTeamId
+    });
+    const lineupPlayer = lineup?.LineupPlayer?.items?.find((lp) => {
+        return lp.RosterPlayer?.PlayerId === rosterPlayer.PlayerId;
+    });
+
+    let playerScore = teamScore?.Starters?.find((starter) => {
+        return starter.PlayerId === rosterPlayer.PlayerId;
+    });
+
+    if (!playerScore) {
+        playerScore = teamScore?.Bench?.find((benchPlayer) => {
+            return benchPlayer.PlayerId === rosterPlayer.PlayerId;
+        });
+    }
+
+    return { nflGame, lineupPlayer, playerScore };
+}
+
 export function mapRosterToTeamLineup(roster, teamScore, nflGames, lineup) {
     let lineupMap = {};
     roster?.forEach((rosterPlayer) => {
@@ -509,80 +569,35 @@ export function mapRosterToTeamLineup(roster, teamScore, nflGames, lineup) {
                 Players: [],
             };
         }
-        const nflGame = nflGames?.find((nflGame) => {
-            return nflGame.HomeTeam?.NflTeamId === rosterPlayer.NflTeamId ||
-                nflGame.AwayTeam?.NflTeamId === rosterPlayer.NflTeamId;
-        });
-        const starterPlayerScore = teamScore?.Starters?.find((starter) => {
-            return starter.PlayerId === rosterPlayer.PlayerId;
-        });
-        const lineupPlayer = lineup?.LineupPlayer?.items?.find((lp) => {
-            return lp.RosterPlayer?.PlayerId === rosterPlayer.PlayerId;
-        });
-        if (starterPlayerScore) {
-            const player = {
-                Starting: lineupPlayer?.Starter,
-                ...starterPlayerScore,
-                PlayerId: rosterPlayer.PlayerId,
-                RosterPlayerId: rosterPlayer.RosterPlayerId,
-                Player: {
-                    EspnPlayerId: rosterPlayer.EspnPlayerId,
-                    Name: rosterPlayer.PlayerName,
-                    Position: {
-                        PositionCode: rosterPlayer.PositionCode,
-                        Group: mapPositionGroup(rosterPlayer.PositionCode),
-                    },
-                    NflTeam: {
-                        NflTeamId: rosterPlayer.NflTeamId,
-                        DisplayCode: rosterPlayer.DisplayCode,
-                    },
-                    Status: {
-                        StatusCode: rosterPlayer.StatusCode,
-                        StatusDescription: rosterPlayer.StatusDescription,
-                    }
-                },
-                NflGame: {
-                    ...mapNflGame(nflGame)
-                },
-            };
-            lineupMap[rosterPlayer.TeamId].Players = lineupMap[rosterPlayer.TeamId].Players.concat(player);
-        }
-        else {
-            const benchPlayerScore = teamScore?.Bench?.find((benchPlayer) => {
-                return benchPlayer.PlayerId === rosterPlayer.PlayerId;
+        const { nflGame, lineupPlayer, playerScore } = getLineupPlayerData(nflGames, rosterPlayer, lineup, teamScore);
+
+        const player = mapLineupPlayer(lineupPlayer, playerScore, rosterPlayer, nflGame);
+        lineupMap[rosterPlayer.TeamId].Players = lineupMap[rosterPlayer.TeamId].Players.concat(player);
+    });
+
+    lineup?.LineupPlayer?.items?.forEach((lp) => {
+        if (lp.Starter) {
+            const rosterPlayer = roster?.find((rp) => {
+                return lp.RosterPlayer?.PlayerId === rp.PlayerId;
             });
-            const player = {
-                Starting: lineupPlayer?.Starter,
-                ...benchPlayerScore,
-                PlayerId: rosterPlayer.PlayerId,
-                RosterPlayerId: rosterPlayer.RosterPlayerId,
-                Player: {
-                    EspnPlayerId: rosterPlayer.EspnPlayerId,
-                    Name: rosterPlayer.PlayerName,
-                    Position: {
-                        PositionCode: rosterPlayer.PositionCode,
-                        Group: mapPositionGroup(rosterPlayer.PositionCode),
-                    },
-                    NflTeam: {
-                        NflTeamId: rosterPlayer.NflTeamId,
-                        DisplayCode: rosterPlayer.DisplayCode,
-                    },
-                    Status: {
-                        StatusCode: rosterPlayer.StatusCode,
-                        StatusDescription: rosterPlayer.StatusDescription,
+            if (!rosterPlayer) {
+                const { nflGame, playerScore } = getLineupPlayerData(nflGames, lp.RosterPlayer, lineup, teamScore);
+                const player = mapLineupPlayer(lp, playerScore, lp.RosterPlayer, nflGame);
+                if (player.Starting && (player.NflGame.Playing || player.NflGame.Final)) {
+                    if (roster[0]?.TeamId && lineupMap[roster[0]?.TeamId]?.Players) {
+                        lineupMap[roster[0]?.TeamId].Players = lineupMap[roster[0]?.TeamId]?.Players.concat(player);
                     }
-                },
-                NflGame: {
-                    ...mapNflGame(nflGame)
-                },
-            };
-            lineupMap[rosterPlayer.TeamId].Players = lineupMap[rosterPlayer.TeamId].Players.concat(player);
+                }
+            }
         }
     });
     const lineupResult = Object.values(lineupMap).map((lineup) => (
         lineup
     ));
 
+    lineupResult[0]?.Players?.sort(
+        (a, b) => a.Player.Position.PositionId - b.Player.Position.PositionId
+    );
     return lineupResult[0];
 }
 

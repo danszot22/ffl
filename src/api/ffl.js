@@ -43,3 +43,13 @@ export const updateRoster = async (leagueId, teamId, playerId, rosterPlayerId) =
             });
     return result?.data;
 }
+
+export const updateLineup = async (teamId, week, lineup) => {
+    const result =
+        await fflapi
+            .post(`/lineup/${teamId}/${week}/`, lineup)
+            .catch((error) => {
+                return error?.response;
+            });
+    return result?.data;
+}

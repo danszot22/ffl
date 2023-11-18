@@ -1,4 +1,4 @@
-import { Paper, Typography, TableFooter, Box } from "@mui/material";
+import { Paper, Typography, TableFooter, Box, CircularProgress } from "@mui/material";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { FormGroup, Checkbox, Button, FormHelperText, FormControl } from "@mui/material";
 import PageToolbar from "../common/PageToolbar";
@@ -22,7 +22,7 @@ function ProjectedStats({ rosterPlayer, variant, sx }) {
     )
 }
 
-function LineupTable({ roster, week, currentWeek, errorList, handleSave, handleChange }) {
+function LineupTable({ isUpdating, roster, week, currentWeek, errorList, handleSave, handleChange }) {
     return (
         <Root title={'Edit Lineup'} subtitle={roster?.team ? `${formatFantasyTeamName(roster?.team)} - Week ${week}` : ''}>
             <PageToolbar title={'Edit Lineup'} subtitle={roster?.team ? `${formatFantasyTeamName(roster?.team)} - Week ${week}` : ''} />
@@ -97,12 +97,13 @@ function LineupTable({ roster, week, currentWeek, errorList, handleSave, handleC
                                     display: 'flex',
                                     flexDirection: 'row',
                                     alignItems: 'flex-start',
+                                    gap: 1
                                 }}>
                                     <Button
                                         variant="contained"
-                                        sx={{ ml: 1 }}
+                                        sx={{ ml: 1, mb: 2 }}
                                         onClick={handleSave}
-                                        disabled={errorList.length > 0}
+                                        disabled={isUpdating || errorList.length > 0}
                                     >
                                         Save
                                     </Button>
@@ -113,6 +114,7 @@ function LineupTable({ roster, week, currentWeek, errorList, handleSave, handleC
                                     >
                                         Cancel
                                     </Button>
+                                    {isUpdating ? <CircularProgress /> : null}
                                     <FormControl required error={errorList.length > 0} sx={{ display: { xs: 'inline', md: 'none' }, }}>
                                         {errorList.map((error, index) =>
                                             <FormHelperText key={index}>{error}</FormHelperText>

@@ -1,12 +1,14 @@
 import { NflWeekContext } from "../../contexts/NflWeekContext";
-import { useSearchParams, useParams } from "react-router-dom";
+import { useSearchParams, useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState, useContext } from "react";
 import { mapTeamScoringTotals, mapRosterToTeamLineup, mapLineupToTeamLineup } from "../../utils/parsers";
 import withAuth from "../withAuth";
 import LineupTable from "./LineupTable";
 import useTeamLineupData from "../../hooks/useTeamLineupData";
+import { updateLineup } from "../../api/ffl";
 
 function LineupEdit({ league, team }) {
+    const navigate = useNavigate();
     const { id } = useParams();
     const [searchParams] = useSearchParams();
     const { state: nflWeekState } = useContext(NflWeekContext);
@@ -16,6 +18,7 @@ function LineupEdit({ league, team }) {
     const [errorList, setErrorList] = useState([]);
     const [teamRoster, setTeamRoster] = useState([]);
     const [teamScoring, setTeamScoring] = useState([]);
+    const [isUpdating, setIsUpdating] = useState(false);
 
     const {
         rosterSettingData,
@@ -140,8 +143,9 @@ function LineupEdit({ league, team }) {
         setErrorList(errors);
     }
 
-    const handleSave = (event) => {
+    const handleSave = async () => {
         if (errorList.length === 0) {
+            setIsUpdating(true);
             const newLineup = roster?.Players.map(rosterPlayer => {
                 const lineup = {
                     RosterPlayerId: rosterPlayer.RosterPlayerId,
@@ -149,8 +153,15 @@ function LineupEdit({ league, team }) {
                 }
                 return lineup;
             });
-            console.log(newLineup);
-            //TODO : Call API
+
+            const result = await updateLineup(Number.isInteger(+id) ? +id : team?.TeamId, week, newLineup);
+            setIsUpdating(false);
+            if (result?.Message) {
+                setErrorList([result?.Message]);
+            }
+            else {
+                navigate(`/Lineups`);
+            }
         }
     };
 
@@ -172,7 +183,7 @@ function LineupEdit({ league, team }) {
     };
 
     return (
-        <LineupTable roster={roster} week={week} errorList={errorList} handleSave={handleSave} handleChange={handleChange} currentWeek={nflWeekState?.lineupWeek} />
+        <LineupTable isUpdating={isUpdating} roster={roster} week={week} errorList={errorList} handleSave={handleSave} handleChange={handleChange} currentWeek={nflWeekState?.lineupWeek} />
     )
 }
 

@@ -590,6 +590,7 @@ export const teamLineupLoader = async (team, week) => {
                                     DisplayCode
                                 }
                                 Position {
+                                    PositionId
                                     PositionCode
                                 }
                             }
@@ -722,6 +723,7 @@ export const leaguePlayersLoader = async (league, spotCode = 'ALL', availability
             PlayerId
             EspnPlayerId
             PlayerName
+            PositionId
             PositionCode
             NflTeamId
             DisplayCode
