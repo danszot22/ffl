@@ -1,4 +1,4 @@
-import { Paper, Typography, Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Skeleton } from "@mui/material";
+import { Paper, Typography, Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Skeleton, CircularProgress } from "@mui/material";
 import { Table, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { formatPlayerFullName } from "../../utils/helpers";
 import { StyledTableHeaderRow } from "../common/styled";
@@ -78,6 +78,7 @@ export default function DropRosterPlayers({ leagueId, roster, playerToAdd }) {
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
+                    {isUpdating ? <CircularProgress /> : null}
                     <Button onClick={handleClose}>Cancel</Button>
                     <Button disabled={isUpdating || transactionText.length === 0} onClick={handleClickConfirm} autoFocus>
                         Confirm

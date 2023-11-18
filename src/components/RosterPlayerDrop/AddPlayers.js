@@ -2,7 +2,7 @@ import { useState } from "react";
 import { formatPlayerFullName } from "../../utils/helpers";
 import { MaterialReactTable } from 'material-react-table';
 import { getTransactionText, updateRoster } from "../../api/ffl";
-import { Box, Typography, Button, Skeleton, DialogTitle, DialogContent, DialogContentText, DialogActions, Dialog, FormControl, InputLabel, Select, MenuItem, Tooltip, IconButton } from "@mui/material";
+import { Box, Typography, Button, Skeleton, DialogTitle, DialogContent, DialogContentText, DialogActions, Dialog, FormControl, InputLabel, Select, MenuItem, Tooltip, IconButton, CircularProgress } from "@mui/material";
 import { alpha } from '@mui/material/styles';
 import usePlayerTableLoader from "../../hooks/usePlayerTableLoader";
 import usePlayerTableColumns from "../../hooks/usePlayerTableColumns";
@@ -180,6 +180,7 @@ export default function AddPlayers({ teamId, rosterPlayerToDrop, leagueId, }) {
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
+                    {isUpdating ? <CircularProgress /> : null}
                     <Button onClick={handleClose}>Cancel</Button>
                     <Button disabled={isUpdating || transactionText.length === 0} onClick={handleClickConfirm} autoFocus>
                         Confirm
