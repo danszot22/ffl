@@ -53,3 +53,63 @@ export const updateLineup = async (teamId, week, lineup) => {
             });
     return result?.data;
 }
+
+export const updateTeams = async (leagueId, teams) => {
+    const result =
+        await fflapi
+            .post(`/v2/league/${leagueId}/teams`, teams)
+            .catch((error) => {
+                return error?.response;
+            });
+    return result?.data;
+}
+
+export const reorganizeLeague = async (leagueId) => {
+    const result =
+        await fflapi
+            .post(`/v2/league/${leagueId}/reorganize`)
+            .catch((error) => {
+                return error?.response;
+            });
+    return result?.data;
+}
+
+export const recreateSchedule = async (leagueId) => {
+    const result =
+        await fflapi
+            .post(`/v2/league/${leagueId}/reschedule`)
+            .catch((error) => {
+                return error?.response;
+            });
+    return result?.data;
+}
+
+export const sendInvitations = async (leagueId) => {
+    const result =
+        await fflapi
+            .post(`/v2/league/${leagueId}/invitations`)
+            .catch((error) => {
+                return error?.response;
+            });
+    return result?.data;
+}
+
+export const addManager = async (leagueId, manager) => {
+    const result =
+        await fflapi
+            .post(`/v2/league/${leagueId}/teamOwner`, manager)
+            .catch((error) => {
+                return error?.response;
+            });
+    return result?.data;
+}
+
+export const deleteManager = async (managerId) => {
+    const result =
+        await fflapi
+            .delete(`/v2/league/teamOwner/${managerId}`)
+            .catch((error) => {
+                return error?.response;
+            });
+    return result?.data;
+}

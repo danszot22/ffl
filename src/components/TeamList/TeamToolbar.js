@@ -1,9 +1,10 @@
 import { EventRepeat, Layers, Send } from '@mui/icons-material';
-import { Box, Button, Toolbar, Tooltip } from '@mui/material';
+import { Box, Button, CircularProgress, Toolbar, Tooltip, Typography } from '@mui/material';
 import { GridRowModes } from '@mui/x-data-grid';
+import { recreateSchedule, reorganizeLeague, sendInvitations, updateTeams } from '../../api/ffl';
 
 function TeamToolbar(props) {
-    const { gridMode, rowModesModel, setRowModesModel, teams } = props;
+    const { gridMode, rowModesModel, setRowModesModel, teams, apiRef, leagueId, isUpdating, setIsUpdating, message, setMessage } = props;
 
     const convertArrayToObject = (array, key, mode, ignoreModifications) => {
         const initialValue = {};
@@ -18,10 +19,25 @@ function TeamToolbar(props) {
         }, initialValue);
     };
 
-    const handleSaveOrEdit = () => {
+    const handleSaveOrEdit = async () => {
+        setMessage();
         if (gridMode === 'edit') {
             setRowModesModel(convertArrayToObject(teams, 'TeamId', GridRowModes.View, false));
-            //TODO : Call API
+            const updatedRows = Object.keys(apiRef?.current?.state.editRows).map((key) => {
+                return {
+                    TeamId: +key,
+                    TeamName: apiRef?.current?.state.editRows[key]?.TeamName?.value,
+                    OwnerName: apiRef?.current?.state.editRows[key]?.OwnerName?.value,
+                    AvlAddDrops: apiRef?.current?.state.editRows[key]?.AvlAddDrops?.value
+                }
+            });
+            setIsUpdating(true);
+            const result = await updateTeams(leagueId, updatedRows);
+            setIsUpdating(false);
+            if (result?.Message) {
+                setMessage([result?.Message]);
+            }
+
         } else {
             setRowModesModel(convertArrayToObject(teams, 'TeamId', GridRowModes.Edit, true));
         }
@@ -31,19 +47,31 @@ function TeamToolbar(props) {
         setRowModesModel(convertArrayToObject(teams, 'TeamId', GridRowModes.View, true));
     };
 
-    const handleSendInvites = () => {
-        //setRowModesModel(convertArrayToObject(teams, 'id', GridRowModes.View, true));
-        //TODO : Call API
+    const handleSendInvites = async () => {
+        setIsUpdating(true);
+        const result = await sendInvitations(leagueId);
+        setIsUpdating(false);
+        if (result?.Message) {
+            setMessage([result?.Message]);
+        }
     };
 
-    const handleReorganizeDivisions = () => {
-        //setRowModesModel(convertArrayToObject(teams, 'id', GridRowModes.View, true));
-        //TODO : Call API
+    const handleReorganizeDivisions = async () => {
+        setIsUpdating(true);
+        const result = await reorganizeLeague(leagueId);
+        setIsUpdating(false);
+        if (result?.Message) {
+            setMessage([result?.Message]);
+        }
     };
 
-    const handleRecreateSchedule = () => {
-        //setRowModesModel(convertArrayToObject(teams, 'id', GridRowModes.View, true));
-        //TODO : Call API
+    const handleRecreateSchedule = async () => {
+        setIsUpdating(true);
+        const result = await recreateSchedule(leagueId);
+        setIsUpdating(false);
+        if (result?.Message) {
+            setMessage([result?.Message]);
+        }
     };
 
     const handleMouseDown = (event) => {
@@ -85,6 +113,7 @@ function TeamToolbar(props) {
                 >
                     Cancel
                 </Button>
+                {isUpdating ? <CircularProgress /> : null}
                 <Tooltip arrow placement="right" title="Send Invitations" >
                     <Button onClick={handleSendInvites}>
                         <Send />
@@ -100,6 +129,7 @@ function TeamToolbar(props) {
                         <EventRepeat />
                     </Button>
                 </Tooltip>
+                <Typography color="error">{message}</Typography>
             </Box>
         </Toolbar>
     );

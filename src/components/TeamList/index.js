@@ -1,4 +1,4 @@
-import { GridAddIcon, GridDeleteIcon, GridActionsCellItem } from '@mui/x-data-grid';
+import { GridAddIcon, GridActionsCellItem } from '@mui/x-data-grid';
 import { useCallback, useMemo, useState, useEffect } from 'react';
 import Root from '../Root';
 import { StyledDataGrid } from "../common/styled";
@@ -8,6 +8,8 @@ import { teamsLoader } from '../../api/graphql';
 import PageToolbar from '../common/PageToolbar';
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField, useMediaQuery, useTheme } from '@mui/material';
 import withAuth from '../withAuth';
+import useApiRef from '../../hooks/useApiRef';
+import { addManager, deleteManager } from '../../api/ffl';
 
 function TeamList({ league, user }) {
     const theme = useTheme();
@@ -17,6 +19,8 @@ function TeamList({ league, user }) {
     const [selectedTeam, setSelectedTeam] = useState({});
     const [open, setOpen] = useState(false);
     const [email, setEmail] = useState('');
+    const [isUpdating, setIsUpdating] = useState(false);
+    const [message, setMessage] = useState();
 
     useEffect(() => {
         const fetchTeams = async (leagueId) => {
@@ -57,47 +61,57 @@ function TeamList({ league, user }) {
         setSelectedTeam({});
     };
 
-    const handleAddClick = () => {
-        const updatedTeams = teams.map((team) => {
-            if (team.TeamId !== selectedTeam.TeamId)
-                return team;
-            else
-                return {
-                    ...selectedTeam,
-                    TeamOwner: { items: [...selectedTeam.TeamOwner.items, { Email: email, status: 'new' }] }
-                }
-        });
-        setTeams(updatedTeams);
-        setEmail('');
-        setSelectedTeam({});
-        setOpen(false);
-        //TODO : Call API
+    const handleAddClick = async () => {
+        const newManager = { TeamId: selectedTeam.TeamId, Email: email };
+        setIsUpdating(true);
+        const result = await addManager(league?.LeagueId, newManager);
+        setIsUpdating(false);
+        if (result?.Message) {
+            setMessage([result?.Message]);
+        }
+        else {
+            const updatedTeams = teams.map((team) => {
+                if (team.TeamId !== selectedTeam.TeamId)
+                    return team;
+                else
+                    return {
+                        ...selectedTeam,
+                        TeamOwner: {
+                            items: [...selectedTeam.TeamOwner.items,
+                            { TeamOwnerId: result?.TeamOwnerId, Email: email, status: 'new' }]
+                        }
+                    }
+            });
+            setTeams(updatedTeams);
+            setEmail('');
+            setSelectedTeam({});
+            setOpen(false);
+        }
     };
 
-    const handleDeleteTeamClick = (row) => {
-        const updatedTeams = teams.filter((team) => {
-            return (team.TeamId !== row.TeamId);
-        })
-        setTeams(updatedTeams);
-        //TODO : Call API
-    };
-
-    const handleManagerDeleteClick = (row, teamOwnerToDelete) => {
-        const updatedTeams = teams.map((team) => {
-            if (team.TeamId !== row.TeamId)
-                return team;
-            else {
-                const managers = row.TeamOwner.items.filter((teamOwner) => {
-                    return teamOwner.TeamOwnerId !== teamOwnerToDelete.TeamOwnerId;
-                });
-                return {
-                    ...row,
-                    TeamOwner: { items: [...managers] }
+    const handleManagerDeleteClick = async (row, teamOwnerToDelete) => {
+        setIsUpdating(true);
+        const result = await deleteManager(teamOwnerToDelete.TeamOwnerId);
+        setIsUpdating(false);
+        if (result?.Message) {
+            setMessage([result?.Message]);
+        }
+        else {
+            const updatedTeams = teams.map((team) => {
+                if (team.TeamId !== row.TeamId)
+                    return team;
+                else {
+                    const managers = row.TeamOwner.items.filter((teamOwner) => {
+                        return teamOwner.TeamOwnerId !== teamOwnerToDelete.TeamOwnerId;
+                    });
+                    return {
+                        ...row,
+                        TeamOwner: { items: [...managers] }
+                    }
                 }
-            }
-        })
-        setTeams(updatedTeams);
-        //TODO : Call API
+            })
+            setTeams(updatedTeams);
+        }
     };
 
     const columns = [
@@ -125,31 +139,25 @@ function TeamList({ league, user }) {
                     [
                         <GridActionsCellItem
                             icon={<GridAddIcon />}
-                            label="Add"
+                            label="Add Manager"
                             sx={{
                                 color: 'primary.main',
                             }}
                             onClick={() => handleClickOpen(row)}
-                        />,
-                        <GridActionsCellItem
-                            icon={<GridDeleteIcon />}
-                            label="Delete"
-                            className="textPrimary"
-                            onClick={() => handleDeleteTeamClick(row)}
-                            color="inherit"
                         />,
                     ] : [];
                 return actions;
             },
         }];
 
+    const { apiRef, columns: refColumns } = useApiRef(columns);
     return (
         <Root title={'Teams'}>
             <PageToolbar title={'Teams'} />
             <StyledDataGrid
                 getRowId={(row) => row.TeamId}
                 rows={teams}
-                columns={columns}
+                columns={refColumns}
                 getRowHeight={(row) => {
                     return row.model.TeamOwner.items.length * 120 * row.densityFactor;
                 }}
@@ -170,7 +178,13 @@ function TeamList({ league, user }) {
                         gridMode,
                         rowModesModel,
                         setRowModesModel,
-                        teams
+                        teams,
+                        apiRef,
+                        leagueId: league?.LeagueId,
+                        isUpdating,
+                        setIsUpdating,
+                        message,
+                        setMessage
                     },
                 }}
                 getRowClassName={(params) =>
