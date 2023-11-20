@@ -18,6 +18,8 @@ export default function PageToolbar(props) {
                 flexGrow: 1,
                 display: 'flex',
                 flexDirection: 'column',
+                alignItems: 'center',
+                alignContent: 'center'
             }}>
                 <Typography
                     sx={{ flex: '1 1 100%', fontWeight: 700, }}
@@ -27,14 +29,15 @@ export default function PageToolbar(props) {
                 >
                     {title}
                 </Typography>
-                <Typography
-                    sx={{ flex: '1 1 100%', }}
-                    variant="subtitle2"
-                    id="tableTitle"
-                    component="div"
-                >
-                    {subtitle}
-                </Typography>
+                {subtitle ?
+                    <Typography
+                        variant="subtitle2"
+                        id="tableTitle"
+                        component="div"
+                    >
+                        {subtitle}
+                    </Typography>
+                    : null}
             </Box>
 
         </Toolbar>
