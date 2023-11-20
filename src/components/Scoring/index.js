@@ -154,7 +154,7 @@ function Scoring({ league, team }) {
                     border: '2px solid #000',
                     boxShadow: 24,
                     p: 1,
-                    minWidth: '75%',
+                    minWidth: { xs: '75%', sm: '50%', lg: '25%' },
                     minHeight: '50%'
                 }}>
                     <Typography>Game Results</Typography>
