@@ -1,4 +1,4 @@
-import { Paper, Table, TableBody, TableContainer, TableHead, TableRow, TableCell, Box } from "@mui/material";
+import { Paper, Table, TableBody, TableContainer, TableHead, TableRow, TableCell } from "@mui/material";
 import { mapScoring } from "../../utils/parsers";
 import ExpandableSummaryRow from "./ExpandableSummaryRow";
 import PanelToolbar from "./PanelToolbar";
@@ -17,34 +17,7 @@ function ScoringSummary({ team, summaryData, week, showProjections }) {
                         <TableRow>
                             <TableCell></TableCell>
                             <TableCell>Team</TableCell>
-                            <TableCell sx={{ display: (showProjections ? 'table-cell' : 'none') }}>
-                                <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: "center", alignItems: "center" }}>
-                                    <Paper
-                                        sx={{
-                                            textAlign: 'center',
-                                            minWidth: 40,
-                                            p: 1,
-                                            color: "#fff",
-                                            bgcolor: (theme) =>
-                                                theme.palette.warning.dark,
-                                        }}
-                                    >
-                                        {isXs ? 'P' : 'Playing'}
-                                    </Paper>
-                                    <Paper
-                                        sx={{
-                                            textAlign: 'center',
-                                            minWidth: 40,
-                                            p: 1,
-                                            color: "#fff",
-                                            bgcolor: (theme) =>
-                                                theme.palette.error.dark,
-                                        }}
-                                    >
-                                        {isXs ? 'NP' : 'Not Playing'}
-                                    </Paper>
-                                </Box>
-                            </TableCell>
+                            <TableCell sx={{ display: (showProjections ? 'table-cell' : 'none') }}></TableCell>
                             <TableCell align="right">Points {showProjections ? "(Proj)" : null}</TableCell>
                             {
                                 !isXs ? <>

@@ -3,13 +3,13 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import IconButton from '@mui/material/IconButton';
 import { StyledExpandableTableRow } from '../common/styled';
 import { useState } from 'react';
-import { Box, TableCell, TableRow, Grid, Collapse, Typography, useTheme, useMediaQuery, Modal } from "@mui/material";
+import { Box, TableCell, TableRow, Grid, Collapse, Typography, useTheme, useMediaQuery, Modal, Paper } from "@mui/material";
 import CategoryPlayerList from './CategoryPlayerList';
 import TeamLink from '../common/TeamLink';
 import { formatFantasyTeamName, formatPlayerName } from '../../utils/helpers';
 import { Link } from 'react-router-dom';
 
-export default function ExpandableCategoryRow({ team, row, showProjections, showGame = true }) {
+export default function ExpandableCategoryRow({ category, team, row, showProjections, showGame = true }) {
     const theme = useTheme();
     const isBelowMedium = useMediaQuery(theme.breakpoints.down('md'))
     const [open, setOpen] = useState(false);
@@ -20,6 +20,51 @@ export default function ExpandableCategoryRow({ team, row, showProjections, show
             <StyledExpandableTableRow onClick={() => setOpen(!open)} key={row.TeamId} sx={{ '& > *': { borderBottom: 'unset' } }}>
                 <TableCell>
                     <TeamLink team={row.Team} variant="inherit" sx={{ fontWeight: row.TeamId === team ? 600 : 0 }} shortName={isBelowMedium} />
+                </TableCell>
+                <TableCell sx={{ pl: 0, pr: 0, display: (showProjections ? 'table-cell' : 'none') }}>
+                    <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: "center", alignItems: "center" }}>
+                        <Paper
+                            sx={{
+                                textAlign: 'center',
+                                p: 1,
+                                mr: { xs: 0, md: 1 },
+                                minWidth: 40,
+                                color: "#fff",
+                                bgcolor: (theme) =>
+                                    theme.palette.warning.dark,
+                            }}
+                        >
+                            {row.Starters.filter(player => player.NflGame.Playing &&
+                                ((category.startsWith('Pass') && ["TMQB", "QB"].includes(player.Player.Position.PositionCode)) ||
+                                    (category.startsWith('Rush') && ["RB"].includes(player.Player.Position.PositionCode)) ||
+                                    (category.startsWith('Rec') && ["WR", "TE"].includes(player.Player.Position.PositionCode)) ||
+                                    (category.startsWith('Fg') && ["TMPK", "PK"].includes(player.Player.Position.PositionCode)) ||
+                                    (category.startsWith('XP') && ["TMPK", "PK"].includes(player.Player.Position.PositionCode)) ||
+                                    (category.startsWith('Tack') && ["S", "CB", "LB", "DE", "DT"].includes(player.Player.Position.PositionCode)) ||
+                                    (category.startsWith('Sack') && ["S", "CB", "LB", "DE", "DT"].includes(player.Player.Position.PositionCode)) ||
+                                    (category.startsWith('DEF') && ["S", "CB", "LB", "DE", "DT"].includes(player.Player.Position.PositionCode)))).length}
+                        </Paper>
+                        <Paper
+                            sx={{
+                                textAlign: 'center',
+                                minWidth: 40,
+                                p: 1,
+                                color: "#fff",
+                                bgcolor: (theme) =>
+                                    theme.palette.error.dark,
+                            }}
+                        >
+                            {row.Starters.filter(player => player.NflGame.NotPlayed &&
+                                ((category.startsWith('Pass') && ["TMQB", "QB"].includes(player.Player.Position.PositionCode)) ||
+                                    (category.startsWith('Rush') && ["RB"].includes(player.Player.Position.PositionCode)) ||
+                                    (category.startsWith('Rec') && ["WR", "TE"].includes(player.Player.Position.PositionCode)) ||
+                                    (category.startsWith('FG') && ["TMPK", "PK"].includes(player.Player.Position.PositionCode)) ||
+                                    (category.startsWith('XP') && ["TMPK", "PK"].includes(player.Player.Position.PositionCode)) ||
+                                    (category.startsWith('Tack') && ["S", "CB", "LB", "DE", "DT"].includes(player.Player.Position.PositionCode)) ||
+                                    (category.startsWith('Sack') && ["S", "CB", "LB", "DE", "DT"].includes(player.Player.Position.PositionCode)) ||
+                                    (category.startsWith('DeF') && ["S", "CB", "LB", "DE", "DT"].includes(player.Player.Position.PositionCode)))).length}
+                        </Paper>
+                    </Box>
                 </TableCell>
                 <TableCell align="right">
                     <Typography variant="inherit" sx={{ fontWeight: row.TeamId === team ? 600 : 0 }}>

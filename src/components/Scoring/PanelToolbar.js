@@ -1,7 +1,8 @@
-import { Toolbar, Typography } from "@mui/material";
+import { Box, Paper, Toolbar, Typography } from "@mui/material";
 import { alpha } from '@mui/material/styles';
 
-export default function PanelToolbar({ title }) {
+export default function PanelToolbar({ title, showProjections }) {
+
     return (
         <Toolbar
             sx={{
@@ -11,14 +12,45 @@ export default function PanelToolbar({ title }) {
                     alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
             }}
         >
-            <Typography
-                sx={{ flex: '1 1 100%' }}
-                id="tableTitle"
-                component="div"
-            >
-                {title}
-            </Typography>
-
+            <div style={{ width: '100%' }}>
+                <Box component="span" sx={{ display: 'flex', flexDirection: 'row', justifyContent: "space-between", alignItems: "center" }}>
+                    <Typography
+                        id="tableTitle"
+                        component="span"
+                    >
+                        {title}
+                    </Typography>
+                    {showProjections ?
+                        <Box component="span" sx={{ gap: 1, display: 'flex', flexDirection: 'row', justifyContent: "center", alignItems: "center" }}>
+                            <Paper
+                                sx={{
+                                    textAlign: 'center',
+                                    minWidth: 40,
+                                    p: 1,
+                                    color: "#fff",
+                                    bgcolor: (theme) =>
+                                        theme.palette.warning.dark,
+                                }}
+                            >
+                                Playing
+                            </Paper>
+                            <Paper
+                                sx={{
+                                    textAlign: 'center',
+                                    minWidth: 40,
+                                    p: 1,
+                                    color: "#fff",
+                                    bgcolor: (theme) =>
+                                        theme.palette.error.dark,
+                                }}
+                            >
+                                Not Playing
+                            </Paper>
+                        </Box>
+                        :
+                        null}
+                </Box>
+            </div>
         </Toolbar>
     )
 }
