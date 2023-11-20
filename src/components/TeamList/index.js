@@ -10,6 +10,7 @@ import { Button, Dialog, DialogActions, DialogContent, DialogContentText, Dialog
 import withAuth from '../withAuth';
 import useApiRef from '../../hooks/useApiRef';
 import { addManager, deleteManager } from '../../api/ffl';
+import ConfirmationDialog from '../common/ConfirmationDialog';
 
 function TeamList({ league, user }) {
     const theme = useTheme();
@@ -17,7 +18,9 @@ function TeamList({ league, user }) {
 
     const [teams, setTeams] = useState([]);
     const [selectedTeam, setSelectedTeam] = useState({});
+    const [selectedTeamOwner, setSelectedTeamOwner] = useState({});
     const [open, setOpen] = useState(false);
+    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const [email, setEmail] = useState('');
     const [isUpdating, setIsUpdating] = useState(false);
     const [message, setMessage] = useState();
@@ -89,23 +92,30 @@ function TeamList({ league, user }) {
         }
     };
 
-    const handleManagerDeleteClick = async (row, teamOwnerToDelete) => {
+    const handleDelete = async (row, teamOwnerToDelete) => {
+        setMessage();
+        setShowDeleteConfirmation(true);
+        setSelectedTeam(row);
+        setSelectedTeamOwner(teamOwnerToDelete);
+    }
+
+    const handleConfirmClick = async () => {
         setIsUpdating(true);
-        const result = await deleteManager(teamOwnerToDelete.TeamOwnerId);
+        const result = await deleteManager(selectedTeamOwner.TeamOwnerId);
         setIsUpdating(false);
         if (result?.Message) {
             setMessage([result?.Message]);
         }
         else {
             const updatedTeams = teams.map((team) => {
-                if (team.TeamId !== row.TeamId)
+                if (team.TeamId !== selectedTeam.TeamId)
                     return team;
                 else {
-                    const managers = row.TeamOwner.items.filter((teamOwner) => {
-                        return teamOwner.TeamOwnerId !== teamOwnerToDelete.TeamOwnerId;
+                    const managers = selectedTeam.TeamOwner.items.filter((teamOwner) => {
+                        return teamOwner.TeamOwnerId !== selectedTeamOwner.TeamOwnerId;
                     });
                     return {
-                        ...row,
+                        ...selectedTeam,
                         TeamOwner: { items: [...managers] }
                     }
                 }
@@ -125,7 +135,7 @@ function TeamList({ league, user }) {
             sortable: false,
             width: 360,
             renderCell: (params) => (
-                <ManagerList team={params.row} handleDeleteClick={handleManagerDeleteClick} isEditable={user?.isAdmin || user?.isCommissioner} />
+                <ManagerList team={params.row} handleDeleteClick={handleDelete} isEditable={user?.isAdmin || user?.isCommissioner} />
             ),
         },
         {
@@ -191,6 +201,9 @@ function TeamList({ league, user }) {
                     params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd'
                 }
             />
+            <ConfirmationDialog open={showDeleteConfirmation} setOpen={setShowDeleteConfirmation}
+                message={message} isUpdating={isUpdating} handleConfirmClick={handleConfirmClick}
+                confirmationMessage={'Are you sure you want to delete this manager?'} />
             <Dialog open={open} onClose={handleClose}>
                 <DialogTitle>Add Manager</DialogTitle>
                 <DialogContent>

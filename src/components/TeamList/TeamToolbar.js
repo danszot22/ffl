@@ -2,9 +2,13 @@ import { EventRepeat, Layers, Send } from '@mui/icons-material';
 import { Box, Button, CircularProgress, Toolbar, Tooltip, Typography } from '@mui/material';
 import { GridRowModes } from '@mui/x-data-grid';
 import { recreateSchedule, reorganizeLeague, sendInvitations, updateTeams } from '../../api/ffl';
+import { useState } from 'react';
+import ConfirmationDialog from '../common/ConfirmationDialog';
 
 function TeamToolbar(props) {
     const { gridMode, rowModesModel, setRowModesModel, teams, apiRef, leagueId, isUpdating, setIsUpdating, message, setMessage } = props;
+    const [showScheduleConfirmation, setShowScheduleConfirmation] = useState(false);
+    const [showReorganizeConfirmation, setShowReorganizeConfirmation] = useState(false);
 
     const convertArrayToObject = (array, key, mode, ignoreModifications) => {
         const initialValue = {};
@@ -80,58 +84,66 @@ function TeamToolbar(props) {
     };
 
     return (
-        <Toolbar
-            sx={{
-                display: 'flex',
-                alignItems: 'flex-start',
-                flexDirection: 'column',
-                pt: { xs: 1 },
-                pl: { sm: 1 },
-                pr: { xs: 1, sm: 1, },
-            }}
-        >
-            <Box sx={{
-                display: 'flex',
-                alignItems: 'flex-start',
-                flexDirection: 'row',
-            }}
+        <>
+            <ConfirmationDialog open={showScheduleConfirmation} setOpen={setShowScheduleConfirmation}
+                message={message} isUpdating={isUpdating} handleConfirmClick={handleRecreateSchedule}
+                confirmationMessage={'Schedule will be recreated and any previous fantasy games along with game results will be deleted. Are you sure want to recreate schedule?'} />
+            <ConfirmationDialog open={showReorganizeConfirmation} setOpen={setShowReorganizeConfirmation}
+                message={message} isUpdating={isUpdating} handleConfirmClick={handleReorganizeDivisions}
+                confirmationMessage={'Teams will be placed in divisions based on last years draft results. Schedule will be recreated and any previous fantasy games and game results will be deleted. Are you sure want to reorganize divisions?'} />
+            <Toolbar
+                sx={{
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    flexDirection: 'column',
+                    pt: { xs: 1 },
+                    pl: { sm: 1 },
+                    pr: { xs: 1, sm: 1, },
+                }}
             >
-                <Button
-                    onClick={handleSaveOrEdit}
-                    onMouseDown={handleMouseDown}
-                    variant="outlined"
-                    sx={{ ml: 1 }}
+                <Box sx={{
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    flexDirection: 'row',
+                }}
                 >
-                    {gridMode === 'edit' ? 'Save' : 'Edit'}
-                </Button>
-                <Button
-                    onClick={handleCancel}
-                    onMouseDown={handleMouseDown}
-                    disabled={gridMode === 'view'}
-                    variant="outlined"
-                    sx={{ ml: 1 }}
-                >
-                    Cancel
-                </Button>
-                {isUpdating ? <CircularProgress /> : null}
-                <Tooltip arrow placement="right" title="Send Invitations" >
-                    <Button onClick={handleSendInvites}>
-                        <Send />
+                    <Button
+                        onClick={handleSaveOrEdit}
+                        onMouseDown={handleMouseDown}
+                        variant="outlined"
+                        sx={{ ml: 1 }}
+                    >
+                        {gridMode === 'edit' ? 'Save' : 'Edit'}
                     </Button>
-                </Tooltip>
-                <Tooltip arrow placement="right" title="Reorganize Divisions" >
-                    <Button onClick={handleReorganizeDivisions}>
-                        <Layers />
+                    <Button
+                        onClick={handleCancel}
+                        onMouseDown={handleMouseDown}
+                        disabled={gridMode === 'view'}
+                        variant="outlined"
+                        sx={{ ml: 1 }}
+                    >
+                        Cancel
                     </Button>
-                </Tooltip>
-                <Tooltip arrow placement="right" title="Recreate Schedule" >
-                    <Button onClick={handleRecreateSchedule}>
-                        <EventRepeat />
-                    </Button>
-                </Tooltip>
-                <Typography color="error">{message}</Typography>
-            </Box>
-        </Toolbar>
+                    {isUpdating ? <CircularProgress /> : null}
+                    <Tooltip arrow placement="right" title="Send Invitations" >
+                        <Button onClick={handleSendInvites}>
+                            <Send />
+                        </Button>
+                    </Tooltip>
+                    <Tooltip arrow placement="right" title="Reorganize Divisions" >
+                        <Button onClick={() => setShowReorganizeConfirmation(true)}>
+                            <Layers />
+                        </Button>
+                    </Tooltip>
+                    <Tooltip arrow placement="right" title="Recreate Schedule" >
+                        <Button onClick={() => setShowScheduleConfirmation(true)}>
+                            <EventRepeat />
+                        </Button>
+                    </Tooltip>
+                    <Typography color="error">{message}</Typography>
+                </Box>
+            </Toolbar>
+        </>
     );
 }
 
