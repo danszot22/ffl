@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const fflapi = axios.create({
-    baseURL: 'https://ffltest.azurewebsites.net/api',
+    baseURL: 'http://localhost:39826/api',
     headers: {
         'content-type': 'application/json'
     }
@@ -135,9 +135,10 @@ export const denyTrade = async (tradeId) => {
 }
 
 export const acceptTrade = async (tradeId) => {
+    const urlToPage = "https://kind-sky-02d625b0f.4.azurestaticapps.net/LeagueTrades";
     const result =
         await fflapi
-            .post(`/trade/${tradeId}/accept`)
+            .post(`/trade/${tradeId}/accept`, { urlToPage })
             .catch((error) => {
                 return error?.response;
             });
@@ -165,9 +166,10 @@ export const deleteTrade = async (tradeId) => {
 }
 
 export const createTrade = async (givingTeamId, receivingTeamId, players) => {
+    const urlToPage = "https://kind-sky-02d625b0f.4.azurestaticapps.net/TeamTrades";
     const result =
         await fflapi
-            .post(`/trade/${givingTeamId}/${receivingTeamId}/create`, players)
+            .post(`/trade/${givingTeamId}/${receivingTeamId}/create/`, { players, urlToPage })
             .catch((error) => {
                 return error?.response;
             });
