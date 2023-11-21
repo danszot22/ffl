@@ -113,3 +113,63 @@ export const deleteManager = async (managerId) => {
             });
     return result?.data;
 }
+
+export const approveTrade = async (tradeId) => {
+    const result =
+        await fflapi
+            .post(`/trade/${tradeId}/approve`)
+            .catch((error) => {
+                return error?.response;
+            });
+    return result?.data;
+}
+
+export const denyTrade = async (tradeId) => {
+    const result =
+        await fflapi
+            .post(`/trade/${tradeId}/deny`)
+            .catch((error) => {
+                return error?.response;
+            });
+    return result?.data;
+}
+
+export const acceptTrade = async (tradeId) => {
+    const result =
+        await fflapi
+            .post(`/trade/${tradeId}/accept`)
+            .catch((error) => {
+                return error?.response;
+            });
+    return result?.data;
+}
+
+export const rejectTrade = async (tradeId) => {
+    const result =
+        await fflapi
+            .post(`/trade/${tradeId}/reject`)
+            .catch((error) => {
+                return error?.response;
+            });
+    return result?.data;
+}
+
+export const deleteTrade = async (tradeId) => {
+    const result =
+        await fflapi
+            .delete(`/trade/${tradeId}/delete`)
+            .catch((error) => {
+                return error?.response;
+            });
+    return result?.data;
+}
+
+export const createTrade = async (givingTeamId, receivingTeamId, players) => {
+    const result =
+        await fflapi
+            .post(`/trade/${givingTeamId}/${receivingTeamId}/create`, players)
+            .catch((error) => {
+                return error?.response;
+            });
+    return result?.data;
+}

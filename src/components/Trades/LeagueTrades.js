@@ -2,16 +2,19 @@ import { useEffect, useState } from "react";
 import { leagueTradesLoader } from "../../api/graphql";
 import Root from "../Root";
 import PageToolbar from "../common/PageToolbar";
-import { IconButton, Paper, Tooltip, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { CircularProgress, IconButton, Paper, Tooltip, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { convertDateToLocal, formatFantasyTeamName, formatPlayerFullName, formatPlayerName, tradeStatuses } from "../../utils/helpers";
 import { ThumbDown, ThumbUp } from "@mui/icons-material";
 import withAuth from "../withAuth";
+import { approveTrade, denyTrade } from "../../api/ffl";
 
 function LeagueTrades({ league, user }) {
     const theme = useTheme();
     const isBelowMedium = useMediaQuery(theme.breakpoints.down('md'));
     const [trades, setTrades] = useState([]);
+    const [isUpdating, setIsUpdating] = useState(false);
+    const [message, setMessage] = useState(false);
 
     useEffect(() => {
         const fetchTrades = async (leagueId) => {
@@ -23,24 +26,42 @@ function LeagueTrades({ league, user }) {
         league?.LeagueId
     ]);
 
-    const handleAccept = (id) => {
-        const updatedTrades = trades.filter((trade) => {
-            return trade.TradeId !== id;
-        });
-        setTrades(updatedTrades);
-        //TODO : Call API
+    const handleApprove = async (id) => {
+        setMessage();
+        setIsUpdating(true);
+        const result = await approveTrade(id);
+        setIsUpdating(false);
+        if (result?.Message) {
+            setMessage(result?.Message);
+        }
+        else {
+            const updatedTrades = trades.filter((trade) => {
+                return trade.TradeId !== id;
+            });
+            setTrades(updatedTrades);
+        }
     };
-    const handleReject = (id) => {
-        const updatedTrades = trades.filter((trade) => {
-            return trade.TradeId !== id;
-        });
-        setTrades(updatedTrades);
-        //TODO : Call API
+    const handleDeny = async (id) => {
+        setMessage();
+        setIsUpdating(true);
+        const result = await denyTrade(id);
+        setIsUpdating(false);
+        if (result?.Message) {
+            setMessage(result?.Message);
+        }
+        else {
+            const updatedTrades = trades.filter((trade) => {
+                return trade.TradeId !== id;
+            });
+            setTrades(updatedTrades);
+        }
     };
 
     return (
         <Root title={'League Trades'}>
             <PageToolbar title={'League Trades'} />
+            {isUpdating ? <CircularProgress /> : null}
+            <Typography color="error">{message}</Typography>
             <TableContainer component={Paper}>
                 <Table size="small" aria-label="simple table">
                     <TableHead>
@@ -92,15 +113,15 @@ function LeagueTrades({ league, user }) {
                                     <TableCell>
                                         {(user?.isAdmin || user?.isCommissioner) && trade.TradeStatus === 1 ?
                                             <Tooltip title="Approve">
-                                                <IconButton color="success" onClick={() => handleAccept(trade.TradeId)}>
+                                                <IconButton color="success" onClick={() => handleApprove(trade.TradeId)}>
                                                     <ThumbUp />
                                                 </IconButton>
                                             </Tooltip>
                                             : null
                                         }
                                         {(user?.isAdmin || user?.isCommissioner) && trade.TradeStatus === 1 ?
-                                            <Tooltip title="Reject">
-                                                <IconButton color="error" onClick={() => handleReject(trade.TradeId)}>
+                                            <Tooltip title="Deny">
+                                                <IconButton color="error" onClick={() => handleDeny(trade.TradeId)}>
                                                     <ThumbDown />
                                                 </IconButton>
                                             </Tooltip>

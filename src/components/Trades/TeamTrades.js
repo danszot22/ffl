@@ -2,16 +2,19 @@ import { useEffect, useState } from "react";
 import { teamTradesLoader } from "../../api/graphql";
 import Root from "../Root";
 import PageToolbar from "../common/PageToolbar";
-import { Button, IconButton, Paper, Tooltip, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { Box, Button, CircularProgress, IconButton, Paper, Tooltip, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { convertDateToLocal, formatFantasyTeamName, formatPlayerFullName, formatPlayerName, tradeStatuses } from "../../utils/helpers";
 import { Delete, ThumbDown, ThumbUp } from "@mui/icons-material";
 import withAuth from "../withAuth";
+import { acceptTrade, deleteTrade, rejectTrade } from "../../api/ffl";
 
 function TeamTrades({ team }) {
     const theme = useTheme();
     const isBelowMedium = useMediaQuery(theme.breakpoints.down('md'));
     const [trades, setTrades] = useState([]);
+    const [isUpdating, setIsUpdating] = useState(false);
+    const [message, setMessage] = useState(false);
 
     useEffect(() => {
         const fetchTrades = async (teamId) => {
@@ -23,30 +26,56 @@ function TeamTrades({ team }) {
         team?.TeamId,
     ]);
 
-    const handleDelete = (id) => {
-        const updatedTrades = trades.filter((trade) => {
-            return trade.TradeId !== id;
-        });
-        setTrades(updatedTrades);
-        //TODO : Call API
+    const handleDelete = async (id) => {
+        setMessage();
+        setIsUpdating(true);
+        const result = await deleteTrade(id);
+        setIsUpdating(false);
+        if (result?.Message) {
+            setMessage(result?.Message);
+        }
+        else {
+            const updatedTrades = trades.filter((trade) => {
+                return trade.TradeId !== id;
+            });
+            setTrades(updatedTrades);
+        }
     };
-    const handleAccept = (id) => {
-        const updatedTrades = trades.filter((trade) => {
-            return trade.TradeId !== id;
-        });
-        setTrades(updatedTrades);
-        //TODO : Call API
+    const handleAccept = async (id) => {
+        setMessage();
+        setIsUpdating(true);
+        const result = await acceptTrade(id);
+        setIsUpdating(false);
+        if (result?.Message) {
+            setMessage(result?.Message);
+        }
+        else {
+            const updatedTrades = trades.filter((trade) => {
+                return trade.TradeId !== id;
+            });
+            setTrades(updatedTrades);
+        }
     };
-    const handleReject = (id) => {
-        const updatedTrades = trades.filter((trade) => {
-            return trade.TradeId !== id;
-        });
-        setTrades(updatedTrades);
-        //TODO : Call API
+    const handleReject = async (id) => {
+        setMessage();
+        setIsUpdating(true);
+        const result = await rejectTrade(id);
+        setIsUpdating(false);
+        if (result?.Message) {
+            setMessage(result?.Message);
+        }
+        else {
+            const updatedTrades = trades.filter((trade) => {
+                return trade.TradeId !== id;
+            });
+            setTrades(updatedTrades);
+        }
     };
     return (
         <Root title={'Team Trades'}>
             <PageToolbar title={'Team Trades'} />
+            {isUpdating ? <CircularProgress /> : null}
+            <Typography color="error">{message}</Typography>
             <TableContainer component={Paper}>
                 <Table size="small" aria-label="simple table">
                     <TableHead>
@@ -96,30 +125,32 @@ function TeamTrades({ team }) {
                                     {tradeStatuses[trade.TradeStatus]}
                                 </TableCell>
                                 <TableCell>
-                                    {team?.TeamId === trade.GivingTeam?.TeamId ?
-                                        <Tooltip title="Delete">
-                                            <IconButton color="error" onClick={() => handleDelete(trade.TradeId)}>
-                                                <Delete />
-                                            </IconButton>
-                                        </Tooltip>
-                                        : null
-                                    }
-                                    {team?.TeamId === trade.ReceivingTeam?.TeamId && trade.TradeStatus === 0 ?
-                                        <Tooltip title="Accept">
-                                            <IconButton color="success" onClick={() => handleAccept(trade.TradeId)}>
-                                                <ThumbUp />
-                                            </IconButton>
-                                        </Tooltip>
-                                        : null
-                                    }
-                                    {team?.TeamId === trade.ReceivingTeam?.TeamId && trade.TradeStatus === 0 ?
-                                        <Tooltip title="Reject">
-                                            <IconButton color="error" onClick={() => handleReject(trade.TradeId)}>
-                                                <ThumbDown />
-                                            </IconButton>
-                                        </Tooltip>
-                                        : null
-                                    }
+                                    <Box sx={{ display: 'flex' }}>
+                                        {team?.TeamId === trade.GivingTeam?.TeamId ?
+                                            <Tooltip title="Delete">
+                                                <IconButton color="error" onClick={() => handleDelete(trade.TradeId)}>
+                                                    <Delete />
+                                                </IconButton>
+                                            </Tooltip>
+                                            : null
+                                        }
+                                        {team?.TeamId === trade.ReceivingTeam?.TeamId && trade.TradeStatus === 0 ?
+                                            <Tooltip title="Accept">
+                                                <IconButton color="success" onClick={() => handleAccept(trade.TradeId)}>
+                                                    <ThumbUp />
+                                                </IconButton>
+                                            </Tooltip>
+                                            : null
+                                        }
+                                        {team?.TeamId === trade.ReceivingTeam?.TeamId && trade.TradeStatus === 0 ?
+                                            <Tooltip title="Reject">
+                                                <IconButton color="error" onClick={() => handleReject(trade.TradeId)}>
+                                                    <ThumbDown />
+                                                </IconButton>
+                                            </Tooltip>
+                                            : null
+                                        }
+                                    </Box>
                                 </TableCell>
                             </TableRow>
                         ))}
