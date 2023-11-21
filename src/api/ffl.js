@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const fflapi = axios.create({
-    baseURL: 'http://localhost:39826/api',
+    baseURL: 'https://ffltest.azurewebsites.net/api',
     headers: {
         'content-type': 'application/json'
     }
