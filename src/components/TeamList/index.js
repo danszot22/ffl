@@ -125,15 +125,15 @@ function TeamList({ league, user }) {
     };
 
     const columns = [
-        { field: 'Division', width: isBelowMedium ? 30 : 100, headerName: 'Division', sortable: false, editable: false },
-        { field: 'TeamName', width: isBelowMedium ? 80 : 240, headerName: 'Name', sortable: false, editable: true },
-        { field: 'OwnerName', width: isBelowMedium ? 80 : 240, headerName: 'Owner', sortable: false, editable: true },
-        { field: 'AvlAddDrops', width: isBelowMedium ? 30 : 100, headerName: '#Add/Drops', type: 'number', sortable: false, editable: true, },
+        { field: 'Division', width: isBelowMedium ? 50 : 100, headerName: 'Division', sortable: false, editable: false },
+        { field: 'TeamName', width: isBelowMedium ? 160 : 240, headerName: 'Name', sortable: false, editable: true },
+        { field: 'OwnerName', width: isBelowMedium ? 160 : 240, headerName: 'Owner', sortable: false, editable: true },
+        { field: 'AvlAddDrops', width: isBelowMedium ? 50 : 100, headerName: '#Add/Drops', type: 'number', sortable: false, editable: true, },
         {
             field: 'managers',
             headerName: 'Managers',
             sortable: false,
-            width: 360,
+            width: isBelowMedium ? 240 : 360,
             renderCell: (params) => (
                 <ManagerList team={params.row} handleDeleteClick={handleDelete} isEditable={user?.isAdmin || user?.isCommissioner} />
             ),
