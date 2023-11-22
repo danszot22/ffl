@@ -8,13 +8,17 @@ import { convertDateToLocal, formatFantasyTeamName, formatPlayerFullName, format
 import { ThumbDown, ThumbUp } from "@mui/icons-material";
 import withAuth from "../withAuth";
 import { approveTrade, denyTrade } from "../../api/ffl";
+import ConfirmationDialog from '../common/ConfirmationDialog';
 
 function LeagueTrades({ league, user }) {
     const theme = useTheme();
     const isBelowMedium = useMediaQuery(theme.breakpoints.down('md'));
     const [trades, setTrades] = useState([]);
+    const [tradeId, setTradeId] = useState();
     const [isUpdating, setIsUpdating] = useState(false);
     const [message, setMessage] = useState(false);
+    const [showApproveConfirmation, setShowApproveConfirmation] = useState(false);
+    const [showDenyConfirmation, setShowDenyConfirmation] = useState(false);
 
     useEffect(() => {
         const fetchTrades = async (leagueId) => {
@@ -27,31 +31,44 @@ function LeagueTrades({ league, user }) {
     ]);
 
     const handleApprove = async (id) => {
+        setTradeId(id);
+        setShowApproveConfirmation(true);
+    };
+
+    const handleDeny = async (id) => {
+        setTradeId(id);
+        setShowDenyConfirmation(true);
+    };
+
+    const handleApproveConfirmClick = async () => {
+        setShowApproveConfirmation(false);
         setMessage();
         setIsUpdating(true);
-        const result = await approveTrade(id);
+        const result = await approveTrade(tradeId);
         setIsUpdating(false);
         if (result?.Message) {
             setMessage(result?.Message);
         }
         else {
             const updatedTrades = trades.filter((trade) => {
-                return trade.TradeId !== id;
+                return trade.TradeId !== tradeId;
             });
             setTrades(updatedTrades);
         }
     };
-    const handleDeny = async (id) => {
+
+    const handleDenyConfirmClick = async () => {
+        setShowDenyConfirmation(false);
         setMessage();
         setIsUpdating(true);
-        const result = await denyTrade(id);
+        const result = await denyTrade(tradeId);
         setIsUpdating(false);
         if (result?.Message) {
             setMessage(result?.Message);
         }
         else {
             const updatedTrades = trades.filter((trade) => {
-                return trade.TradeId !== id;
+                return trade.TradeId !== tradeId;
             });
             setTrades(updatedTrades);
         }
@@ -60,6 +77,12 @@ function LeagueTrades({ league, user }) {
     return (
         <Root title={'League Trades'}>
             <PageToolbar title={'League Trades'} />
+            <ConfirmationDialog open={showApproveConfirmation} setOpen={setShowApproveConfirmation}
+                message={message} isUpdating={isUpdating} handleConfirmClick={handleApproveConfirmClick}
+                confirmationMessage={'Approve Trade Request?'} />
+            <ConfirmationDialog open={showDenyConfirmation} setOpen={setShowDenyConfirmation}
+                message={message} isUpdating={isUpdating} handleConfirmClick={handleDenyConfirmClick}
+                confirmationMessage={'Deny Trade Request?'} />
             {isUpdating ? <CircularProgress /> : null}
             <Typography color="error">{message}</Typography>
             <TableContainer component={Paper}>

@@ -8,13 +8,18 @@ import { convertDateToLocal, formatFantasyTeamName, formatPlayerFullName, format
 import { Delete, ThumbDown, ThumbUp } from "@mui/icons-material";
 import withAuth from "../withAuth";
 import { acceptTrade, deleteTrade, rejectTrade } from "../../api/ffl";
+import ConfirmationDialog from '../common/ConfirmationDialog';
 
 function TeamTrades({ team }) {
     const theme = useTheme();
     const isBelowMedium = useMediaQuery(theme.breakpoints.down('md'));
     const [trades, setTrades] = useState([]);
+    const [tradeId, setTradeId] = useState();
     const [isUpdating, setIsUpdating] = useState(false);
     const [message, setMessage] = useState(false);
+    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+    const [showRejectConfirmation, setShowRejectConfirmation] = useState(false);
+    const [showAcceptConfirmation, setShowAcceptConfirmation] = useState(false);
 
     useEffect(() => {
         const fetchTrades = async (teamId) => {
@@ -27,54 +32,84 @@ function TeamTrades({ team }) {
     ]);
 
     const handleDelete = async (id) => {
-        setMessage();
-        setIsUpdating(true);
-        const result = await deleteTrade(id);
-        setIsUpdating(false);
-        if (result?.Message) {
-            setMessage(result?.Message);
-        }
-        else {
-            const updatedTrades = trades.filter((trade) => {
-                return trade.TradeId !== id;
-            });
-            setTrades(updatedTrades);
-        }
+        setTradeId(id);
+        setShowDeleteConfirmation(true);
     };
-    const handleAccept = async (id) => {
-        setMessage();
-        setIsUpdating(true);
-        const result = await acceptTrade(id);
-        setIsUpdating(false);
-        if (result?.Message) {
-            setMessage(result?.Message);
-        }
-        else {
-            const updatedTrades = trades.filter((trade) => {
-                return trade.TradeId !== id;
-            });
-            setTrades(updatedTrades);
-        }
-    };
+
     const handleReject = async (id) => {
+        setTradeId(id);
+        setShowRejectConfirmation(true);
+    };
+
+    const handleAccept = async (id) => {
+        setTradeId(id);
+        setShowAcceptConfirmation(true);
+    };
+
+    const handleDeleteConfirmClick = async () => {
+        setShowDeleteConfirmation(false);
         setMessage();
         setIsUpdating(true);
-        const result = await rejectTrade(id);
+        const result = await deleteTrade(tradeId);
         setIsUpdating(false);
         if (result?.Message) {
             setMessage(result?.Message);
         }
         else {
             const updatedTrades = trades.filter((trade) => {
-                return trade.TradeId !== id;
+                return trade.TradeId !== tradeId;
             });
             setTrades(updatedTrades);
         }
     };
+
+    const handleAcceptConfirmClick = async () => {
+        setShowAcceptConfirmation(false);
+        setMessage();
+        setIsUpdating(true);
+        const result = await acceptTrade(tradeId);
+        setIsUpdating(false);
+        if (result?.Message) {
+            setMessage(result?.Message);
+        }
+        else {
+            const updatedTrades = trades.filter((trade) => {
+                return trade.TradeId !== tradeId;
+            });
+            setTrades(updatedTrades);
+        }
+    };
+
+    const handleRejectConfirmClick = async () => {
+        setShowRejectConfirmation(false);
+        setMessage();
+        setIsUpdating(true);
+        const result = await rejectTrade(tradeId);
+        setIsUpdating(false);
+        if (result?.Message) {
+            setMessage(result?.Message);
+        }
+        else {
+            const updatedTrades = trades.filter((trade) => {
+                return trade.TradeId !== tradeId;
+            });
+            setTrades(updatedTrades);
+        }
+    };
+
     return (
         <Root title={'Team Trades'}>
             <PageToolbar title={'Team Trades'} />
             {isUpdating ? <CircularProgress /> : null}
+            <ConfirmationDialog open={showDeleteConfirmation} setOpen={setShowDeleteConfirmation}
+                message={message} isUpdating={isUpdating} handleConfirmClick={handleDeleteConfirmClick}
+                confirmationMessage={'Delete Trade Request?'} />
+            <ConfirmationDialog open={showRejectConfirmation} setOpen={setShowRejectConfirmation}
+                message={message} isUpdating={isUpdating} handleConfirmClick={handleRejectConfirmClick}
+                confirmationMessage={'Reject Trade Request?'} />
+            <ConfirmationDialog open={showAcceptConfirmation} setOpen={setShowAcceptConfirmation}
+                message={message} isUpdating={isUpdating} handleConfirmClick={handleAcceptConfirmClick}
+                confirmationMessage={'Accept Trade Request?'} />
             <Typography color="error">{message}</Typography>
             <TableContainer component={Paper}>
                 <Table size="small" aria-label="simple table">
