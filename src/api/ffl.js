@@ -186,3 +186,23 @@ export const createTrade = async (givingTeamId, receivingTeamId, players) => {
             });
     return result?.data;
 }
+
+export const updateWaiverRequestOrder = async (teamId, requestIds) => {
+    const result =
+        await fflapi
+            .post(`/waivers/${teamId}`, requestIds)
+            .catch((error) => {
+                return error?.response;
+            });
+    return result?.data;
+}
+
+export const deleteWaiverRequest = async (requestId) => {
+    const result =
+        await fflapi
+            .delete(`/waivers/${requestId}`)
+            .catch((error) => {
+                return error?.response;
+            });
+    return result?.data;
+}
