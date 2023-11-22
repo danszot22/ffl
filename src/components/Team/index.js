@@ -34,7 +34,7 @@ function Team({ league, team, user }) {
             setTeamDetails(teamResponse);
             const scheduleResponse = await teamScheduleLoader(teamId, 0);
             setSchedule(mapToTeamGameList(scheduleResponse, teamId));
-            const waiverResponse = await teamWaiverRequestsLoader(teamId, 2);
+            const waiverResponse = await teamWaiverRequestsLoader(teamId, 0);
             setWaivers(waiverResponse);
             const transactionResponse = await teamTransactionsLoader(teamId);
             setTransactions(transactionResponse);
