@@ -64,6 +64,17 @@ export const updateTeams = async (leagueId, teams) => {
     return result?.data;
 }
 
+export const updateFinances = async (leagueId, teams) => {
+    const result =
+        await fflapi
+            .post(`/v2/league/${leagueId}/finances`, teams)
+            .catch((error) => {
+                console.log(error);
+                return error?.response;
+            });
+    return result?.data;
+}
+
 export const reorganizeLeague = async (leagueId) => {
     const result =
         await fflapi

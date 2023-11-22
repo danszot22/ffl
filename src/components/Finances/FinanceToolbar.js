@@ -1,8 +1,9 @@
-import { Button, Toolbar } from '@mui/material';
+import { Button, CircularProgress, Toolbar, Typography } from '@mui/material';
 import { GridRowModes } from '@mui/x-data-grid';
+import { updateFinances } from '../../api/ffl';
 
 function FinanceToolbar(props) {
-    const { gridMode, rowModesModel, setRowModesModel, teams } = props;
+    const { gridMode, rowModesModel, setRowModesModel, teams, apiRef, leagueId, isUpdating, setIsUpdating, message, setMessage } = props;
 
     const convertArrayToObject = (array, key, mode, ignoreModifications) => {
         const initialValue = {};
@@ -17,10 +18,23 @@ function FinanceToolbar(props) {
         }, initialValue);
     };
 
-    const handleSaveOrEdit = () => {
+    const handleSaveOrEdit = async () => {
         if (gridMode === 'edit') {
             setRowModesModel(convertArrayToObject(teams, 'TeamId', GridRowModes.View, false));
-            //TODO : Call API
+            const updatedRows = Object.keys(apiRef?.current?.state.editRows).map((key) => {
+                return {
+                    TeamId: +key,
+                    EntryFee: apiRef?.current?.state.editRows[key]?.EntryFee?.value,
+                    FeesPaid: apiRef?.current?.state.editRows[key]?.FeesPaid?.value,
+                    WinningsPaid: apiRef?.current?.state.editRows[key]?.WinningsPaid?.value
+                }
+            });
+            setIsUpdating(true);
+            const result = await updateFinances(leagueId, updatedRows);
+            setIsUpdating(false);
+            if (result?.Message) {
+                setMessage([result?.Message]);
+            }
         } else {
             setRowModesModel(convertArrayToObject(teams, 'TeamId', GridRowModes.Edit, true));
         }
@@ -63,6 +77,8 @@ function FinanceToolbar(props) {
             >
                 Cancel
             </Button>
+            {isUpdating ? <CircularProgress /> : null}
+            <Typography color="error">{message}</Typography>
         </Toolbar>
     );
 }

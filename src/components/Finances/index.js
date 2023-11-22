@@ -9,12 +9,15 @@ import PageToolbar from '../common/PageToolbar';
 import withAuth from '../withAuth';
 import TeamLink from '../common/TeamLink';
 import { useMediaQuery, useTheme } from '@mui/material';
+import useApiRef from '../../hooks/useApiRef';
 
 function Finances({ league, user }) {
     const theme = useTheme();
     const isBelowMedium = useMediaQuery(theme.breakpoints.down('md'));
 
     const [teams, setTeams] = useState([]);
+    const [isUpdating, setIsUpdating] = useState(false);
+    const [message, setMessage] = useState();
 
     useEffect(() => {
         const fetchFinances = async () => {
@@ -92,13 +95,14 @@ function Finances({ league, user }) {
         },
     ];
 
+    const { apiRef, columns: refColumns } = useApiRef(columns);
     return (
         <Root title={'Finances'}>
             <PageToolbar title={'Finances'} />
             <StyledDataGrid
                 getRowId={(row) => row.TeamId}
                 rows={teams}
-                columns={columns}
+                columns={refColumns}
                 onCellKeyDown={handleCellKeyDown}
                 rowModesModel={rowModesModel}
                 onCellEditStop={handleCellEditStop}
@@ -116,7 +120,13 @@ function Finances({ league, user }) {
                         gridMode,
                         rowModesModel,
                         setRowModesModel,
-                        teams
+                        teams,
+                        apiRef,
+                        leagueId: league?.LeagueId,
+                        isUpdating,
+                        setIsUpdating,
+                        message,
+                        setMessage
                     },
                 }}
                 getRowClassName={(params) =>
