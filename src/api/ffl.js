@@ -113,3 +113,65 @@ export const deleteManager = async (managerId) => {
             });
     return result?.data;
 }
+
+export const approveTrade = async (tradeId) => {
+    const result =
+        await fflapi
+            .post(`/trade/${tradeId}/approve`)
+            .catch((error) => {
+                return error?.response;
+            });
+    return result?.data;
+}
+
+export const denyTrade = async (tradeId) => {
+    const result =
+        await fflapi
+            .post(`/trade/${tradeId}/deny`)
+            .catch((error) => {
+                return error?.response;
+            });
+    return result?.data;
+}
+
+export const acceptTrade = async (tradeId) => {
+    const urlToPage = "https://kind-sky-02d625b0f.4.azurestaticapps.net/LeagueTrades";
+    const result =
+        await fflapi
+            .post(`/trade/${tradeId}/accept`, { urlToPage })
+            .catch((error) => {
+                return error?.response;
+            });
+    return result?.data;
+}
+
+export const rejectTrade = async (tradeId) => {
+    const result =
+        await fflapi
+            .post(`/trade/${tradeId}/reject`)
+            .catch((error) => {
+                return error?.response;
+            });
+    return result?.data;
+}
+
+export const deleteTrade = async (tradeId) => {
+    const result =
+        await fflapi
+            .delete(`/trade/${tradeId}/delete`)
+            .catch((error) => {
+                return error?.response;
+            });
+    return result?.data;
+}
+
+export const createTrade = async (givingTeamId, receivingTeamId, players) => {
+    const urlToPage = "https://kind-sky-02d625b0f.4.azurestaticapps.net/TeamTrades";
+    const result =
+        await fflapi
+            .post(`/trade/${givingTeamId}/${receivingTeamId}/create/`, { players, urlToPage })
+            .catch((error) => {
+                return error?.response;
+            });
+    return result?.data;
+}

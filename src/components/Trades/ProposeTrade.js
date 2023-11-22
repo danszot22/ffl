@@ -3,12 +3,15 @@ import Root from "../Root";
 import PageToolbar from "../common/PageToolbar";
 import { leaguePlayersLoader, teamsLoader } from "../../api/graphql";
 import { mapToRosterList } from "../../utils/parsers";
-import { Box, Button, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import { Box, Button, CircularProgress, FormControl, InputLabel, MenuItem, Select, Typography } from "@mui/material";
 import TeamRoster from "./TeamRoster";
 import withAuth from "../withAuth";
 import { formatFantasyTeamName } from "../../utils/helpers";
+import { createTrade } from "../../api/ffl";
+import { useNavigate } from "react-router";
 
 function ProposeTrade({ league, team }) {
+    const navigate = useNavigate();
     const [rosters, setRosters] = useState([]);
     const [teams, setTeams] = useState([]);
     const [teamRoster, setTeamRoster] = useState([]);
@@ -16,6 +19,8 @@ function ProposeTrade({ league, team }) {
     const [proposedTeam, setProposedTeam] = useState({});
     const [givingPlayers, setGivingPlayers] = useState([]);
     const [receivingPlayers, setReceivingPlayers] = useState([]);
+    const [isUpdating, setIsUpdating] = useState(false);
+    const [message, setMessage] = useState(false);
 
     useEffect(() => {
         setProposedTeamRoster(rosters.find(rosterPlayer => rosterPlayer?.team.TeamId === proposedTeam));
@@ -64,13 +69,21 @@ function ProposeTrade({ league, team }) {
         setReceivingPlayers([]);
     };
 
-    const handleSubmit = (event) => {
-        //TODO : Call API
-        console.log(givingPlayers, receivingPlayers);
+    const handleSubmit = async () => {
+        const players = givingPlayers.concat(receivingPlayers);
+        setMessage();
+        setIsUpdating(true);
+        const result = await createTrade(team?.TeamId, proposedTeam, players);
+        setIsUpdating(false);
+        if (result?.Message) {
+            setMessage(result?.Message);
+        }
+        else {
+            navigate(`/TeamTrades`);
+        }
     };
 
     const handlePlayerChange = (event) => {
-        //TODO : Call API
         const player = teamRoster?.Players?.find(rosterPlayer => +event.target.name === rosterPlayer.RosterPlayerId);
         if (player) {
             if (event.target.checked) {
@@ -120,10 +133,12 @@ function ProposeTrade({ league, team }) {
             <Button
                 variant="contained"
                 sx={{ ml: 1 }}
-                to={`/TeamTrades/${team?.TeamId}`}
+                to={`/TeamTrades`}
             >
                 Cancel
             </Button>
+            {isUpdating ? <CircularProgress /> : null}
+            <Typography color="error">{message}</Typography>
         </Root>
     )
 }
