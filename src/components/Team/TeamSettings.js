@@ -1,15 +1,18 @@
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import Root from "../Root";
-import { Box, TextField, Button } from "@mui/material";
+import { Box, TextField, Button, Typography, CircularProgress } from "@mui/material";
 import { useEffect, useState } from "react";
 import PageToolbar from "../common/PageToolbar";
 import withAuth from "../withAuth";
+import { updateTeam } from "../../api/ffl";
 
 function TeamSettings({ league, team }) {
     const { state } = useLocation();
     const { leagueId } = useParams();
     const [ownerName, setOwnerName] = useState(state?.OwnerName);
     const [teamName, setTeamName] = useState(state?.TeamName);
+    const [isUpdating, setIsUpdating] = useState(false);
+    const [message, setMessage] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -22,9 +25,17 @@ function TeamSettings({ league, team }) {
     }, [navigate, leagueId, league?.LeagueId, team.TeamId]);
 
 
-    const handleSave = (event) => {
-        //TODO : Call API
-        console.log(state, ownerName, teamName);
+    const handleSave = async () => {
+        setMessage();
+        setIsUpdating(true);
+        const result = await updateTeam(team?.TeamId, { ownerName, teamName });
+        setIsUpdating(false);
+        if (result?.Message) {
+            setMessage(result?.Message);
+        }
+        else {
+            navigate('/Team');
+        }
     };
 
     return (
@@ -64,6 +75,8 @@ function TeamSettings({ league, team }) {
             >
                 Cancel
             </Button>
+            {isUpdating ? <CircularProgress /> : null}
+            <Typography color="error">{message}</Typography>
         </Root>)
 }
 

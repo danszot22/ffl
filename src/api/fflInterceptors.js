@@ -22,7 +22,7 @@ const fflInterceptors = (navigate) => {
 
             // If the error status is 401 and there is no originalRequest._retry flag,
             // it means the token has expired and we need to refresh it
-            if ((error.response.status === 401 || error.response.status === 403) && !originalRequest._retry) {
+            if ((error?.response?.status === 401 || error?.response?.status === 403) && !originalRequest._retry) {
                 originalRequest._retry = true;
 
                 try {
@@ -43,7 +43,7 @@ const fflInterceptors = (navigate) => {
                     navigate(`/Login?error=${error?.code}`);
                 }
             }
-
+            console.log(error);
             return Promise.reject(error);
         }
     );

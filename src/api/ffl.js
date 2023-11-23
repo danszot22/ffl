@@ -9,29 +9,38 @@ export const fflapi = axios.create({
 
 export const getTransactionText = async (nflTeamId, rosterPlayerId) => {
 
-    const result = await fflapi.get(`/rosterPlayer/${nflTeamId}/${rosterPlayerId}/transactionType`)
-        .catch((error) => {
-            return error?.response;
-        });
-    return result?.data;
+    const result =
+        await fflapi
+            .get(`/rosterPlayer/${nflTeamId}/${rosterPlayerId}/transactionType`)
+            .catch((error) => {
+                const message = error?.message ? error.message : 'An error occurred';
+                return { Message: message };
+            });
+    return result?.data ? result?.data : result;
 }
 
 export const getRosterPlayersToDrop = async (leagueId, teamId, playerId) => {
 
-    const result = await fflapi.get(`/rosterPlayer/${leagueId}/${teamId}/${playerId}/players`)
-        .catch((error) => {
-            return error?.response;
-        });
-    return result?.data;
+    const result =
+        await fflapi
+            .get(`/rosterPlayer/${leagueId}/${teamId}/${playerId}/players`)
+            .catch((error) => {
+                const message = error?.message ? error.message : 'An error occurred';
+                return { Message: message };
+            });
+    return result?.data ? result?.data : result;
 }
 
 export const getPositionsToAdd = async (leagueId, teamId, playerId) => {
 
-    const result = await fflapi.get(`/rosterPlayer/${leagueId}/${teamId}/${playerId}/positions`)
-        .catch((error) => {
-            return error?.response;
-        });
-    return result?.data;
+    const result =
+        await fflapi
+            .get(`/rosterPlayer/${leagueId}/${teamId}/${playerId}/positions`)
+            .catch((error) => {
+                const message = error?.message ? error.message : 'An error occurred';
+                return { Message: message };
+            });
+    return result?.data ? result?.data : result;
 }
 
 export const updateRoster = async (leagueId, teamId, playerId, rosterPlayerId) => {
@@ -39,9 +48,10 @@ export const updateRoster = async (leagueId, teamId, playerId, rosterPlayerId) =
         await fflapi
             .post(`/rosterPlayer/${leagueId}/${rosterPlayerId}/`, { teamId, playerId })
             .catch((error) => {
-                return error?.response;
+                const message = error?.message ? error.message : 'An error occurred';
+                return { Message: message };
             });
-    return result?.data;
+    return result?.data ? result?.data : result;
 }
 
 export const updateLineup = async (teamId, week, lineup) => {
@@ -49,9 +59,10 @@ export const updateLineup = async (teamId, week, lineup) => {
         await fflapi
             .post(`/lineup/${teamId}/${week}/`, lineup)
             .catch((error) => {
-                return error?.response;
+                const message = error?.message ? error.message : 'An error occurred';
+                return { Message: message };
             });
-    return result?.data;
+    return result?.data ? result?.data : result;
 }
 
 export const updateTeams = async (leagueId, teams) => {
@@ -59,9 +70,10 @@ export const updateTeams = async (leagueId, teams) => {
         await fflapi
             .post(`/v2/league/${leagueId}/teams`, teams)
             .catch((error) => {
-                return error?.response;
+                const message = error?.message ? error.message : 'An error occurred';
+                return { Message: message };
             });
-    return result?.data;
+    return result?.data ? result?.data : result;
 }
 
 export const updateFinances = async (leagueId, teams) => {
@@ -69,10 +81,10 @@ export const updateFinances = async (leagueId, teams) => {
         await fflapi
             .post(`/v2/league/${leagueId}/finances`, teams)
             .catch((error) => {
-                console.log(error);
-                return error?.response;
+                const message = error?.message ? error.message : 'An error occurred';
+                return { Message: message };
             });
-    return result?.data;
+    return result?.data ? result?.data : result;
 }
 
 export const reorganizeLeague = async (leagueId) => {
@@ -80,9 +92,10 @@ export const reorganizeLeague = async (leagueId) => {
         await fflapi
             .post(`/v2/league/${leagueId}/reorganize`)
             .catch((error) => {
-                return error?.response;
+                const message = error?.message ? error.message : 'An error occurred';
+                return { Message: message };
             });
-    return result?.data;
+    return result?.data ? result?.data : result;
 }
 
 export const recreateSchedule = async (leagueId) => {
@@ -90,9 +103,10 @@ export const recreateSchedule = async (leagueId) => {
         await fflapi
             .post(`/v2/league/${leagueId}/reschedule`)
             .catch((error) => {
-                return error?.response;
+                const message = error?.message ? error.message : 'An error occurred';
+                return { Message: message };
             });
-    return result?.data;
+    return result?.data ? result?.data : result;
 }
 
 export const sendInvitations = async (leagueId) => {
@@ -100,9 +114,10 @@ export const sendInvitations = async (leagueId) => {
         await fflapi
             .post(`/v2/league/${leagueId}/invitations`)
             .catch((error) => {
-                return error?.response;
+                const message = error?.message ? error.message : 'An error occurred';
+                return { Message: message };
             });
-    return result?.data;
+    return result?.data ? result?.data : result;
 }
 
 export const addManager = async (leagueId, manager) => {
@@ -110,9 +125,10 @@ export const addManager = async (leagueId, manager) => {
         await fflapi
             .post(`/v2/league/${leagueId}/teamOwner`, manager)
             .catch((error) => {
-                return error?.response;
+                const message = error?.message ? error.message : 'An error occurred';
+                return { Message: message };
             });
-    return result?.data;
+    return result?.data ? result?.data : result;
 }
 
 export const deleteManager = async (managerId) => {
@@ -120,9 +136,10 @@ export const deleteManager = async (managerId) => {
         await fflapi
             .delete(`/v2/league/teamOwner/${managerId}`)
             .catch((error) => {
-                return error?.response;
+                const message = error?.message ? error.message : 'An error occurred';
+                return { Message: message };
             });
-    return result?.data;
+    return result?.data ? result?.data : result;
 }
 
 export const approveTrade = async (tradeId) => {
@@ -130,9 +147,10 @@ export const approveTrade = async (tradeId) => {
         await fflapi
             .post(`/trade/${tradeId}/approve`)
             .catch((error) => {
-                return error?.response;
+                const message = error?.message ? error.message : 'An error occurred';
+                return { Message: message };
             });
-    return result?.data;
+    return result?.data ? result?.data : result;
 }
 
 export const denyTrade = async (tradeId) => {
@@ -140,9 +158,10 @@ export const denyTrade = async (tradeId) => {
         await fflapi
             .post(`/trade/${tradeId}/deny`)
             .catch((error) => {
-                return error?.response;
+                const message = error?.message ? error.message : 'An error occurred';
+                return { Message: message };
             });
-    return result?.data;
+    return result?.data ? result?.data : result;
 }
 
 export const acceptTrade = async (tradeId) => {
@@ -151,9 +170,10 @@ export const acceptTrade = async (tradeId) => {
         await fflapi
             .post(`/trade/${tradeId}/accept`, { urlToPage })
             .catch((error) => {
-                return error?.response;
+                const message = error?.message ? error.message : 'An error occurred';
+                return { Message: message };
             });
-    return result?.data;
+    return result?.data ? result?.data : result;
 }
 
 export const rejectTrade = async (tradeId) => {
@@ -161,9 +181,10 @@ export const rejectTrade = async (tradeId) => {
         await fflapi
             .post(`/trade/${tradeId}/reject`)
             .catch((error) => {
-                return error?.response;
+                const message = error?.message ? error.message : 'An error occurred';
+                return { Message: message };
             });
-    return result?.data;
+    return result?.data ? result?.data : result;
 }
 
 export const deleteTrade = async (tradeId) => {
@@ -171,9 +192,10 @@ export const deleteTrade = async (tradeId) => {
         await fflapi
             .delete(`/trade/${tradeId}/delete`)
             .catch((error) => {
-                return error?.response;
+                const message = error?.message ? error.message : 'An error occurred';
+                return { Message: message };
             });
-    return result?.data;
+    return result?.data ? result?.data : result;
 }
 
 export const createTrade = async (givingTeamId, receivingTeamId, players) => {
@@ -182,9 +204,10 @@ export const createTrade = async (givingTeamId, receivingTeamId, players) => {
         await fflapi
             .post(`/trade/${givingTeamId}/${receivingTeamId}/create/`, { players, urlToPage })
             .catch((error) => {
-                return error?.response;
+                const message = error?.message ? error.message : 'An error occurred';
+                return { Message: message };
             });
-    return result?.data;
+    return result?.data ? result?.data : result;
 }
 
 export const updateWaiverRequestOrder = async (teamId, requestIds) => {
@@ -192,9 +215,10 @@ export const updateWaiverRequestOrder = async (teamId, requestIds) => {
         await fflapi
             .post(`/waivers/${teamId}`, requestIds)
             .catch((error) => {
-                return error?.response;
+                const message = error?.message ? error.message : 'An error occurred';
+                return { Message: message };
             });
-    return result?.data;
+    return result?.data ? result?.data : result;
 }
 
 export const deleteWaiverRequest = async (requestId) => {
@@ -202,7 +226,41 @@ export const deleteWaiverRequest = async (requestId) => {
         await fflapi
             .delete(`/waivers/${requestId}`)
             .catch((error) => {
-                return error?.response;
+                const message = error?.message ? error.message : 'An error occurred';
+                return { Message: message };
             });
-    return result?.data;
+    return result?.data ? result?.data : result;
+}
+
+export const updateTeam = async (teamId, team) => {
+    const result =
+        await fflapi
+            .post(`/v2/team/${teamId}`, team)
+            .catch((error) => {
+                const message = error?.message ? error.message : 'An error occurred';
+                return { Message: message };
+            });
+    return result?.data ? result?.data : result;
+}
+
+export const updateAccount = async (userId, account) => {
+    const result =
+        await fflapi
+            .post(`/account/${userId}`, account)
+            .catch((error) => {
+                const message = error?.message ? error.message : 'An error occurred';
+                return { Message: message };
+            });
+    return result?.data ? result?.data : result;
+}
+
+export const updateDefaultLeague = async (userId, toLeagueId) => {
+    const result =
+        await fflapi
+            .post(`/account/${userId}/league/${toLeagueId}`)
+            .catch((error) => {
+                const message = error?.message ? error.message : 'An error occurred';
+                return { Message: message };
+            });
+    return result?.data ? result?.data : result;
 }

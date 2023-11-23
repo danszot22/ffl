@@ -2,14 +2,17 @@ import { useEffect, useState } from "react";
 import Root from "../Root";
 import withAuth from "../withAuth";
 import { userLoader } from "../../api/graphql";
-import { Box, Button, Checkbox, Divider, FormControlLabel, FormGroup, TextField } from "@mui/material";
+import { Box, Button, Checkbox, CircularProgress, Divider, FormControlLabel, FormGroup, TextField, Typography } from "@mui/material";
 import PageToolbar from "../common/PageToolbar";
 import { useNavigate } from "react-router-dom";
+import { updateAccount } from "../../api/ffl";
 
 function Account({ user }) {
     const [accountDetails, setAccountDetails] = useState();
     const [emailIR, setEmailIR] = useState(false);
     const [emailStats, setEmailStats] = useState(false);
+    const [isUpdating, setIsUpdating] = useState(false);
+    const [message, setMessage] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -27,10 +30,17 @@ function Account({ user }) {
         fetchData();
     }, [user?.userName]);
 
-    const handleSave = (event) => {
-        //TODO : Call API
-        console.log(accountDetails);
-        navigate(-1);
+    const handleSave = async () => {
+        setMessage();
+        setIsUpdating(true);
+        const result = await updateAccount(user?.userId, accountDetails);
+        setIsUpdating(false);
+        if (result?.Message) {
+            setMessage(result?.Message);
+        }
+        else {
+            navigate(-1);
+        }
     };
 
     const handleChange = (id, value) => {
@@ -129,6 +139,8 @@ function Account({ user }) {
             >
                 Cancel
             </Button>
+            {isUpdating ? <CircularProgress /> : null}
+            <Typography color="error">{message}</Typography>
         </Root>
     )
 }

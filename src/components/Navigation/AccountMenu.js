@@ -5,6 +5,7 @@ import { FantasyTeamContext, setLeague, setTeam, setUser } from '../../contexts/
 import { useNavigate } from 'react-router-dom';
 import { Password } from '@mui/icons-material';
 import { dispatchLeagueChange, formatFantasyTeamName } from '../../utils/helpers';
+import { updateDefaultLeague } from '../../api/ffl';
 
 export default function AccountMenu({ user, leagues, league, team }) {
     const [anchorEl, setAnchorEl] = useState(null);
@@ -17,8 +18,8 @@ export default function AccountMenu({ user, leagues, league, team }) {
         setAnchorEl(event.currentTarget);
     };
 
-    const handleChange = (leagueId) => {
-        //TODO Call API
+    const handleChange = async (leagueId) => {
+        await updateDefaultLeague(user?.userId, leagueId);
         dispatchLeagueChange(dispatch, user.userId, leagueId);
     };
 
