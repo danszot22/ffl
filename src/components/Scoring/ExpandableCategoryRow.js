@@ -34,7 +34,7 @@ export default function ExpandableCategoryRow({ category, team, row, showProject
                                     theme.palette.warning.dark,
                             }}
                         >
-                            {row.Starters.filter(player => player.NflGame.Playing &&
+                            {row.Starters.filter(player => player.NflGame?.Playing &&
                                 ((category.startsWith('Pass') && ["TMQB", "QB"].includes(player.Player.Position.PositionCode)) ||
                                     (category.startsWith('Rush') && ["RB"].includes(player.Player.Position.PositionCode)) ||
                                     (category.startsWith('Rec') && ["WR", "TE"].includes(player.Player.Position.PositionCode)) ||
@@ -54,7 +54,7 @@ export default function ExpandableCategoryRow({ category, team, row, showProject
                                     theme.palette.error.dark,
                             }}
                         >
-                            {row.Starters.filter(player => player.NflGame.NotPlayed &&
+                            {row.Starters.filter(player => player.NflGame?.NotPlayed &&
                                 ((category.startsWith('Pass') && ["TMQB", "QB"].includes(player.Player.Position.PositionCode)) ||
                                     (category.startsWith('Rush') && ["RB"].includes(player.Player.Position.PositionCode)) ||
                                     (category.startsWith('Rec') && ["WR", "TE"].includes(player.Player.Position.PositionCode)) ||
