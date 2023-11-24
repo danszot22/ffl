@@ -6,7 +6,7 @@ import TeamToolbar from './TeamToolbar';
 import ManagerList from './ManagerList';
 import { teamsLoader } from '../../api/graphql';
 import PageToolbar from '../common/PageToolbar';
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField, useMediaQuery, useTheme } from '@mui/material';
+import { TextField, useMediaQuery, useTheme } from '@mui/material';
 import withAuth from '../withAuth';
 import useApiRef from '../../hooks/useApiRef';
 import { addManager, deleteManager } from '../../api/ffl';
@@ -24,6 +24,10 @@ function TeamList({ league, user }) {
     const [email, setEmail] = useState('');
     const [isUpdating, setIsUpdating] = useState(false);
     const [message, setMessage] = useState();
+    const [isAdding, setIsAdding] = useState(false);
+    const [addMessage, setAddMessage] = useState();
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [deleteMessage, setDeleteMessage] = useState();
 
     useEffect(() => {
         const fetchTeams = async (leagueId) => {
@@ -53,7 +57,8 @@ function TeamList({ league, user }) {
         event.defaultMuiPrevented = true;
     }, []);
 
-    const handleClickOpen = (row) => {
+    const handleClickAddOpen = (row) => {
+        setAddMessage();
         setOpen(true);
         setSelectedTeam(row);
     };
@@ -66,11 +71,11 @@ function TeamList({ league, user }) {
 
     const handleAddClick = async () => {
         const newManager = { TeamId: selectedTeam.TeamId, Email: email };
-        setIsUpdating(true);
+        setIsAdding(true);
         const result = await addManager(league?.LeagueId, newManager);
-        setIsUpdating(false);
+        setIsAdding(false);
         if (result?.Message) {
-            setMessage([result?.Message]);
+            setAddMessage([result?.Message]);
         }
         else {
             const updatedTeams = teams.map((team) => {
@@ -93,18 +98,18 @@ function TeamList({ league, user }) {
     };
 
     const handleDelete = async (row, teamOwnerToDelete) => {
-        setMessage();
+        setDeleteMessage();
         setShowDeleteConfirmation(true);
         setSelectedTeam(row);
         setSelectedTeamOwner(teamOwnerToDelete);
     }
 
     const handleConfirmClick = async () => {
-        setIsUpdating(true);
+        setIsDeleting(true);
         const result = await deleteManager(selectedTeamOwner.TeamOwnerId);
-        setIsUpdating(false);
+        setIsDeleting(false);
         if (result?.Message) {
-            setMessage([result?.Message]);
+            setDeleteMessage([result?.Message]);
         }
         else {
             const updatedTeams = teams.map((team) => {
@@ -121,6 +126,7 @@ function TeamList({ league, user }) {
                 }
             })
             setTeams(updatedTeams);
+            setShowDeleteConfirmation(false);
         }
     };
 
@@ -153,7 +159,7 @@ function TeamList({ league, user }) {
                             sx={{
                                 color: 'primary.main',
                             }}
-                            onClick={() => handleClickOpen(row)}
+                            onClick={() => handleClickAddOpen(row)}
                         />,
                     ] : [];
                 return actions;
@@ -201,32 +207,24 @@ function TeamList({ league, user }) {
                     params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd'
                 }
             />
-            <ConfirmationDialog open={showDeleteConfirmation} setOpen={setShowDeleteConfirmation}
-                message={message} isUpdating={isUpdating} handleConfirmClick={handleConfirmClick}
+            <ConfirmationDialog title={'Delete Manager'} open={showDeleteConfirmation} setOpen={setShowDeleteConfirmation}
+                message={deleteMessage} isUpdating={isDeleting} handleConfirmClick={handleConfirmClick}
                 confirmationMessage={'Are you sure you want to delete this manager?'} />
-            <Dialog open={open} onClose={handleClose}>
-                <DialogTitle>Add Manager</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                        To add a manager, please enter their email address here.
-                    </DialogContentText>
-                    <TextField
-                        autoFocus
-                        margin="dense"
-                        id="email"
-                        label="Email Address"
-                        type="email"
-                        fullWidth
-                        variant="standard"
-                        value={email}
-                        onChange={(event) => setEmail(event.target.value)}
-                    />
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleClose}>Cancel</Button>
-                    <Button onClick={handleAddClick}>Add</Button>
-                </DialogActions>
-            </Dialog>
+            <ConfirmationDialog title={'Add Manager'} open={open} setOpen={handleClose}
+                message={addMessage} isUpdating={isAdding} handleConfirmClick={handleAddClick}
+                confirmationMessage={'To add a manager, please enter their email address here.'} >
+                <TextField
+                    autoFocus
+                    margin="dense"
+                    id="email"
+                    label="Email Address"
+                    type="email"
+                    fullWidth
+                    variant="standard"
+                    value={email}
+                    onChange={(event) => setEmail(event.target.value)}
+                />
+            </ConfirmationDialog>
         </Root>
     );
 }

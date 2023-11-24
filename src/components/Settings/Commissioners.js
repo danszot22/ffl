@@ -1,15 +1,21 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Tooltip } from '@mui/material';
+import { Button, CircularProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Tooltip, Typography } from '@mui/material';
 import { StyledTableRow } from '../common/styled';
 import { convertDateToLocal } from "../../utils/helpers";
 import { Delete, Send } from '@mui/icons-material';
 import { useState } from 'react';
+import { addCommissioner, sendCommissionerInvitation } from '../../api/ffl';
+import ConfirmationDialog from '../common/ConfirmationDialog';
 
-export default function Commissioners({ commissioners, handleDelete, isEditable }) {
-
+export default function Commissioners({ leagueId, commissioners, setCommissioners, handleDelete, isEditable }) {
     const [open, setOpen] = useState(false);
     const [email, setEmail] = useState('');
+    const [isAdding, setIsAdding] = useState(false);
+    const [addMessage, setAddMessage] = useState();
+    const [isSending, setIsSending] = useState(false);
+    const [sendMessage, setSendMessage] = useState();
 
     const handleClickOpen = () => {
+        setAddMessage();
         setOpen(true);
     };
 
@@ -18,20 +24,38 @@ export default function Commissioners({ commissioners, handleDelete, isEditable 
         setEmail('');
     };
 
-    const handleAdd = () => {
-        setOpen(false);
-        console.log(email);
-        //TODO Call API
-
-        setEmail('');
+    const handleAdd = async () => {
+        const newCommissioner = { LeagueId: leagueId, Email: email };
+        setIsAdding(true);
+        const result = await addCommissioner(leagueId, newCommissioner);
+        setIsAdding(false);
+        if (result?.Message) {
+            setAddMessage([result?.Message]);
+        }
+        else {
+            const updatedCommissioners = commissioners.concat({ LeagueCommissionerId: result?.LeagueCommissionerId, Email: email, status: 'new' });
+            setCommissioners(updatedCommissioners);
+            setEmail('');
+            setOpen(false);
+        }
     };
 
-    const handleSendInvite = (id) => {
-        console.log(id);
+    const handleSendInvite = async () => {
+        setSendMessage();
+        setIsSending(true);
+        const result = await sendCommissionerInvitation(leagueId);
+        setIsSending(false);
+        if (result?.Message) {
+            setSendMessage([result?.Message]);
+        }
     }
 
     return (
         <>
+            {isSending ? <CircularProgress /> : null}
+            <Typography color="error" component="div">
+                {sendMessage}
+            </Typography>
             <TableContainer component={Paper} sx={{ border: 1 }}>
                 <Table>
                     <TableHead>
@@ -83,29 +107,21 @@ export default function Commissioners({ commissioners, handleDelete, isEditable 
                     </TableBody>
                 </Table>
             </TableContainer>
-            <Dialog open={open} onClose={handleClose}>
-                <DialogTitle>Add Commissioner</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                        To add a commissioner, please enter their email address here.
-                    </DialogContentText>
-                    <TextField
-                        autoFocus
-                        margin="dense"
-                        id="email"
-                        label="Email Address"
-                        type="email"
-                        fullWidth
-                        variant="standard"
-                        value={email}
-                        onChange={(event) => setEmail(event.target.value)}
-                    />
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleClose}>Cancel</Button>
-                    <Button onClick={handleAdd}>Add</Button>
-                </DialogActions>
-            </Dialog>
+            <ConfirmationDialog title={'Add Commissioner'} open={open} setOpen={handleClose}
+                message={addMessage} isUpdating={isAdding} handleConfirmClick={handleAdd}
+                confirmationMessage={'To add a commissioner, please enter their email address here.'} >
+                <TextField
+                    autoFocus
+                    margin="dense"
+                    id="email"
+                    label="Email Address"
+                    type="email"
+                    fullWidth
+                    variant="standard"
+                    value={email}
+                    onChange={(event) => setEmail(event.target.value)}
+                />
+            </ConfirmationDialog>
         </>
     )
 }

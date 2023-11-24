@@ -112,7 +112,7 @@ export const recreateSchedule = async (leagueId) => {
 export const sendInvitations = async (leagueId) => {
     const result =
         await fflapi
-            .post(`/v2/league/${leagueId}/invitations`)
+            .post(`/v2/league/${leagueId}/teamOwner/invitations`)
             .catch((error) => {
                 const message = error?.message ? error.message : 'An error occurred';
                 return { Message: message };
@@ -258,6 +258,50 @@ export const updateDefaultLeague = async (userId, toLeagueId) => {
     const result =
         await fflapi
             .post(`/account/${userId}/league/${toLeagueId}`)
+            .catch((error) => {
+                const message = error?.message ? error.message : 'An error occurred';
+                return { Message: message };
+            });
+    return result?.data ? result?.data : result;
+}
+
+export const sendCommissionerInvitation = async (leagueId) => {
+    const result =
+        await fflapi
+            .post(`/v2/league/${leagueId}/commissioner/invitation`)
+            .catch((error) => {
+                const message = error?.message ? error.message : 'An error occurred';
+                return { Message: message };
+            });
+    return result?.data ? result?.data : result;
+}
+
+export const addCommissioner = async (leagueId, commissioner) => {
+    const result =
+        await fflapi
+            .post(`/v2/league/${leagueId}/commissioner`, commissioner)
+            .catch((error) => {
+                const message = error?.message ? error.message : 'An error occurred';
+                return { Message: message };
+            });
+    return result?.data ? result?.data : result;
+}
+
+export const deleteCommissioner = async (commissionerId) => {
+    const result =
+        await fflapi
+            .delete(`/v2/league/commissioner/${commissionerId}`)
+            .catch((error) => {
+                const message = error?.message ? error.message : 'An error occurred';
+                return { Message: message };
+            });
+    return result?.data ? result?.data : result;
+}
+
+export const deleteRosterPlayer = async (leagueId, rosterPlayerId) => {
+    const result =
+        await fflapi
+            .delete(`/rosterPlayer/${leagueId}/${rosterPlayerId}/`)
             .catch((error) => {
                 const message = error?.message ? error.message : 'An error occurred';
                 return { Message: message };

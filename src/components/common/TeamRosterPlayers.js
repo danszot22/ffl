@@ -63,7 +63,7 @@ export default function TeamRosterPlayers({ roster, teamDetails, team, isEditabl
                             : null}
                         {isEditable ?
                             <Tooltip title="Delete">
-                                <IconButton variant="contained" color="error" onClick={handleDelete}>
+                                <IconButton variant="contained" color="error" onClick={() => handleDelete(player)}>
                                     <Delete />
                                 </IconButton>
                             </Tooltip>

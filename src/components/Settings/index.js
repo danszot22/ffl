@@ -8,12 +8,18 @@ import GeneralSettings from "./GeneralSettings";
 import PrizeSettings from "./PrizeSettings";
 import RosterSettings from "./RosterSettings";
 import withAuth from "../withAuth";
+import ConfirmationDialog from "../common/ConfirmationDialog";
+import { deleteCommissioner } from "../../api/ffl";
 
 function Settings({ league, user }) {
     const [rosterSettings, setRosterSettings] = useState({});
     const [settings, setSettings] = useState();
     const [prizes, setPrizes] = useState({});
     const [commissioners, setCommissioners] = useState([]);
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [deleteMessage, setDeleteMessage] = useState();
+    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+    const [selectedCommissioner, setSelectedCommissioner] = useState();
 
     useEffect(() => {
         const fetchSettings = async (leagueId) => {
@@ -36,13 +42,25 @@ function Settings({ league, user }) {
         league?.LeagueId,
     ]);
 
-    const handleDelete = (id) => {
-        const updatedCommissioners = commissioners.filter((commissioner) => {
-            return commissioner.LeagueCommissionerId !== id;
-        });
-        setCommissioners(updatedCommissioners);
+    const handleDelete = async (id) => {
+        setDeleteMessage();
+        setShowDeleteConfirmation(true);
+        setSelectedCommissioner(id);
+    }
 
-        //TODO Call API
+    const handleConfirmClick = async () => {
+        setIsDeleting(true);
+        const result = await deleteCommissioner(selectedCommissioner);
+        setIsDeleting(false);
+        if (result?.Message) {
+            setDeleteMessage([result?.Message]);
+        }
+        else {
+            const updatedCommissioners = commissioners.filter((commissioner) => {
+                return commissioner.LeagueCommissionerId !== selectedCommissioner;
+            });
+            setCommissioners(updatedCommissioners);
+        }
     }
 
     return (
@@ -70,7 +88,16 @@ function Settings({ league, user }) {
                         flexGrow: 1,
                     }}
                 >
-                    <Commissioners commissioners={commissioners} handleDelete={handleDelete} isEditable={user?.isAdmin || user?.isCommissioner} />
+                    <Commissioners
+                        leagueId={league?.LeagueId}
+                        commissioners={commissioners}
+                        setCommissioners={setCommissioners}
+                        handleDelete={handleDelete}
+                        isEditable={user?.isAdmin || user?.isCommissioner}
+                    />
+                    <ConfirmationDialog title={'Delete Commissioner'} open={showDeleteConfirmation} setOpen={setShowDeleteConfirmation}
+                        message={deleteMessage} isUpdating={isDeleting} handleConfirmClick={handleConfirmClick}
+                        confirmationMessage={'Are you sure you want to delete this commissioner?'} />
                     <GeneralSettings settings={settings} isEditable={user?.isAdmin || user?.isCommissioner} />
                     {prizes ?
                         <PrizeSettings prizes={prizes} isEditable={user?.isAdmin || user?.isCommissioner} />
