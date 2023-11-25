@@ -1,13 +1,14 @@
 import Root from "../Root";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Box, Button, Checkbox, Divider, FormControlLabel, FormGroup, TextField, useMediaQuery, useTheme } from "@mui/material";
+import { Box, Button, Checkbox, CircularProgress, Divider, FormControlLabel, FormGroup, TextField, Typography, useMediaQuery, useTheme } from "@mui/material";
 import PageToolbar from "../common/PageToolbar";
+import { updateRosterFormat } from "../../api/ffl";
 
 export default function EditRosterSettings() {
     const theme = useTheme();
     const isBelowMedium = useMediaQuery(theme.breakpoints.down('md'));
-
+    const navigate = useNavigate();
     const { state } = useLocation();
     const [settings, setSettings] = useState({ ...state.settings });
     const [fields, setFields] = useState([]);
@@ -15,10 +16,20 @@ export default function EditRosterSettings() {
     const [TMQB, setTMQB] = useState(false);
     const [TMPK, setTMPK] = useState(false);
     const [TE, setTE] = useState(false);
+    const [message, setMessage] = useState();
+    const [isUpdating, setIsUpdating] = useState();
 
-    const handleSave = (event) => {
-        //TODO : Call API
-        console.log(settings);
+    const handleSave = async () => {
+        setMessage();
+        setIsUpdating(true);
+        const result = await updateRosterFormat(state?.leagueId, settings);
+        setIsUpdating(false);
+        if (result?.Message) {
+            setMessage(result?.Message);
+        }
+        else {
+            navigate('/Settings');
+        }
     };
 
     const handleChangeQB = (enablingTeamQB) => {
@@ -182,6 +193,8 @@ export default function EditRosterSettings() {
             >
                 Cancel
             </Button>
+            {isUpdating ? <CircularProgress /> : null}
+            <Typography color='error'>{message} </Typography>
         </Root>
     )
 }

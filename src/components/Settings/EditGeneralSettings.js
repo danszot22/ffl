@@ -1,11 +1,16 @@
-import { Box, Button, Checkbox, Divider, FormControl, FormControlLabel, FormGroup, FormHelperText, InputAdornment, InputLabel, MenuItem, Select, TextField } from "@mui/material";
+import { Box, Button, Checkbox, CircularProgress, Divider, FormControl, FormControlLabel, FormGroup, FormHelperText, InputAdornment, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material";
 import Root from "../Root";
 import PageToolbar from "../common/PageToolbar";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { updateSettings } from "../../api/ffl";
 
 export default function EditGeneralSettings() {
     const { state } = useLocation();
+    const navigate = useNavigate();
+    const [message, setMessage] = useState();
+    const [isUpdating, setIsUpdating] = useState();
+
     const [settings, setSettings] = useState({ ...state?.settings });
     const [deadline, setDeadline] = useState(0);
     const [waiverDay, setWaiverDay] = useState(2);
@@ -33,9 +38,17 @@ export default function EditGeneralSettings() {
         setWaivers(settings?.Waivers);
     }, [settings]);
 
-    const handleSave = (event) => {
-        //TODO : Call API
-        console.log(settings);
+    const handleSave = async () => {
+        setMessage();
+        setIsUpdating(true);
+        const result = await updateSettings(state?.leagueId, settings);
+        setIsUpdating(false);
+        if (result?.Message) {
+            setMessage(result?.Message);
+        }
+        else {
+            navigate('/Settings');
+        }
     };
 
     const handleChange = (id, value) => {
@@ -286,6 +299,8 @@ export default function EditGeneralSettings() {
             >
                 Cancel
             </Button>
+            {isUpdating ? <CircularProgress /> : null}
+            <Typography color='error'>{message} </Typography>
         </Root>
     )
 }

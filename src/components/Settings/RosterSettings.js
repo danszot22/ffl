@@ -2,12 +2,12 @@ import { Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, 
 import { StyledTableRow } from '../common/styled';
 import { useNavigate } from 'react-router-dom';
 
-export default function RosterSettings({ settings, isEditable }) {
+export default function RosterSettings({ leagueId, settings, isEditable }) {
 
     const navigate = useNavigate();
 
     function handleGoToRosterSettings() {
-        navigate(`/RosterSettings/Edit`, { state: { settings } });
+        navigate(`/RosterSettings/Edit`, { state: { leagueId, settings } });
     }
 
     return (

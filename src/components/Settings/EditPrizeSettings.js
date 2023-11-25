@@ -1,17 +1,22 @@
-import { Box, Button, Divider, InputAdornment, TextField } from "@mui/material";
+import { Box, Button, CircularProgress, Divider, InputAdornment, TextField, Typography } from "@mui/material";
 import Root from "../Root";
 import PageToolbar from "../common/PageToolbar";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { updatePrizes } from "../../api/ffl";
 
 export default function EditPrizeSettings() {
     const { state } = useLocation();
+    const navigate = useNavigate();
+    console.log(state);
     const [prizes, setPrizes] = useState({
         ...state.prizes,
         FirstFeePrize: state.prizes.FirstFeePrize * 100,
         SecondFeePrize: state.prizes.SecondFeePrize * 100,
         ThirdFeePrize: state.prizes.ThirdFeePrize * 100,
     });
+    const [message, setMessage] = useState();
+    const [isUpdating, setIsUpdating] = useState();
 
     const handleChange = (id, value) => {
         let updatedPrizes = { ...prizes };
@@ -19,8 +24,7 @@ export default function EditPrizeSettings() {
         setPrizes(updatedPrizes);
     };
 
-    const handleSave = (event) => {
-
+    const handleSave = async () => {
         const updatedPrizes = {
             ...prizes,
             FirstFeePrize: prizes.FirstFeePrize / 100,
@@ -28,8 +32,16 @@ export default function EditPrizeSettings() {
             ThirdFeePrize: prizes.ThirdFeePrize / 100,
         }
 
-        //TODO : Call API
-        console.log(updatedPrizes);
+        setMessage();
+        setIsUpdating(true);
+        const result = await updatePrizes(state?.leagueId, updatedPrizes);
+        setIsUpdating(false);
+        if (result?.Message) {
+            setMessage(result?.Message);
+        }
+        else {
+            navigate('/Settings');
+        }
     };
 
     return (
@@ -147,6 +159,8 @@ export default function EditPrizeSettings() {
             >
                 Cancel
             </Button>
+            {isUpdating ? <CircularProgress /> : null}
+            <Typography color='error'>{message} </Typography>
         </Root>
     )
 }

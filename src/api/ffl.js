@@ -308,3 +308,47 @@ export const deleteRosterPlayer = async (leagueId, rosterPlayerId) => {
             });
     return result?.data ? result?.data : result;
 }
+
+export const updateRosterFormat = async (leagueId, format) => {
+    const result =
+        await fflapi
+            .post(`/v2/league/${leagueId}/rosterFormat`, format)
+            .catch((error) => {
+                const message = error?.message ? error.message : 'An error occurred';
+                return { Message: message };
+            });
+    return result?.data ? result?.data : result;
+}
+
+export const updatePrizes = async (leagueId, prizes) => {
+    const result =
+        await fflapi
+            .post(`/v2/league/${leagueId}/prizes`, prizes)
+            .catch((error) => {
+                const message = error?.message ? error.message : 'An error occurred';
+                return { Message: message };
+            });
+    return result?.data ? result?.data : result;
+}
+
+export const updateSettings = async (leagueId, settings) => {
+    const result =
+        await fflapi
+            .post(`/v2/league/${leagueId}/settings`, settings)
+            .catch((error) => {
+                const message = error?.message ? error.message : 'An error occurred';
+                return { Message: message };
+            });
+    return result?.data ? result?.data : result;
+}
+
+export const updateSize = async (leagueId, size) => {
+    const result =
+        await fflapi
+            .post(`/v2/league/${leagueId}/size`, size)
+            .catch((error) => {
+                const message = error?.message ? error.message : 'An error occurred';
+                return { Message: message };
+            });
+    return result?.data ? result?.data : result;
+}

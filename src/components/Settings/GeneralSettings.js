@@ -5,7 +5,7 @@ import { siteScheduleLoader } from "../../api/graphql";
 import { useEffect, useState } from 'react';
 import { formatDollars } from "../../utils/helpers";
 
-export default function GeneralSettings({ settings, isEditable }) {
+export default function GeneralSettings({ leagueId, settings, isEditable }) {
     const [playoffSchedule, setPlayoffSchedule] = useState({});
     const [regularSchedule, setRegularSchedule] = useState({});
     const [keeperDrop, setKeeperDrop] = useState(false);
@@ -23,7 +23,7 @@ export default function GeneralSettings({ settings, isEditable }) {
     }, [settings]);
 
     function handleGoToGeneralSettings() {
-        navigate(`/GeneralSettings/Edit`, { state: { settings } });
+        navigate(`/GeneralSettings/Edit`, { state: { leagueId, settings } });
     }
 
     return (

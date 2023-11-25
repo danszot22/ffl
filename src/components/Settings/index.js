@@ -98,14 +98,14 @@ function Settings({ league, user }) {
                     <ConfirmationDialog title={'Delete Commissioner'} open={showDeleteConfirmation} setOpen={setShowDeleteConfirmation}
                         message={deleteMessage} isUpdating={isDeleting} handleConfirmClick={handleConfirmClick}
                         confirmationMessage={'Are you sure you want to delete this commissioner?'} />
-                    <GeneralSettings settings={settings} isEditable={user?.isAdmin || user?.isCommissioner} />
+                    <GeneralSettings leagueId={league?.LeagueId} settings={settings} isEditable={user?.isAdmin || user?.isCommissioner} />
                     {prizes ?
-                        <PrizeSettings prizes={prizes} isEditable={user?.isAdmin || user?.isCommissioner} />
+                        <PrizeSettings leagueId={league?.LeagueId} prizes={prizes} isEditable={user?.isAdmin || user?.isCommissioner} />
                         : null}
                 </Box>
                 {rosterSettings ?
                     <Paper sx={{ display: 'flex', justifyContent: 'center', flexGrow: 1, border: 1 }}>
-                        <RosterSettings settings={rosterSettings} isEditable={user?.isAdmin || user?.isCommissioner} />
+                        <RosterSettings leagueId={league?.LeagueId} settings={rosterSettings} isEditable={user?.isAdmin || user?.isCommissioner} />
                     </Paper>
                     : null}
             </Box>

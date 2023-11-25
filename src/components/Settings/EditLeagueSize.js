@@ -1,11 +1,14 @@
-import { Box, Button, Checkbox, Divider, FormControl, FormGroup, FormHelperText, InputLabel, MenuItem, Select, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import { Box, Button, Checkbox, CircularProgress, Divider, FormControl, FormGroup, FormHelperText, InputLabel, MenuItem, Select, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import Root from "../Root";
 import PageToolbar from "../common/PageToolbar";
 import { useEffect, useState } from "react";
 import { siteScheduleLoader, teamsLoader } from "../../api/graphql";
 import withAuth from "../withAuth";
+import { updateSize } from "../../api/ffl";
+import { useNavigate } from "react-router-dom";
 
 function EditLeagueSize({ league }) {
+    const navigate = useNavigate();
     const [schedules, setSchedules] = useState([]);
     const [teams, setTeams] = useState([]);
     const [playoffSchedules, setPlayoffSchedules] = useState([]);
@@ -15,6 +18,7 @@ function EditLeagueSize({ league }) {
     const [regularSchedule, setRegularSchedule] = useState(league?.ScheduleId);
     const [teamsToRemove, setTeamsToRemove] = useState([]);
     const [errorList, setErrorList] = useState([]);
+    const [isUpdating, setIsUpdating] = useState();
 
     useEffect(() => {
         let errors = [];
@@ -73,9 +77,27 @@ function EditLeagueSize({ league }) {
         }
     };
 
-    const handleSave = (event) => {
-        //TODO : Call API
-        console.log(teamCount, regularSchedule, playoffSchedule, teamsToRemove, teamsToRemove.length);
+    const handleSave = async () => {
+        let errors = [];
+        setIsUpdating(true);
+        const teams = teamsToRemove.map((team) => {
+            return { TeamId: team }
+        })
+        const result = await updateSize(league.LeagueId,
+            {
+                NumberOfTeams: teamCount,
+                ScheduleId: regularSchedule,
+                PlayoffScheduleId: playoffSchedule,
+                Teams: teams
+            });
+        setIsUpdating(false);
+        if (result?.Message) {
+            errors.push(result?.Message);
+            setErrorList(errors)
+        }
+        else {
+            navigate('/Settings');
+        }
     };
 
     return (
@@ -169,6 +191,7 @@ function EditLeagueSize({ league }) {
             >
                 Cancel
             </Button>
+            {isUpdating ? <CircularProgress /> : null}
             <FormControl required error={errorList.length > 0}>
                 {errorList.map(error =>
                     <FormHelperText>{error}</FormHelperText>

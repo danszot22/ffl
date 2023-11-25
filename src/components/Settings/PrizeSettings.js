@@ -3,12 +3,12 @@ import { StyledTableRow } from '../common/styled';
 import { formatDollars, formatPercent } from "../../utils/helpers";
 import { useNavigate } from 'react-router-dom';
 
-export default function PrizeSettings({ prizes, isEditable }) {
+export default function PrizeSettings({ leagueId, prizes, isEditable }) {
 
     const navigate = useNavigate();
 
     function handleGoToPrizeSettings() {
-        navigate(`/PrizeSettings/Edit`, { state: { prizes } });
+        navigate(`/PrizeSettings/Edit`, { state: { leagueId, prizes } });
     }
 
     return (
