@@ -1,6 +1,4 @@
-import axios from "axios";
-
-const dabFflUrl = "https://ffltest.azurewebsites.net/api/dab/graphql/";
+import { fflapi } from './ffl';
 
 export const seasonStandingsLoader = async (year, leagueId) => {
     const response = await postToApi(`{
@@ -35,15 +33,12 @@ async function postToApi(query) {
 
     const options = {
         method: 'POST',
-        url: dabFflUrl,
-        headers: {
-            'content-type': 'application/json'
-        },
+        url: '/dab/graphql/',
         data: {
             query
         }
     };
-    return await axios.request(options).catch((error) => {
+    return await fflapi.request(options).catch((error) => {
         return error?.response;
     });;
 }
