@@ -603,7 +603,7 @@ export function mapRosterToTeamLineup(roster, teamScore, nflGames, lineup) {
 
 export function mapLineupToTeamLineup(lineup, nflGames) {
     let lineupMap = {};
-    lineup.LineupPlayer?.items?.forEach((lineupPlayer) => {
+    lineup?.LineupPlayer?.items?.forEach((lineupPlayer) => {
         if (!lineupMap[lineup.Team.TeamId]) {
             lineupMap[lineup.Team.TeamId] = {
                 key: lineup.Team.TeamId,
