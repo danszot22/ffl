@@ -1,7 +1,10 @@
 import axios from "axios";
 
+export const fflapiurl = 'https://ffltest.azurewebsites.net/api';
+export const fflurl = 'https://kind-sky-02d625b0f.4.azurestaticapps.net';
+
 export const fflapi = axios.create({
-    baseURL: 'https://ffltest.azurewebsites.net/api',
+    baseURL: fflapiurl,
     headers: {
         'content-type': 'application/json'
     }
@@ -13,7 +16,8 @@ export const getTransactionText = async (nflTeamId, rosterPlayerId) => {
         await fflapi
             .get(`/rosterPlayer/${nflTeamId}/${rosterPlayerId}/transactionType`)
             .catch((error) => {
-                const message = error?.message ? error.message : 'An error occurred';
+                const message = error.response?.data?.Message ? error.response?.data?.Message :
+                    error?.message ? error.message : 'An error occurred';
                 return { Message: message };
             });
     return result?.data ? result?.data : result;
@@ -25,7 +29,8 @@ export const getRosterPlayersToDrop = async (leagueId, teamId, playerId) => {
         await fflapi
             .get(`/rosterPlayer/${leagueId}/${teamId}/${playerId}/players`)
             .catch((error) => {
-                const message = error?.message ? error.message : 'An error occurred';
+                const message = error.response?.data?.Message ? error.response?.data?.Message :
+                    error?.message ? error.message : 'An error occurred';
                 return { Message: message };
             });
     return result?.data ? result?.data : result;
@@ -37,7 +42,8 @@ export const getPositionsToAdd = async (leagueId, teamId, playerId) => {
         await fflapi
             .get(`/rosterPlayer/${leagueId}/${teamId}/${playerId}/positions`)
             .catch((error) => {
-                const message = error?.message ? error.message : 'An error occurred';
+                const message = error.response?.data?.Message ? error.response?.data?.Message :
+                    error?.message ? error.message : 'An error occurred';
                 return { Message: message };
             });
     return result?.data ? result?.data : result;
@@ -48,7 +54,8 @@ export const updateRoster = async (leagueId, teamId, playerId, rosterPlayerId) =
         await fflapi
             .post(`/rosterPlayer/${leagueId}/${rosterPlayerId}/`, { teamId, playerId })
             .catch((error) => {
-                const message = error?.message ? error.message : 'An error occurred';
+                const message = error.response?.data?.Message ? error.response?.data?.Message :
+                    error?.message ? error.message : 'An error occurred';
                 return { Message: message };
             });
     return result?.data ? result?.data : result;
@@ -175,7 +182,7 @@ export const denyTrade = async (tradeId) => {
 }
 
 export const acceptTrade = async (tradeId) => {
-    const urlToPage = "https://kind-sky-02d625b0f.4.azurestaticapps.net/LeagueTrades";
+    const urlToPage = `${fflurl}/LeagueTrades`;
     const result =
         await fflapi
             .post(`/trade/${tradeId}/accept`, { urlToPage })
@@ -212,7 +219,7 @@ export const deleteTrade = async (tradeId) => {
 }
 
 export const createTrade = async (givingTeamId, receivingTeamId, players) => {
-    const urlToPage = "https://kind-sky-02d625b0f.4.azurestaticapps.net/TeamTrades";
+    const urlToPage = `${fflurl}/TeamTrades`;
     const result =
         await fflapi
             .post(`/trade/${givingTeamId}/${receivingTeamId}/create/`, { players, urlToPage })
