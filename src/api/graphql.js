@@ -466,7 +466,7 @@ export const teamLoader = async (team) => {
           }
         }
       }`);
-    return response.data.data.teams.items[0];
+    return response.data.data?.teams?.items[0];
 
 }
 
