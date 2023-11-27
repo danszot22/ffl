@@ -90,7 +90,6 @@ function PlayerList({ league, team }) {
                 manualPagination
                 manualSorting
                 enableRowActions
-                enableRowNumbers
                 displayColumnDefOptions={{
                     'mrt-row-actions': {
                         header: '',
