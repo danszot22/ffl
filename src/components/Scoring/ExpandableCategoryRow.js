@@ -3,7 +3,7 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import IconButton from '@mui/material/IconButton';
 import { StyledExpandableTableRow } from '../common/styled';
 import { useState } from 'react';
-import { Box, TableCell, TableRow, Grid, Collapse, Typography, useTheme, useMediaQuery, Modal, Paper } from "@mui/material";
+import { Box, TableCell, Typography, useTheme, useMediaQuery, Paper, Dialog, DialogTitle, DialogContent, Button } from "@mui/material";
 import CategoryPlayerList from './CategoryPlayerList';
 import TeamLink from '../common/TeamLink';
 import { formatFantasyTeamName, formatPlayerName } from '../../utils/helpers';
@@ -90,55 +90,31 @@ export default function ExpandableCategoryRow({ category, team, row, showProject
                         </IconButton>
                     </TableCell> : null}
             </StyledExpandableTableRow>
-            <TableRow>
-                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-                    {!isBelowMedium ? <Collapse in={open} timeout="auto" unmountOnExit>
-                        <Grid container spacing={2}>
-                            <Grid item xs={12}>
-                                <Box
-                                    sx={{
-                                        p: 2,
-                                        bgcolor: 'background.default',
-                                        display: 'grid',
-                                        gridTemplateColumns: { md: '1fr 1fr' },
-                                        gap: 2,
-                                    }}
-                                >
-                                    <CategoryPlayerList title="Starter" players={row.Starters} showProjections={showProjections} showGame={showGame} />
-                                    {row.Bench ? <CategoryPlayerList title="Bench" players={row.Bench} showProjections={showProjections} showGame={showGame} /> : null}
-                                </Box>
-                            </Grid>
-                        </Grid>
-                    </Collapse> : null}
-                </TableCell>
-            </TableRow>
-            {isBelowMedium ? <Modal
+            <Dialog
                 open={open}
                 onClose={handleClose}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
             >
-                <Box
-                    sx={{
-                        overflow: 'scroll',
-                        position: 'absolute',
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                        bgcolor: 'background.paper',
-                        border: '2px solid #000',
-                        boxShadow: 24,
-                        p: 1,
-                        minHeight: '25%',
-                        minWidth: '75%',
-                    }}
-                >
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-                        <CategoryPlayerList title={`${formatFantasyTeamName(row.Team, true)}'s Starters`} players={row.Starters} showProjections={showProjections} showGame={showGame} />
-                        {row.Bench ? <CategoryPlayerList title={`${formatFantasyTeamName(row.Team, true)}'s Bench`} players={row.Bench} showProjections={showProjections} showGame={showGame} /> : null}
-                    </Box>
-                </Box>
-            </Modal> : null}
+                <DialogTitle id="alert-dialog-title" sx={{ backgroundColor: 'black', color: 'white' }}>
+                    {formatFantasyTeamName(row.Team, false)}
+                </DialogTitle>
+                <DialogContent sx={{ backgroundColor: 'black', color: 'white' }}>
+                    <CategoryPlayerList title={`Starters`} players={row.Starters} showProjections={showProjections} showGame={showGame} />
+                    {row.Bench ? <CategoryPlayerList title={`Bench`} players={row.Bench} showProjections={showProjections} showGame={showGame} /> : null}
+                    <DialogTitle id="alert-dialog-title" sx={{ backgroundColor: 'black', color: 'white' }}>
+                        <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1, justifyContent: 'space-around' }}>
+                            <Typography variant={'caption'} sx={{ color: "error.light" }}>
+                                Not Played
+                            </Typography>
+                            <Typography variant="caption" sx={{ color: "warning.light" }}>
+                                Playing
+                            </Typography>
+                            <Button variant="contained" onClick={handleClose}>Close</Button>
+                        </Box>
+                    </DialogTitle>
+                </DialogContent>
+            </Dialog>
         </>
     );
 }

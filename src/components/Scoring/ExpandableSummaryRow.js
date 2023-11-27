@@ -1,5 +1,4 @@
-import Grid from '@mui/material/Unstable_Grid2';
-import { TableRow, TableCell, Collapse, Box, Typography, Modal, Paper, Link } from "@mui/material";
+import { TableCell, Box, Typography, Paper, Link, Dialog, DialogTitle, DialogContent, Button } from "@mui/material";
 import { StyledExpandableTableRow } from '../common/styled';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
@@ -77,52 +76,31 @@ export default function ExpandableSummaryRow({ team, row, topScore, showProjecti
                     </> : null
                 }
             </StyledExpandableTableRow>
-            <TableRow>
-                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={showProjections ? 8 : 6}>
-                    {!isXs ? <Collapse in={open} timeout="auto" unmountOnExit>
-                        <Grid container spacing={2}>
-                            <Grid item xs={12}>
-                                <Box
-                                    sx={{
-                                        p: 2,
-                                        bgcolor: 'background.default',
-                                        display: 'grid',
-                                        gridTemplateColumns: { md: '1fr 1fr' },
-                                        gap: 2,
-                                    }}
-                                >
-                                    <SummaryPlayerList title='Starter' players={row.Starters} showProjections={showProjections} />
-                                    <SummaryPlayerList title='Bench' players={row.Bench} showProjections={showProjections} />
-                                </Box>
-                            </Grid>
-                        </Grid>
-                    </Collapse> : null}
-                </TableCell>
-            </TableRow>
-            {isXs ? <Modal
+            <Dialog
                 open={open}
                 onClose={handleClose}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
             >
-                <Box
-                    sx={{
-                        overflow: 'scroll',
-                        position: 'absolute',
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                        bgcolor: 'background.paper',
-                        border: '2px solid #000',
-                        boxShadow: 24,
-                        p: 1,
-                        minHeight: '25%',
-                        minWidth: '95%',
-                    }}
-                >
-                    <SummaryPlayerList title={`${formatFantasyTeamName(row.team, true)}'s starters`} players={row.Starters} showProjections={showProjections} />
-                </Box>
-            </Modal> : null}
+                <DialogTitle id="alert-dialog-title" sx={{ backgroundColor: 'black', color: 'white' }}>
+                    {formatFantasyTeamName(row.team, false)}
+                </DialogTitle>
+                <DialogContent sx={{ backgroundColor: 'black', color: 'white' }}>
+                    <SummaryPlayerList title={'Starters'} players={row.Starters} showProjections={showProjections} />
+                    <SummaryPlayerList title='Bench' players={row.Bench} showProjections={showProjections} />
+                </DialogContent>
+                <DialogTitle id="alert-dialog-title" sx={{ backgroundColor: 'black', color: 'white' }}>
+                    <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1, justifyContent: 'space-around' }}>
+                        <Typography variant={'caption'} sx={{ color: "error.light" }}>
+                            Not Played
+                        </Typography>
+                        <Typography variant="caption" sx={{ color: "warning.light" }}>
+                            Playing
+                        </Typography>
+                        <Button variant="contained" onClick={handleClose}>Close</Button>
+                    </Box>
+                </DialogTitle>
+            </Dialog>
         </>
     );
 }

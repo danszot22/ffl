@@ -1,6 +1,6 @@
-import { Paper, Table, TableBody, TableCell, TableHead, TableRow, useMediaQuery, useTheme } from "@mui/material";
+import { Paper, Table, TableBody, TableCell, TableHead, TableRow, Typography, useMediaQuery, useTheme } from "@mui/material";
 import CategoryPlayerRow from './CategoryPlayerRow';
-import { StyledTableHeaderRow } from "../common/styled";
+import { grey } from "@mui/material/colors";
 
 export default function CategoryPlayerList({ players, showProjections, title, showGame }) {
     const theme = useTheme();
@@ -10,21 +10,28 @@ export default function CategoryPlayerList({ players, showProjections, title, sh
         <Paper elevation={3} >
             <Table size="small" aria-label="players">
                 <TableHead>
-                    <StyledTableHeaderRow>
+                    <TableRow>
                         <TableCell>{title}</TableCell>
                         {showGame && isAboveSmall ? (
                             <TableCell>Game</TableCell>
                         ) : null}
                         <TableCell align="right">Total</TableCell>
-                        {showProjections && isAboveSmall ? (
+                        {showProjections ? (
                             <TableCell align="right">Projected</TableCell>
                         ) : null}
-                    </StyledTableHeaderRow>
+                    </TableRow>
                 </TableHead>
                 <TableBody>
                     {players?.length > 0 ? players.map((player) => (
                         <CategoryPlayerRow key={player.PlayerId} row={player} showGame={showGame} showProjections={showProjections} />
-                    )) : <TableRow><TableCell>No Players</TableCell></TableRow>}
+                    )) :
+                        <TableRow>
+                            <TableCell variant="caption" scope="row" colSpan={4} sx={{ pl: 0, backgroundColor: 'black', color: grey[400] }}>
+                                <Typography variant="caption">
+                                    No Players
+                                </Typography>
+                            </TableCell>
+                        </TableRow>}
                 </TableBody>
             </Table>
         </Paper>

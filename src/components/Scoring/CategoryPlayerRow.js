@@ -1,37 +1,29 @@
-import { StyledTableRow } from '../common/styled';
-import { Typography, TableCell, useTheme, useMediaQuery, Box } from "@mui/material";
+import { Typography, TableCell, Box, TableRow } from "@mui/material";
 import { formatGameInfo } from '../../utils/helpers';
 import PlayerLink from '../common/PlayerLink';
+import { grey } from "@mui/material/colors";
 
 export default function CategoryPlayerRow({ row, showProjections, showGame }) {
-    const theme = useTheme();
-    const isAboveSmall = useMediaQuery(theme.breakpoints.up('sm'))
 
     return (
-        <StyledTableRow key={row.PlayerId}>
-            <TableCell component="th" scope="row">
+        <TableRow key={row.PlayerId} sx={{ backgroundColor: 'black', color: row.NflGame?.NotPlayed ? "error.light" : row.NflGame?.Playing ? "warning.light" : grey[400] }}>
+            <TableCell sx={{ pl: 0, pr: 0 }} variant="caption" scope="row">
                 <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                    <PlayerLink playerId={row.PlayerId} playerName={row?.Player.Name} positionCode={row.Player?.Position?.PositionCode} variant={'caption'} />
-                    <Typography sx={{ display: { xs: 'block', md: 'none' } }} color={row.NflGame?.NotPlayed ? "error.dark" : row.NflGame?.Playing ? "warning.dark" : ""} variant="caption">
+                    <PlayerLink playerId={row.PlayerId} playerName={row?.Player.Name} positionCode={row.Player?.Position?.PositionCode} variant={'caption'}
+                        sx={{ backgroundColor: 'black', color: row.NflGame?.NotPlayed ? "error.light" : row.NflGame?.Playing ? "warning.light" : grey[400] }} />
+                    <Typography variant="caption">
                         {formatGameInfo(row.Player.NflTeam?.NflTeamId, row.NflGame)}
                     </Typography>
                 </Box>
             </TableCell>
-            {showGame && isAboveSmall ? (
-                <TableCell>
-                    <Typography color={row.NflGame?.NotPlayed ? "error.dark" : row.NflGame?.Playing ? "warning.dark" : ""} variant="caption">
-                        {formatGameInfo(row.Player.NflTeam?.NflTeamId, row.NflGame)}
-                    </Typography>
-                </TableCell>
-            ) : null}
-            <TableCell align="right">
+            <TableCell variant="caption" align="right">
                 {row.Total}
             </TableCell>
-            {showProjections && isAboveSmall ? (
-                <TableCell align="right">
+            {showProjections ? (
+                <TableCell variant="caption" align="right">
                     {!row.NflGame.Final ? row.ProjTotal : null}
                 </TableCell>
             ) : null}
-        </StyledTableRow>
+        </TableRow>
     )
 }
