@@ -33,18 +33,20 @@ import EditLeagueSize from "./components/Settings/EditLeagueSize";
 import Login from "./components/Login";
 import Account from "./components/Account";
 import fflInterceptors from "./api/fflInterceptors";
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 import ForgotUsername from "./components/Account/ForgotUsername";
 import ForgotPassword from "./components/Account/ForgotPassword";
 import ChangePassword from "./components/Account/ChangePassword";
 import ResetPassword from "./components/Account/ResetPassword";
+import { FantasyTeamContext, setUserToken } from "./contexts/FantasyTeamContext";
 
 function Root() {
     const navigate = useNavigate();
+    const { dispatch, state } = useContext(FantasyTeamContext);
 
     useEffect(() => {
-        fflInterceptors(navigate);
-    }, [navigate]);
+        fflInterceptors(navigate, state.userToken, setUserToken, dispatch);
+    }, [navigate, state.userToken, dispatch]);
 
     return (
         <Routes>

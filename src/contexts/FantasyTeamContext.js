@@ -4,14 +4,21 @@ export const getInitialState = () => ({
     user: null,
     league: null,
     team: null,
+    userToken: null,
 });
 
 export const setUser = (payload) => ({ type: "SET_USER", payload });
 export const setTeam = (payload) => ({ type: "SET_TEAM", payload });
 export const setLeague = (payload) => ({ type: "SET_LEAGUE", payload });
+export const setUserToken = (payload) => ({ type: "SET_USERTOKEN", payload });
 
 export function fantasyTeamReducer(state, action) {
     switch (action.type) {
+        case "SET_USERTOKEN":
+            return {
+                ...state,
+                userToken: action.payload,
+            };
         case "SET_USER":
             return {
                 ...state,

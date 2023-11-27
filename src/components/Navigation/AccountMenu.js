@@ -1,7 +1,7 @@
 import { useContext, useState } from 'react';
 import { Box, Avatar, Menu, MenuItem, Divider, Tooltip, IconButton, ListItemIcon, MenuList, Typography, ListItemText } from '@mui/material';
 import Logout from '@mui/icons-material/Logout';
-import { FantasyTeamContext, setLeague, setTeam, setUser } from '../../contexts/FantasyTeamContext';
+import { FantasyTeamContext, setLeague, setTeam, setUser, setUserToken } from '../../contexts/FantasyTeamContext';
 import { useNavigate } from 'react-router-dom';
 import { Password } from '@mui/icons-material';
 import { dispatchLeagueChange, formatFantasyTeamName } from '../../utils/helpers';
@@ -32,6 +32,7 @@ export default function AccountMenu({ user, leagues, league, team }) {
         dispatch(setTeam(null));
         dispatch(setLeague(null));
         dispatch(setUser(null));
+        dispatch(setUserToken(null));
         localStorage.removeItem('token');
         localStorage.removeItem('refreshToken');
         navigate(`/Login`);

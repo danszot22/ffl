@@ -12,11 +12,11 @@ async function renewToken() {
     return [newAccessToken, newRefreshToken];
 }
 
-const fflInterceptors = (navigate) => {
+const fflInterceptors = (navigate, userToken, setUserToken, dispatch) => {
     // Add a request interceptor
     fflapi.interceptors.request.use(
         (config) => {
-            const token = localStorage.getItem('token');
+            const token = userToken ? userToken : localStorage.getItem('token');
             if (token) {
                 config.headers.Authorization = `Bearer ${token}`;
             }
@@ -42,6 +42,7 @@ const fflInterceptors = (navigate) => {
                     }
                     const [newAccessToken, newRefreshToken] = await refreshPromise;
 
+                    dispatch(setUserToken(newAccessToken));
                     localStorage.setItem('token', newAccessToken);
                     localStorage.setItem('refreshToken', newRefreshToken);
 

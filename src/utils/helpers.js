@@ -1,5 +1,5 @@
 import { leagueSettingsLoader, teamLoader, userTeamLoader } from "../api/graphql";
-import { setLeague, setTeam, setUser } from "../contexts/FantasyTeamContext";
+import { setLeague, setTeam, setUser, setUserToken } from "../contexts/FantasyTeamContext";
 
 const dollarFormatter = new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -99,6 +99,8 @@ export function formatQuarter(nflGame) {
 }
 
 export async function dispatchTokenData(dispatch, tokenPayLoad) {
+    dispatch(setUserToken(tokenPayLoad));
+
     const team = await teamLoader(+tokenPayLoad?.teamId);
     dispatch(setTeam(team));
 
