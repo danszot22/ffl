@@ -1,5 +1,5 @@
 import { TableCell, Box, Typography, Paper, Link, Dialog, DialogTitle, DialogContent, Button } from "@mui/material";
-import { StyledExpandableTableRow } from '../common/styled';
+import { StyledTableRow } from '../common/styled';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import IconButton from '@mui/material/IconButton';
@@ -18,7 +18,7 @@ export default function ExpandableSummaryRow({ team, row, topScore, showProjecti
 
     return (
         <>
-            <StyledExpandableTableRow onClick={() => setOpen(!open)} key={row.key} sx={{ '& > *': { borderBottom: 'unset' } }}>
+            <StyledTableRow onClick={() => setOpen(!open)} key={row.key} sx={{ '& > *': { borderBottom: 'unset' } }}>
                 <TableCell sx={{ pr: 0 }} component="th" scope="row">
                     <Typography variant="inherit" sx={{ fontWeight: row.key === team ? 600 : 0 }}>{row.rank}</Typography>
                 </TableCell>
@@ -75,7 +75,7 @@ export default function ExpandableSummaryRow({ team, row, topScore, showProjecti
                         </TableCell>
                     </> : null
                 }
-            </StyledExpandableTableRow>
+            </StyledTableRow>
             <Dialog
                 open={open}
                 onClose={handleClose}

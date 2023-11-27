@@ -1,7 +1,7 @@
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import IconButton from '@mui/material/IconButton';
-import { StyledExpandableTableRow } from '../common/styled';
+import { StyledTableRow } from '../common/styled';
 import { useState } from 'react';
 import { Box, TableCell, Typography, useTheme, useMediaQuery, Paper, Dialog, DialogTitle, DialogContent, Button } from "@mui/material";
 import CategoryPlayerList from './CategoryPlayerList';
@@ -17,7 +17,7 @@ export default function ExpandableCategoryRow({ category, team, row, showProject
 
     return (
         <>
-            <StyledExpandableTableRow onClick={() => setOpen(!open)} key={row.TeamId} sx={{ '& > *': { borderBottom: 'unset' } }}>
+            <StyledTableRow onClick={() => setOpen(!open)} key={row.TeamId} sx={{ '& > *': { borderBottom: 'unset' } }}>
                 <TableCell>
                     <TeamLink team={row.Team} variant="inherit" sx={{ fontWeight: row.TeamId === team ? 600 : 0 }} shortName={isBelowMedium} />
                 </TableCell>
@@ -89,7 +89,7 @@ export default function ExpandableCategoryRow({ category, team, row, showProject
                             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
                         </IconButton>
                     </TableCell> : null}
-            </StyledExpandableTableRow>
+            </StyledTableRow>
             <Dialog
                 open={open}
                 onClose={handleClose}
