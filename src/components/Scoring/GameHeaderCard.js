@@ -13,8 +13,7 @@ export default function GameHeaderCard({ game, handleOpen, showProjections }) {
                     <Table size="small">
                         <TableHead>
                             <TableRow>
-                                <TableCell colSpan={1}>Game</TableCell>
-                                <TableCell colSpan={2}><Link onClick={handleOpen}>View All</Link></TableCell>
+                                <TableCell colSpan={3}><Link onClick={handleOpen}>All Games</Link></TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>

@@ -4,12 +4,13 @@ import { mapCategoryScoring, mapTeamScoringTotals, mapFantasyGames } from "../..
 import ScoringTabs from "./ScoringTabs";
 import GameHeaderCard from "./GameHeaderCard";
 import { scoringLoader, fantasyGameLoader, lineupsLoader, nflGamesLoader } from "../../api/graphql";
-import { Button, ButtonGroup, Box, Typography, Skeleton, Modal, Table, TableRow, TableCell, Paper, TableHead, FormControl, InputLabel, Select, MenuItem, useTheme, useMediaQuery } from "@mui/material";
+import { Button, ButtonGroup, Box, Typography, Skeleton, Table, TableRow, TableCell, Paper, TableHead, FormControl, InputLabel, Select, MenuItem, useTheme, useMediaQuery, Dialog, DialogTitle, DialogContent } from "@mui/material";
 import { NflWeekContext } from "../../contexts/NflWeekContext";
 import PageToolbar from "../common/PageToolbar";
 import withAuth from "../withAuth";
 import { formatFantasyTeamName } from "../../utils/helpers";
 import { useQuery } from "@tanstack/react-query";
+import { grey } from "@mui/material/colors";
 
 function Scoring({ league, team }) {
     const theme = useTheme();
@@ -139,30 +140,21 @@ function Scoring({ league, team }) {
                     <ScoringTabs team={team?.TeamId} data={categoryData} summaryData={summaryData.totals} week={week} showProjections={!summaryData.complete} />
                 )
             }
-            <Modal
+            <Dialog
                 open={open}
                 onClose={handleClose}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
             >
-                <Box sx={{
-                    position: 'absolute',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    bgcolor: 'background.paper',
-                    border: '2px solid #000',
-                    boxShadow: 24,
-                    p: 1,
-                    minWidth: { xs: '75%', sm: '50%', lg: '25%' },
-                    minHeight: '50%'
-                }}>
-                    <Typography>Game Results</Typography>
+                <DialogTitle id="alert-dialog-title" >
+                    Game Results
+                </DialogTitle>
+                <DialogContent>
                     {fantasyGames.map((game) =>
                         <Paper key={game.FantasyGameId} sx={{ m: 1 }} elevation={8}>
                             <Table size="small">
                                 <TableHead>
-                                    <TableRow>
+                                    <TableRow sx={{ backgroundColor: grey[200] }}>
                                         <TableCell colSpan={3}>{!summaryData.complete ? 'Projected' : 'Final'}</TableCell>
                                     </TableRow>
                                 </TableHead>
@@ -183,8 +175,8 @@ function Scoring({ league, team }) {
                             </Table>
                         </Paper>
                     )}
-                </Box>
-            </Modal>
+                </DialogContent>
+            </Dialog>
         </Root >
 
     )
