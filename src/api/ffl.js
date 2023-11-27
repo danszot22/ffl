@@ -59,7 +59,8 @@ export const updateLineup = async (teamId, week, lineup) => {
         await fflapi
             .post(`/lineup/${teamId}/${week}/`, lineup)
             .catch((error) => {
-                const message = error?.message ? error.message : 'An error occurred';
+                const message = error.response?.data?.Message ? error.response?.data?.Message :
+                    error?.message ? error.message : 'An error occurred';
                 return { Message: message };
             });
     return result?.data ? result?.data : result;
@@ -70,7 +71,8 @@ export const updateTeams = async (leagueId, teams) => {
         await fflapi
             .post(`/v2/league/${leagueId}/teams`, teams)
             .catch((error) => {
-                const message = error?.message ? error.message : 'An error occurred';
+                const message = error.response?.data?.Message ? error.response?.data?.Message :
+                    error?.message ? error.message : 'An error occurred';
                 return { Message: message };
             });
     return result?.data ? result?.data : result;
@@ -81,7 +83,8 @@ export const updateFinances = async (leagueId, teams) => {
         await fflapi
             .post(`/v2/league/${leagueId}/finances`, teams)
             .catch((error) => {
-                const message = error?.message ? error.message : 'An error occurred';
+                const message = error.response?.data?.Message ? error.response?.data?.Message :
+                    error?.message ? error.message : 'An error occurred';
                 return { Message: message };
             });
     return result?.data ? result?.data : result;
@@ -92,7 +95,8 @@ export const reorganizeLeague = async (leagueId) => {
         await fflapi
             .post(`/v2/league/${leagueId}/reorganize`)
             .catch((error) => {
-                const message = error?.message ? error.message : 'An error occurred';
+                const message = error.response?.data?.Message ? error.response?.data?.Message :
+                    error?.message ? error.message : 'An error occurred';
                 return { Message: message };
             });
     return result?.data ? result?.data : result;
@@ -103,7 +107,8 @@ export const recreateSchedule = async (leagueId) => {
         await fflapi
             .post(`/v2/league/${leagueId}/reschedule`)
             .catch((error) => {
-                const message = error?.message ? error.message : 'An error occurred';
+                const message = error.response?.data?.Message ? error.response?.data?.Message :
+                    error?.message ? error.message : 'An error occurred';
                 return { Message: message };
             });
     return result?.data ? result?.data : result;
@@ -114,7 +119,8 @@ export const sendInvitations = async (leagueId) => {
         await fflapi
             .post(`/v2/league/${leagueId}/teamOwner/invitations`)
             .catch((error) => {
-                const message = error?.message ? error.message : 'An error occurred';
+                const message = error.response?.data?.Message ? error.response?.data?.Message :
+                    error?.message ? error.message : 'An error occurred';
                 return { Message: message };
             });
     return result?.data ? result?.data : result;
@@ -125,7 +131,8 @@ export const addManager = async (leagueId, manager) => {
         await fflapi
             .post(`/v2/league/${leagueId}/teamOwner`, manager)
             .catch((error) => {
-                const message = error?.message ? error.message : 'An error occurred';
+                const message = error.response?.data?.Message ? error.response?.data?.Message :
+                    error?.message ? error.message : 'An error occurred';
                 return { Message: message };
             });
     return result?.data ? result?.data : result;
@@ -136,7 +143,8 @@ export const deleteManager = async (managerId) => {
         await fflapi
             .delete(`/v2/league/teamOwner/${managerId}`)
             .catch((error) => {
-                const message = error?.message ? error.message : 'An error occurred';
+                const message = error.response?.data?.Message ? error.response?.data?.Message :
+                    error?.message ? error.message : 'An error occurred';
                 return { Message: message };
             });
     return result?.data ? result?.data : result;
@@ -147,7 +155,8 @@ export const approveTrade = async (tradeId) => {
         await fflapi
             .post(`/trade/${tradeId}/approve`)
             .catch((error) => {
-                const message = error?.message ? error.message : 'An error occurred';
+                const message = error.response?.data?.Message ? error.response?.data?.Message :
+                    error?.message ? error.message : 'An error occurred';
                 return { Message: message };
             });
     return result?.data ? result?.data : result;
@@ -158,7 +167,8 @@ export const denyTrade = async (tradeId) => {
         await fflapi
             .post(`/trade/${tradeId}/deny`)
             .catch((error) => {
-                const message = error?.message ? error.message : 'An error occurred';
+                const message = error.response?.data?.Message ? error.response?.data?.Message :
+                    error?.message ? error.message : 'An error occurred';
                 return { Message: message };
             });
     return result?.data ? result?.data : result;
@@ -170,7 +180,8 @@ export const acceptTrade = async (tradeId) => {
         await fflapi
             .post(`/trade/${tradeId}/accept`, { urlToPage })
             .catch((error) => {
-                const message = error?.message ? error.message : 'An error occurred';
+                const message = error.response?.data?.Message ? error.response?.data?.Message :
+                    error?.message ? error.message : 'An error occurred';
                 return { Message: message };
             });
     return result?.data ? result?.data : result;
@@ -181,7 +192,8 @@ export const rejectTrade = async (tradeId) => {
         await fflapi
             .post(`/trade/${tradeId}/reject`)
             .catch((error) => {
-                const message = error?.message ? error.message : 'An error occurred';
+                const message = error.response?.data?.Message ? error.response?.data?.Message :
+                    error?.message ? error.message : 'An error occurred';
                 return { Message: message };
             });
     return result?.data ? result?.data : result;
@@ -192,7 +204,8 @@ export const deleteTrade = async (tradeId) => {
         await fflapi
             .delete(`/trade/${tradeId}/delete`)
             .catch((error) => {
-                const message = error?.message ? error.message : 'An error occurred';
+                const message = error.response?.data?.Message ? error.response?.data?.Message :
+                    error?.message ? error.message : 'An error occurred';
                 return { Message: message };
             });
     return result?.data ? result?.data : result;
@@ -204,7 +217,8 @@ export const createTrade = async (givingTeamId, receivingTeamId, players) => {
         await fflapi
             .post(`/trade/${givingTeamId}/${receivingTeamId}/create/`, { players, urlToPage })
             .catch((error) => {
-                const message = error?.message ? error.message : 'An error occurred';
+                const message = error.response?.data?.Message ? error.response?.data?.Message :
+                    error?.message ? error.message : 'An error occurred';
                 return { Message: message };
             });
     return result?.data ? result?.data : result;
@@ -215,7 +229,8 @@ export const updateWaiverRequestOrder = async (teamId, requestIds) => {
         await fflapi
             .post(`/waivers/${teamId}`, requestIds)
             .catch((error) => {
-                const message = error?.message ? error.message : 'An error occurred';
+                const message = error.response?.data?.Message ? error.response?.data?.Message :
+                    error?.message ? error.message : 'An error occurred';
                 return { Message: message };
             });
     return result?.data ? result?.data : result;
@@ -226,7 +241,8 @@ export const deleteWaiverRequest = async (requestId) => {
         await fflapi
             .delete(`/waivers/${requestId}`)
             .catch((error) => {
-                const message = error?.message ? error.message : 'An error occurred';
+                const message = error.response?.data?.Message ? error.response?.data?.Message :
+                    error?.message ? error.message : 'An error occurred';
                 return { Message: message };
             });
     return result?.data ? result?.data : result;
@@ -237,7 +253,8 @@ export const updateTeam = async (teamId, team) => {
         await fflapi
             .post(`/v2/team/${teamId}`, team)
             .catch((error) => {
-                const message = error?.message ? error.message : 'An error occurred';
+                const message = error.response?.data?.Message ? error.response?.data?.Message :
+                    error?.message ? error.message : 'An error occurred';
                 return { Message: message };
             });
     return result?.data ? result?.data : result;
@@ -248,7 +265,8 @@ export const updateAccount = async (userId, account) => {
         await fflapi
             .post(`/account/${userId}`, account)
             .catch((error) => {
-                const message = error?.message ? error.message : 'An error occurred';
+                const message = error.response?.data?.Message ? error.response?.data?.Message :
+                    error?.message ? error.message : 'An error occurred';
                 return { Message: message };
             });
     return result?.data ? result?.data : result;
@@ -259,7 +277,8 @@ export const updateDefaultLeague = async (userId, toLeagueId) => {
         await fflapi
             .post(`/account/${userId}/league/${toLeagueId}`)
             .catch((error) => {
-                const message = error?.message ? error.message : 'An error occurred';
+                const message = error.response?.data?.Message ? error.response?.data?.Message :
+                    error?.message ? error.message : 'An error occurred';
                 return { Message: message };
             });
     return result?.data ? result?.data : result;
@@ -270,7 +289,8 @@ export const sendCommissionerInvitation = async (leagueId) => {
         await fflapi
             .post(`/v2/league/${leagueId}/commissioner/invitation`)
             .catch((error) => {
-                const message = error?.message ? error.message : 'An error occurred';
+                const message = error.response?.data?.Message ? error.response?.data?.Message :
+                    error?.message ? error.message : 'An error occurred';
                 return { Message: message };
             });
     return result?.data ? result?.data : result;
@@ -281,7 +301,8 @@ export const addCommissioner = async (leagueId, commissioner) => {
         await fflapi
             .post(`/v2/league/${leagueId}/commissioner`, commissioner)
             .catch((error) => {
-                const message = error?.message ? error.message : 'An error occurred';
+                const message = error.response?.data?.Message ? error.response?.data?.Message :
+                    error?.message ? error.message : 'An error occurred';
                 return { Message: message };
             });
     return result?.data ? result?.data : result;
@@ -292,7 +313,8 @@ export const deleteCommissioner = async (commissionerId) => {
         await fflapi
             .delete(`/v2/league/commissioner/${commissionerId}`)
             .catch((error) => {
-                const message = error?.message ? error.message : 'An error occurred';
+                const message = error.response?.data?.Message ? error.response?.data?.Message :
+                    error?.message ? error.message : 'An error occurred';
                 return { Message: message };
             });
     return result?.data ? result?.data : result;
@@ -303,7 +325,8 @@ export const deleteRosterPlayer = async (leagueId, rosterPlayerId) => {
         await fflapi
             .delete(`/rosterPlayer/${leagueId}/${rosterPlayerId}/`)
             .catch((error) => {
-                const message = error?.message ? error.message : 'An error occurred';
+                const message = error.response?.data?.Message ? error.response?.data?.Message :
+                    error?.message ? error.message : 'An error occurred';
                 return { Message: message };
             });
     return result?.data ? result?.data : result;
@@ -314,7 +337,8 @@ export const updateRosterFormat = async (leagueId, format) => {
         await fflapi
             .post(`/v2/league/${leagueId}/rosterFormat`, format)
             .catch((error) => {
-                const message = error?.message ? error.message : 'An error occurred';
+                const message = error.response?.data?.Message ? error.response?.data?.Message :
+                    error?.message ? error.message : 'An error occurred';
                 return { Message: message };
             });
     return result?.data ? result?.data : result;
@@ -325,7 +349,8 @@ export const updatePrizes = async (leagueId, prizes) => {
         await fflapi
             .post(`/v2/league/${leagueId}/prizes`, prizes)
             .catch((error) => {
-                const message = error?.message ? error.message : 'An error occurred';
+                const message = error.response?.data?.Message ? error.response?.data?.Message :
+                    error?.message ? error.message : 'An error occurred';
                 return { Message: message };
             });
     return result?.data ? result?.data : result;
@@ -336,7 +361,8 @@ export const updateSettings = async (leagueId, settings) => {
         await fflapi
             .post(`/v2/league/${leagueId}/settings`, settings)
             .catch((error) => {
-                const message = error?.message ? error.message : 'An error occurred';
+                const message = error.response?.data?.Message ? error.response?.data?.Message :
+                    error?.message ? error.message : 'An error occurred';
                 return { Message: message };
             });
     return result?.data ? result?.data : result;
@@ -347,7 +373,8 @@ export const updateSize = async (leagueId, size) => {
         await fflapi
             .post(`/v2/league/${leagueId}/size`, size)
             .catch((error) => {
-                const message = error?.message ? error.message : 'An error occurred';
+                const message = error.response?.data?.Message ? error.response?.data?.Message :
+                    error?.message ? error.message : 'An error occurred';
                 return { Message: message };
             });
     return result?.data ? result?.data : result;
