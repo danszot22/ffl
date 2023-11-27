@@ -1,6 +1,17 @@
 import axios from 'axios';
 import { fflapi } from './ffl';
 
+let refreshPromise = null;
+const clearPromise = () => refreshPromise = null;
+
+async function renewToken() {
+    const accessToken = localStorage.getItem('token');
+    const refreshToken = localStorage.getItem('refreshToken');
+    const response = await fflapi.post('/authenticate/refreshToken', { accessToken, refreshToken });
+    const { accessToken: newAccessToken, refreshToken: newRefreshToken } = response.data;
+    return [newAccessToken, newRefreshToken];
+}
+
 const fflInterceptors = (navigate) => {
     // Add a request interceptor
     fflapi.interceptors.request.use(
@@ -26,10 +37,10 @@ const fflInterceptors = (navigate) => {
                 originalRequest._retry = true;
 
                 try {
-                    const accessToken = localStorage.getItem('token');
-                    const refreshToken = localStorage.getItem('refreshToken');
-                    const response = await fflapi.post('/authenticate/refreshToken', { accessToken, refreshToken });
-                    const { accessToken: newAccessToken, refreshToken: newRefreshToken } = response.data;
+                    if (!refreshPromise) {
+                        refreshPromise = renewToken().finally(clearPromise);
+                    }
+                    const [newAccessToken, newRefreshToken] = await refreshPromise;
 
                     localStorage.setItem('token', newAccessToken);
                     localStorage.setItem('refreshToken', newRefreshToken);
