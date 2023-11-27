@@ -678,6 +678,7 @@ export const leagueSettingsLoader = async (league) => {
 }
 
 export const userLeaguesLoader = async (userId) => {
+    if (!userId) return [];
     const response = await postToApi(`query {
         executeGetUserLeagues(
               UserId: "${userId}",

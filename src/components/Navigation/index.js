@@ -19,8 +19,12 @@ function Navigation({ league, team, isAuthenticated, user, title, subtitle }) {
 
     useEffect(() => {
         const fetchData = async (leagueId) => {
-            setTeams(await teamsLoader(leagueId));
-            setLeagues(await userLeaguesLoader(user?.userId));
+            if (leagueId) {
+                setTeams(await teamsLoader(leagueId));
+            }
+            if (user?.userId) {
+                setLeagues(await userLeaguesLoader(user?.userId));
+            }
         }
         fetchData(league?.LeagueId);
     }, [user?.userId, league?.LeagueId]);
