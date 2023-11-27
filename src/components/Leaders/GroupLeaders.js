@@ -36,12 +36,11 @@ function GroupLeaders({ league, availability, spot }) {
                     <Table size="small">
                         <TableHead>
                             <TableRow>
-                                <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' }, }} colSpan={5}>{availability} {formatTableHeaderText()}</TableCell>
-                                <TableCell sx={{ display: { xs: 'table-cell', sm: 'none' }, }} colSpan={2}>
-                                    {availability} {formatTableHeaderText()}
+                                <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' }, }} colSpan={5}>
+                                    <Link to={`/PlayerList/1?availability=${availability}&spot=${spot}`}>View {availability} {formatTableHeaderText()}</Link>
                                 </TableCell>
-                                <TableCell>
-                                    <Link to={`/PlayerList/1?availability=${availability}&spot=${spot}`}>View</Link>
+                                <TableCell sx={{ display: { xs: 'table-cell', sm: 'none' }, }} colSpan={3}>
+                                    <Link to={`/PlayerList/1?availability=${availability}&spot=${spot}`}>View {availability} {formatTableHeaderText()}</Link>
                                 </TableCell>
                                 <TableCell>Points</TableCell>
                             </TableRow>
