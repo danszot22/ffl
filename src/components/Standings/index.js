@@ -5,9 +5,11 @@ import Grid from '@mui/material/Unstable_Grid2';
 import PageToolbar from "../common/PageToolbar";
 import withAuth from "../withAuth";
 import { seasonStandingsLoader } from "../../api/graphql";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { NflWeekContext } from "../../contexts/NflWeekContext";
 
 function Standings({ league, team }) {
+    const { state: nflWeekState } = useContext(NflWeekContext);
     const [standings, setStandings] = useState();
 
     useEffect(() => {
@@ -15,8 +17,11 @@ function Standings({ league, team }) {
             const response = await seasonStandingsLoader(year, leagueId);
             setStandings(response);
         }
-        fetchData(2023, league?.LeagueId);
+        if (nflWeekState?.seasonYear && league?.LeagueId) {
+            fetchData(nflWeekState?.seasonYear, league?.LeagueId);
+        }
     }, [
+        nflWeekState?.seasonYear,
         league?.LeagueId,
     ]);
 

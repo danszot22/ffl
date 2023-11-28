@@ -829,6 +829,22 @@ export const lastNflGameWeekPlayedLoader = async () => {
     return week;
 }
 
+export const seasonYearLoader = async () => {
+    const response = await postToApi(`{
+        nflGames( 
+            filter: {Week: { eq: 1  } } first: 1 
+             orderBy: { Week : DESC }) {
+          items {
+            GameDate
+          }
+        }
+    }`);
+
+    const gameDate = response.data.data.nflGames?.items[0] ? response.data.data.nflGames.items[0].GameDate : new Date();
+
+    return gameDate;
+}
+
 export const teamPrizeLoader = async (league) => {
     const response = await postToApi(`{
     teamPrizes( filter: {and: [

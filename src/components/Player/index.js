@@ -2,7 +2,7 @@ import Root from "../Root";
 import { useParams } from "react-router-dom";
 import { playerLoader, nflGamesByTeamLoader, teamPositionPlayerLoader } from "../../api/graphql";
 import { playerNewsLoader } from "../../api/espnData";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import PageToolbar from "../common/PageToolbar";
 import { mapPlayerDetails, mapTeamPlayerDetails } from "../../utils/parsers";
 import { convertDateToLocal } from "../../utils/helpers";
@@ -12,8 +12,10 @@ import TeamPlayerStatisticRow from "./TeamPlayerStatisticRow";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import IconButton from '@mui/material/IconButton';
+import { NflWeekContext } from "../../contexts/NflWeekContext";
 
 export default function Player() {
+    const { state: nflWeekState } = useContext(NflWeekContext);
     const { id } = useParams();
     const [player, setPlayer] = useState([]);
     const [teamPlayers, setTeamPlayers] = useState([]);
@@ -25,12 +27,13 @@ export default function Player() {
 
         const fetchPlayerNews = async () => {
             setIsLoading(true);
-            if (player?.Player?.EspnPlayerId && player?.Player?.NflTeam?.ExternalCode)
-                setPlayerNews(await playerNewsLoader(2023, player?.Player?.EspnPlayerId, player?.Player?.NflTeam?.ExternalCode));
+            if (player?.Player?.EspnPlayerId && player?.Player?.NflTeam?.ExternalCode && nflWeekState?.seasonYear) {
+                setPlayerNews(await playerNewsLoader(nflWeekState?.seasonYear, player?.Player?.EspnPlayerId, player?.Player?.NflTeam?.ExternalCode));
+            }
             setIsLoading(false);
         }
         fetchPlayerNews();
-    }, [player]);
+    }, [nflWeekState?.seasonYear, player]);
 
     useEffect(() => {
         const fetchPlayer = async (playerId) => {
@@ -92,7 +95,7 @@ export default function Player() {
                     {isLoading ? <Skeleton sx={{ p: 1 }} variant="rectangular" height={40}>Loading...</Skeleton> :
                         playerNews?.map((playerNewsItem) =>
                             <Box key={playerNewsItem.id}>
-                                <Typography sx={{ display: { xs: 'block', sm: 'none' } }}>{playerNewsItem.shortComment}</Typography>
+                                <Typography>{playerNewsItem.shortComment}</Typography>
                                 <Typography sx={{ display: { xs: 'none', sm: 'block' } }}>{playerNewsItem.longComment}</Typography>
                                 <Typography sx={{ display: { xs: 'none', sm: 'block' } }}>{convertDateToLocal(playerNewsItem.date).toLocaleDateString()} {convertDateToLocal(playerNewsItem.date).toLocaleTimeString()}</Typography>
                             </Box>
