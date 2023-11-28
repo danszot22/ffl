@@ -18,7 +18,7 @@ export default function ExpandableSummaryRow({ team, row, topScore, showProjecti
 
     return (
         <>
-            <StyledTableRow onClick={() => setOpen(!open)} key={row.key} sx={{ '& > *': { borderBottom: 'unset' } }}>
+            <StyledTableRow onClick={() => setOpen(!open)} key={row.key}>
                 <TableCell sx={{ pr: 0 }} component="th" scope="row">
                     <Typography variant="inherit" sx={{ fontWeight: row.key === team ? 600 : 0 }}>{row.rank}</Typography>
                 </TableCell>

@@ -17,7 +17,7 @@ export default function ExpandableCategoryRow({ category, team, row, showProject
 
     return (
         <>
-            <StyledTableRow onClick={() => setOpen(!open)} key={row.TeamId} sx={{ '& > *': { borderBottom: 'unset' } }}>
+            <StyledTableRow onClick={() => setOpen(!open)} key={row.TeamId}>
                 <TableCell>
                     <TeamLink team={row.Team} variant="inherit" sx={{ fontWeight: row.TeamId === team ? 600 : 0 }} shortName={isBelowMedium} />
                 </TableCell>
@@ -71,7 +71,11 @@ export default function ExpandableCategoryRow({ category, team, row, showProject
                         {(row.PointTotal + row.BonusTotal).toFixed(1)}
                     </Typography>
                 </TableCell>
-                <TableCell align="right" sx={{ display: { xs: 'none', md: 'table-cell' } }} ><Typography variant="inherit" sx={{ fontWeight: row.TeamId === team ? 600 : 0 }}>{row.BonusTotal}</Typography></TableCell>
+                <TableCell align="right" sx={{ display: { xs: 'none', md: 'table-cell' } }} >
+                    <Typography variant="inherit" sx={{ fontWeight: row.TeamId === team ? 600 : 0 }}>
+                        {row.BonusTotal}
+                    </Typography>
+                </TableCell>
                 <TableCell align="right">
                     <Link variant="inherit" sx={{ fontWeight: (row.TeamId === team ? 600 : 0) }} onClick={() => setOpen(!open)}>
                         <Typography variant="inherit" sx={{ color: theme => theme.palette.mode === 'dark' ? '#90caf9' : '' }}>
