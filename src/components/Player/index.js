@@ -1,6 +1,6 @@
 import Root from "../Root";
 import { useParams } from "react-router-dom";
-import { playerLoader, nflGamesByTeamLoader, teamPositionPlayerLoader } from "../../api/graphql";
+import { playerLoader, teamPositionPlayerLoader, nflGamesForPlayerLoader } from "../../api/graphql";
 import { playerNewsLoader } from "../../api/espnData";
 import { useContext, useEffect, useState } from "react";
 import PageToolbar from "../common/PageToolbar";
@@ -18,13 +18,16 @@ export default function Player() {
     const { state: nflWeekState } = useContext(NflWeekContext);
     const { id } = useParams();
     const [player, setPlayer] = useState([]);
+    const [playerResponse, setPlayerResponse] = useState();
+    const [teamPlayerResponse, setTeamPlayerResponse] = useState();
+    const [games, setGames] = useState([]);
     const [teamPlayers, setTeamPlayers] = useState([]);
     const [playerNews, setPlayerNews] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [open, setOpen] = useState(false);
+    let playerNflTeam;
 
     useEffect(() => {
-
         const fetchPlayerNews = async () => {
             setIsLoading(true);
             if (player?.Player?.EspnPlayerId && player?.Player?.NflTeam?.ExternalCode && nflWeekState?.seasonYear) {
@@ -36,15 +39,43 @@ export default function Player() {
     }, [nflWeekState?.seasonYear, player]);
 
     useEffect(() => {
+        const fetchTeamPlayers = async (player) => {
+            if (player.Position?.PositionCode.startsWith('TM')) {
+                const position = player.Position?.PositionCode.replace("TM", "");
+                setTeamPlayerResponse(await teamPositionPlayerLoader(player?.NflTeam?.NflTeamId, position));
+            }
+        }
+        if (playerResponse)
+            fetchTeamPlayers(playerResponse);
+    }, [playerResponse]);
+
+    useEffect(() => {
         const fetchPlayer = async (playerId) => {
-            const response = await playerLoader(playerId);
-            const gamesResponse = response?.NflTeam ? await nflGamesByTeamLoader(response?.NflTeam?.NflTeamId) : [];
-            setPlayer(mapPlayerDetails(response, gamesResponse));
-            const playersResponse = await teamPositionPlayerLoader(playerId);
-            setTeamPlayers(mapTeamPlayerDetails(playersResponse, gamesResponse));
+            setPlayerResponse(await playerLoader(playerId));
         }
         fetchPlayer(id);
     }, [id]);
+
+    useEffect(() => {
+        const fetchGames = async (history) => {
+            if (history) {
+                setGames(await nflGamesForPlayerLoader(history));
+            }
+        }
+        fetchGames(playerResponse?.PlayerHistory?.items);
+    }, [playerResponse]);
+
+    useEffect(() => {
+        const mapPlayer = async () => {
+            if (games && playerResponse) {
+                setPlayer(mapPlayerDetails(playerResponse, games));
+            }
+            if (games && teamPlayerResponse) {
+                setTeamPlayers(mapTeamPlayerDetails(teamPlayerResponse, games));
+            }
+        }
+        mapPlayer();
+    }, [games, teamPlayerResponse, playerResponse]);
 
     return (
         <Root title={'Player Details'} >
@@ -163,7 +194,18 @@ export default function Player() {
                     <TableBody>
                         {player?.Player?.Position?.PositionCode === "TMQB" || player?.Player?.Position?.PositionCode === "TMPK" ?
                             Object.values(teamPlayers).map((teamPlayer) => <TeamPlayerStatisticRow key={teamPlayer.Game.NflGameId} open={open} player={player} game={teamPlayer.Game} teamPlayers={teamPlayer.Players} />) :
-                            player?.Statistics?.map((statistic) => <PlayerStatisticRow key={statistic.Game.NflGameId} player={player} statistic={statistic} />)
+                            player?.Statistics?.map((statistic) => {
+                                let showChange;
+                                let moveMessage = `Previously with ${playerNflTeam?.DisplayCode}, Acquired by ${statistic.Game.PlayerNflTeam?.DisplayCode}`;
+                                if (playerNflTeam?.NflTeamId > 0 && playerNflTeam?.NflTeamId !== statistic.Game.PlayerNflTeam?.NflTeamId) {
+                                    showChange = true;
+                                }
+                                playerNflTeam = statistic.Game.PlayerNflTeam;
+                                return <>
+                                    {showChange ? <TableRow><TableCell colSpan={7}>{moveMessage}</TableCell></TableRow> : null}
+                                    <PlayerStatisticRow playerNflTeam={statistic.Game.PlayerNflTeam} key={statistic.Game.NflGameId} player={player} statistic={statistic} />
+                                </>
+                            })
                         }
                     </TableBody>
                 </Table>

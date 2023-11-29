@@ -826,32 +826,35 @@ export function mapTeamPlayerDetails(data, gameData) {
     let playerMap = [];
     const gameMap = {};
 
-    data?.forEach((player) => {
-        playerMap = playerMap.concat(mapPlayerDetails(player, gameData));
+    data?.forEach((playerHistory) => {
+        playerMap = playerMap.concat(mapPlayerDetails(playerHistory.Player, gameData));
     });
 
     playerMap?.forEach((player) => {
         player.Statistics?.forEach((gameStatistics) => {
-            if (!gameMap[gameStatistics.Game?.NflGameId]) {
-                gameMap[gameStatistics.Game?.NflGameId] = {
-                    Game: {
-                        ...gameStatistics.Game
+            const teamGame = gameData.find((game) => game.NflGameId === gameStatistics.Game?.NflGameId);
+            if (teamGame) {
+                if (!gameMap[teamGame.NflGameId]) {
+                    gameMap[teamGame.NflGameId] = {
+                        Game: {
+                            ...gameStatistics.Game
+                        },
+                        Players: [],
+                    };
+                }
+                const p = {
+                    Player: {
+                        PlayerId: player.Player.PlayerId,
+                        EspnPlayerId: player.Player.EspnPlayerId,
+                        Name: player.Player.Name,
+                        Position: { ...player.Player.Position },
+                        NflTeam: { ...player.Player.NflTeam },
                     },
-                    Players: [],
-                };
+                    ...gameStatistics,
+                }
+                if (p.PassYds || p.PassInts || p.PassTds || p.RushYds || p.XPs || p.FgYds)
+                    gameMap[gameStatistics.Game?.NflGameId].Players = gameMap[gameStatistics.Game?.NflGameId].Players.concat(p);
             }
-            const p = {
-                Player: {
-                    PlayerId: player.Player.PlayerId,
-                    EspnPlayerId: player.Player.EspnPlayerId,
-                    Name: player.Player.Name,
-                    Position: { ...player.Player.Position },
-                    NflTeam: { ...player.Player.NflTeam },
-                },
-                ...gameStatistics,
-            }
-            if (p.PassYds || p.PassInts || p.PassTds || p.RushYds || p.XPs || p.FgYds)
-                gameMap[gameStatistics.Game?.NflGameId].Players = gameMap[gameStatistics.Game?.NflGameId].Players.concat(p);
         });
     });
     return gameMap;
@@ -861,9 +864,14 @@ export function mapPlayerDetails(data, gameData) {
     const gameMap = {};
     data?.PlayerStatistic.items.forEach((playerStatistic) => {
         if (!gameMap[playerStatistic.PlayerStatisticVersion.NflGame?.NflGameId]) {
+            const playerHistory = data?.PlayerHistory?.items.find((historyItem) =>
+                playerStatistic.PlayerStatisticVersion.NflGame?.GameDate > historyItem.FromDate &&
+                playerStatistic.PlayerStatisticVersion.NflGame?.GameDate < historyItem.ToDate
+            );
             gameMap[playerStatistic.PlayerStatisticVersion.NflGame?.NflGameId] = {
                 Game: {
-                    ...mapNflGame(playerStatistic.PlayerStatisticVersion.NflGame)
+                    ...mapNflGame(playerStatistic.PlayerStatisticVersion.NflGame),
+                    PlayerNflTeam: playerHistory?.NflTeam
                 },
             };
         }
@@ -876,13 +884,19 @@ export function mapPlayerDetails(data, gameData) {
     });
     gameData.forEach((game) => {
         if (!gameMap[game?.NflGameId]) {
+            const playerHistory = data?.PlayerHistory?.items.find((historyItem) =>
+                game?.GameDate > historyItem.FromDate &&
+                game?.GameDate < historyItem.ToDate
+            );
             gameMap[game?.NflGameId] = {
                 Game: {
-                    ...mapNflGame(game)
+                    ...mapNflGame(game),
+                    PlayerNflTeam: playerHistory?.NflTeam
                 },
             };
         }
     });
+
     const playerMap = {
         Statistics: Object.values(gameMap).map((game) => game),
         Player: {

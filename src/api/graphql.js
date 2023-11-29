@@ -133,13 +133,28 @@ export const nflGamesLoader = async (week) => {
     }`);
     return response.data.data?.nflGames?.items;
 }
+export const nflGamesForPlayerLoader = async (playerHistoryList) => {
+    const games = [];
 
-export const nflGamesByTeamLoader = async (team) => {
+    playerHistoryList.forEach(async (playerHistory) => {
+        if (playerHistory?.NflTeamId) {
+            const g = await nflGamesInPeriodByTeamLoader(playerHistory?.NflTeamId, playerHistory?.FromDate, playerHistory?.ToDate);
+            games.push(...g);
+        }
+    });
+
+    return games;
+}
+
+const nflGamesInPeriodByTeamLoader = async (team, startDate, endDate) => {
     const response = await postToApi(`{
-        nflGames( filter: {or: [
-                 { AwayTeam_NflTeamId: { eq: ${team} } } 
-                 { HomeTeam_NflTeamId: { eq: ${team} } } 
-            ] }
+        nflGames( filter: {and: [{or: [
+            { AwayTeam_NflTeamId: { eq: ${team} } } 
+            { HomeTeam_NflTeamId: { eq: ${team} } } 
+       ] }
+           {GameDate: { gt: "${startDate}"} }
+           {GameDate: { lt: "${endDate}"} }
+       ]}
             ) {
             items {
                 NflGameId
@@ -328,61 +343,65 @@ export const teamFinancesLoader = async (league) => {
       }`);
     return response.data.data.teams.items;
 }
-export const teamPositionPlayerLoader = async (player) => {
-    if (!Number.isInteger(+player)) {
-        return {};
-    }
+export const teamPositionPlayerLoader = async (nflTeamId, position) => {
     const response = await postToApi(`{
-        players ( filter: {TeamPositionPlayerId: { eq: ${player} } } ) {
-          items {
-            PlayerId
-            EspnPlayerId
-            Name
-            NflTeam {
-                NflTeamId
-                Name
-                DisplayCode
-                DisplayName
-                ExternalCode
-            }
-            Position {
-                PositionCode
-            }
-            PlayerStatistic {
-                items {
-                    Total
-                    StatisticalCategory
-                    PlayerStatisticVersion {
-                        Week
-                        Projected
-                        NflGame{
-                            NflGameId
-                            GameDate
-                            Week
-                            HomeScore
-                            AwayScore
-                            AwayTeam {
-                                NflTeamId
-                                NflTeamCode
-                                DisplayName
-                                DisplayCode
+        playerHistories ( 
+            filter: {and: [
+                { Player: {Position:  { PositionCode: { eq: "${position}" } } } } 
+                { NflTeamId: { eq: ${nflTeamId} } } 
+            ] } 
+            ) {
+            items {                
+                Player {
+                    PlayerId
+                    EspnPlayerId
+                    Name
+                    NflTeam {
+                        NflTeamId
+                        Name
+                        DisplayCode
+                        DisplayName
+                        ExternalCode
+                    }
+                    Position {
+                        PositionCode
+                    }
+                    PlayerStatistic {
+                        items {
+                            Total
+                            StatisticalCategory
+                            PlayerStatisticVersion {
+                                Week
+                                Projected
+                                NflGame{
+                                    NflGameId
+                                    GameDate
+                                    Week
+                                    HomeScore
+                                    AwayScore
+                                    AwayTeam {
+                                        NflTeamId
+                                        NflTeamCode
+                                        DisplayName
+                                        DisplayCode
+                                    }
+                                    HomeTeam {
+                                        NflTeamId
+                                        NflTeamCode
+                                        DisplayName
+                                        DisplayCode
+                                    }
+                                    BoxScoreURL
+                                }
                             }
-                            HomeTeam {
-                                NflTeamId
-                                NflTeamCode
-                                DisplayName
-                                DisplayCode
-                            }
-                            BoxScoreURL
                         }
                     }
                 }
             }
-          }
         }
-      }`);
+    }`);
 
-    return response?.data?.data?.players?.items;
+    return response?.data?.data?.playerHistories?.items;
 }
 
 export const playerLoader = async (player) => {
@@ -432,6 +451,20 @@ export const playerLoader = async (player) => {
                             }
                             BoxScoreURL
                         }
+                    }
+                }
+            }
+            PlayerHistory {
+                items {
+                    NflTeamId
+                    FromDate
+                    ToDate
+                    NflTeam {
+                        NflTeamId
+                        Name
+                        DisplayCode
+                        DisplayName
+                        ExternalCode
                     }
                 }
             }

@@ -6,7 +6,7 @@ export default function TeamPlayerStatisticRow({ player, game, teamPlayers, open
 
     return (
         <>
-            <StyledExpandableTableRow key={game.NflGameId} sx={{ '& > *': { borderBottom: 'unset' } }}>
+            <StyledExpandableTableRow>
                 <TableCell component="th" scope="row">
                     {game.Week}
                 </TableCell>
@@ -45,7 +45,7 @@ export default function TeamPlayerStatisticRow({ player, game, teamPlayers, open
                                                 </TableHead>
                                                 <TableBody>
                                                     {teamPlayers.map((player) => (
-                                                        <TableRow key={player?.Player?.PlayerId}>
+                                                        <TableRow key={`${game.NflGameId}-${player?.Player?.PlayerId}`}>
                                                             <TableCell>{player?.Player?.Name}</TableCell>
                                                             <TableCell align="right">{["PK"].includes(player?.Player?.Position?.PositionCode) ? player?.FgYds ?? 0 : player?.PassYds ?? 0}</TableCell>
                                                             <TableCell align="right">{["PK"].includes(player?.Player?.Position?.PositionCode) ? player?.XPs ?? 0 : player?.PassTds ?? 0}</TableCell>

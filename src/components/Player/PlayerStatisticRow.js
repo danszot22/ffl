@@ -1,14 +1,14 @@
 import { formatGameInfo } from "../../utils/helpers";
 import { TableCell, TableRow, Typography, Link } from "@mui/material";
 
-export default function PlayerStatisticRow({ statistic, player }) {
+export default function PlayerStatisticRow({ statistic, player, playerNflTeam }) {
 
     return (
         <TableRow>
             <TableCell>{statistic.Game.Week}</TableCell>
             <TableCell>
                 <Typography color={statistic.Game?.NotPlayed ? "error.light" : statistic.Game?.Playing ? "warning.light" : ""}>
-                    <Link color="inherit" to={statistic.Game?.BoxScoreURL}>{formatGameInfo(player.Player.NflTeam?.NflTeamId, statistic.Game)}</Link>
+                    <Link color="inherit" to={statistic.Game?.BoxScoreURL}>{formatGameInfo(playerNflTeam.NflTeamId, statistic.Game)}</Link>
                 </Typography>
             </TableCell>
             <TableCell>
