@@ -21,7 +21,9 @@ export const playerNewsLoader = async (season, espnPlayerId, teamId) => {
     );
     teamResponse?.data?.items?.forEach(async (item) => {
       if (item.$ref.includes("athletes/" + espnPlayerId)) {
-        const response = await getFromEspnApi(item.$ref);
+        const response = await getFromEspnApi(
+          item.$ref.replace("http:", "https:")
+        );
         news = news.concat(response?.data);
       }
     });
