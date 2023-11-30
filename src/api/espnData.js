@@ -17,7 +17,7 @@ export const playerNewsLoader = async (season, espnPlayerId, teamId) => {
   let news = [];
   try {
     const teamResponse = await getFromEspnApi(
-      `http://sports.core.api.espn.com/v2/sports/football/leagues/nfl/teams/${teamId}/injuries?limit=1000`
+      `https://sports.core.api.espn.com/v2/sports/football/leagues/nfl/teams/${teamId}/injuries?limit=1000`
     );
     teamResponse?.data?.items?.forEach(async (item) => {
       if (item.$ref.includes("athletes/" + espnPlayerId)) {
@@ -26,7 +26,7 @@ export const playerNewsLoader = async (season, espnPlayerId, teamId) => {
       }
     });
     const response = await getFromEspnApi(
-      `http://sports.core.api.espn.com/v2/sports/football/leagues/nfl/seasons/${season}/athletes/${espnPlayerId}/injuries?limit=1000`
+      `https://sports.core.api.espn.com/v2/sports/football/leagues/nfl/seasons/${season}/athletes/${espnPlayerId}/injuries?limit=1000`
     );
     response?.data?.items?.forEach((item) => {
       news = news.concat(item);
