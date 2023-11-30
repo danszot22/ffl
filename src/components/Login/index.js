@@ -22,29 +22,16 @@ export default function Login() {
   const navigate = useNavigate();
 
   useEffect(() => {
-<<<<<<< Updated upstream
-    const processTokenPayLoad = async (tokenPayLoad) => {
-      if (tokenPayLoad?.userName) {
-        dispatchTokenData(dispatch, tokenPayLoad);
-=======
     const processToken = async (token) => {
       localStorage.setItem("token", token);
       const tokenPayLoad = jwtDecode(token);
       if (tokenPayLoad?.userName) {
         dispatchTokenData(dispatch, tokenPayLoad, token);
->>>>>>> Stashed changes
-
         navigate(`/`);
       }
     };
     if (token) {
-<<<<<<< Updated upstream
-      const tokenPayLoad = jwtDecode(token);
-      processTokenPayLoad(tokenPayLoad);
-      localStorage.setItem("token", token);
-=======
       processToken(token);
->>>>>>> Stashed changes
     }
   }, [token, navigate, dispatch]);
 

@@ -16,11 +16,7 @@ export default function withAuth(Component) {
 
         const tokenPayLoad = jwtDecode(token);
         if (tokenPayLoad?.userName) {
-<<<<<<< Updated upstream
-          dispatchTokenData(dispatch, tokenPayLoad);
-=======
           dispatchTokenData(dispatch, tokenPayLoad, token);
->>>>>>> Stashed changes
         }
 
         return true;
@@ -34,11 +30,7 @@ export default function withAuth(Component) {
           }
         }
       })();
-<<<<<<< Updated upstream
-    }, [state?.user, navigate, dispatch]);
-=======
     }, [state, state?.user, navigate, dispatch]);
->>>>>>> Stashed changes
 
     return (
       <Component
