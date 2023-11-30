@@ -1,43 +1,45 @@
-import { useContext, useEffect } from "react"
-import { FantasyTeamContext } from "../contexts/FantasyTeamContext"
+import { useContext, useEffect } from "react";
+import { FantasyTeamContext } from "../contexts/FantasyTeamContext";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { dispatchTokenData } from "../utils/helpers";
 
 export default function withAuth(Component) {
-    return function (props) {
-        const { dispatch, state } = useContext(FantasyTeamContext);
-        const navigate = useNavigate();
+  return function (props) {
+    const { dispatch, state } = useContext(FantasyTeamContext);
+    const navigate = useNavigate();
 
-        useEffect(() => {
-            const checkLocalStorage = async () => {
-                const token = localStorage.getItem('token');
-                if (!token) return false;
+    useEffect(() => {
+      const checkLocalStorage = async () => {
+        const token = localStorage.getItem("token");
+        if (!token) return false;
 
-                const tokenPayLoad = jwtDecode(token);
-                if (tokenPayLoad?.userName) {
-                    dispatchTokenData(dispatch, tokenPayLoad);
-                }
+        const tokenPayLoad = jwtDecode(token);
+        if (tokenPayLoad?.userName) {
+          dispatchTokenData(dispatch, tokenPayLoad);
+        }
 
-                return true;
-            }
+        return true;
+      };
 
-            (async () => {
-                if (!state?.user) {
-                    const inLocalStorage = await checkLocalStorage();
-                    if (!inLocalStorage) {
-                        navigate(`/Login`);
-                    }
-                }
-            })()
+      (async () => {
+        if (!state?.user) {
+          const inLocalStorage = await checkLocalStorage();
+          if (!inLocalStorage) {
+            navigate(`/Login`);
+          }
+        }
+      })();
+    }, [state?.user, navigate, dispatch]);
 
-
-        }, [state?.user, navigate, dispatch])
-
-        return (
-
-            <Component team={state?.team} league={state?.league} user={state?.user} isAuthenticated={true} {...props}>
-            </Component>
-        )
-    }
+    return (
+      <Component
+        team={state?.team}
+        league={state?.league}
+        user={state?.user}
+        isAuthenticated={true}
+        {...props}
+      ></Component>
+    );
+  };
 }

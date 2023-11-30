@@ -1,7 +1,7 @@
-import { fflapi } from './ffl';
+import { fflapi } from "./ffl";
 
 export const seasonStandingsLoader = async (year, leagueId) => {
-    const response = await postToApi(`{
+  const response = await postToApi(`{
         seasonStandings( filter: {and: [
                 { Team :{ LeagueId: { eq: ${leagueId}} } }
                 { Year: { eq: ${year} } }
@@ -26,55 +26,60 @@ export const seasonStandingsLoader = async (year, leagueId) => {
             }
         }
     }`);
-    return response.data.data?.seasonStandings?.items;
-}
+  return response.data.data?.seasonStandings?.items;
+};
 
 async function postToApi(query) {
-
-    const options = {
-        method: 'POST',
-        url: '/dab/graphql/',
-        data: {
-            query
-        }
-    };
-    return await fflapi.request(options).catch((error) => {
-        return error?.response;
-    });;
+  const options = {
+    method: "POST",
+    url: "/dab/graphql/",
+    data: {
+      query,
+    },
+  };
+  return await fflapi.request(options).catch((error) => {
+    return error?.response;
+  });
 }
 
 function convertFilters(columnFilters, globalFilter, additionalFilter) {
-    return columnFilters?.length > 0 ? columnFilters.reduce((acc, column) => {
+  return columnFilters?.length > 0
+    ? columnFilters.reduce((acc, column) => {
         const columnNames = column.id.split(".");
         let columnFilter = " ";
         for (const columnName of columnNames) {
-            columnFilter += ` { ${columnName} :`
+          columnFilter += ` { ${columnName} :`;
         }
         columnFilter += ` { contains: "${column.value}"} `;
         for (var i = 0; i < columnNames.length; i++) {
-            columnFilter += ` } `;
+          columnFilter += ` } `;
         }
         return `${acc} ${columnFilter}`;
-    }, 'filter: {  and: [' + additionalFilter) + " ]}," : additionalFilter ? 'filter: {  and: [' + additionalFilter + " ]}," : ' ';
+      }, "filter: {  and: [" + additionalFilter) + " ]},"
+    : additionalFilter
+    ? "filter: {  and: [" + additionalFilter + " ]},"
+    : " ";
 }
 
 function convertSorting(sorting) {
-    return sorting?.length > 0 ? sorting.reduce((acc, column) => {
+  return sorting?.length > 0
+    ? sorting.reduce((acc, column) => {
         const columnNames = column.id.split(".");
         let columnSort = " ";
         for (const columnName of columnNames) {
-            columnSort += ` { ${columnName} :`
+          columnSort += ` { ${columnName} :`;
         }
         columnSort += column.desc ? " DESC " : " ASC ";
         for (var i = 0; i < columnNames.length; i++) {
-            columnSort += ` } `;
+          columnSort += ` } `;
         }
         return `${acc} ${columnSort}`;
-    }, 'orderBy: ') : " ";
+      }, "orderBy: ")
+    : " ";
 }
 
 export const userLoader = async (username) => {
-    const response = await postToApi(`{
+  const response = await postToApi(`{
         users( filter: {UserName: { eq: "${username}" } }) {
           items {
             Id
@@ -94,11 +99,11 @@ export const userLoader = async (username) => {
             }
         }
     }`);
-    return response.data.data.users?.items[0];
-}
+  return response.data.data.users?.items[0];
+};
 
 export const nflTeamsLoader = async () => {
-    const response = await postToApi(`{
+  const response = await postToApi(`{
         nflTeams(  orderBy: { Name : ASC } ) {
           items {
                 Name
@@ -106,11 +111,11 @@ export const nflTeamsLoader = async () => {
           }
         }
       }`);
-    return response.data.data.nflTeams.items.map((item) => item.Name);
-}
+  return response.data.data.nflTeams.items.map((item) => item.Name);
+};
 
 export const nflGamesLoader = async (week) => {
-    const response = await postToApi(`{
+  const response = await postToApi(`{
         nflGames( filter: {Week: { eq: ${week} } } ) {
             items {
                 HomeScore
@@ -131,23 +136,27 @@ export const nflGamesLoader = async (week) => {
             }
         }
     }`);
-    return response.data.data?.nflGames?.items;
-}
+  return response.data.data?.nflGames?.items;
+};
 export const nflGamesForPlayerLoader = async (playerHistoryList) => {
-    const games = [];
+  const games = [];
 
-    playerHistoryList.forEach(async (playerHistory) => {
-        if (playerHistory?.NflTeamId) {
-            const g = await nflGamesInPeriodByTeamLoader(playerHistory?.NflTeamId, playerHistory?.FromDate, playerHistory?.ToDate);
-            games.push(...g);
-        }
-    });
+  playerHistoryList.forEach(async (playerHistory) => {
+    if (playerHistory?.NflTeamId) {
+      const g = await nflGamesInPeriodByTeamLoader(
+        playerHistory?.NflTeamId,
+        playerHistory?.FromDate,
+        playerHistory?.ToDate
+      );
+      games.push(...g);
+    }
+  });
 
-    return games;
-}
+  return games;
+};
 
 const nflGamesInPeriodByTeamLoader = async (team, startDate, endDate) => {
-    const response = await postToApi(`{
+  const response = await postToApi(`{
         nflGames( filter: {and: [{or: [
             { AwayTeam_NflTeamId: { eq: ${team} } } 
             { HomeTeam_NflTeamId: { eq: ${team} } } 
@@ -178,13 +187,12 @@ const nflGamesInPeriodByTeamLoader = async (team, startDate, endDate) => {
             }
         }
       }`);
-    return response.data.data.nflGames.items;
-}
+  return response.data.data.nflGames.items;
+};
 
 export const scoringLoader = async (league, week) => {
-    if (!Number.isInteger(league) || !Number.isInteger(week))
-        return [];
-    const response = await postToApi(`{
+  if (!Number.isInteger(league) || !Number.isInteger(week)) return [];
+  const response = await postToApi(`{
             pointVersions ( filter: {and: [
                 { LeagueId: { eq: ${league} } }
                 { Week: { eq: ${week} } }
@@ -247,13 +255,12 @@ export const scoringLoader = async (league, week) => {
             }
           }`);
 
-    return response.data.data.pointVersions.items;
-}
+  return response.data.data.pointVersions.items;
+};
 
 export const seasonScoringLoader = async (league) => {
-    if (!Number.isInteger(league))
-        return [];
-    const response = await postToApi(`{
+  if (!Number.isInteger(league)) return [];
+  const response = await postToApi(`{
             pointVersions ( filter: {and: [
                 { LeagueId: { eq: ${league} } }
               { Active: { eq: true } }
@@ -297,13 +304,12 @@ export const seasonScoringLoader = async (league) => {
             }
           }`);
 
-    return response.data.data.pointVersions.items;
-}
+  return response.data.data.pointVersions.items;
+};
 
 export const teamsLoader = async (league) => {
-    if (!Number.isInteger(league))
-        return [];
-    const response = await postToApi(`{
+  if (!Number.isInteger(league)) return [];
+  const response = await postToApi(`{
         teams ( filter: {LeagueId: { eq: ${league} } }   orderBy: { Division : ASC } ) {
           items {
                 LeagueId
@@ -323,13 +329,12 @@ export const teamsLoader = async (league) => {
           }
         }
       }`);
-    return response.data.data?.teams?.items;
-}
+  return response.data.data?.teams?.items;
+};
 
 export const teamFinancesLoader = async (league) => {
-    if (!Number.isInteger(league))
-        return [];
-    const response = await postToApi(`{
+  if (!Number.isInteger(league)) return [];
+  const response = await postToApi(`{
         teams ( filter: {LeagueId: { eq: ${league} } } ) {
           items {
                 TeamId
@@ -341,10 +346,10 @@ export const teamFinancesLoader = async (league) => {
           }
         }
       }`);
-    return response.data.data.teams.items;
-}
+  return response.data.data.teams.items;
+};
 export const teamPositionPlayerLoader = async (nflTeamId, position) => {
-    const response = await postToApi(`{
+  const response = await postToApi(`{
         playerHistories ( 
             filter: {and: [
                 { Player: {Position:  { PositionCode: { eq: "${position}" } } } } 
@@ -401,14 +406,14 @@ export const teamPositionPlayerLoader = async (nflTeamId, position) => {
         }
     }`);
 
-    return response?.data?.data?.playerHistories?.items;
-}
+  return response?.data?.data?.playerHistories?.items;
+};
 
 export const playerLoader = async (player) => {
-    if (!Number.isInteger(+player)) {
-        return {};
-    }
-    const response = await postToApi(`{
+  if (!Number.isInteger(+player)) {
+    return {};
+  }
+  const response = await postToApi(`{
         players ( filter: {PlayerId: { eq: ${player} } } ) {
           items {
             PlayerId
@@ -471,15 +476,14 @@ export const playerLoader = async (player) => {
           }
         }
       }`);
-    return response.data.data?.players?.items[0];
-
-}
+  return response.data.data?.players?.items[0];
+};
 
 export const teamLoader = async (team) => {
-    if (!Number.isInteger(+team)) {
-        return {};
-    }
-    const response = await postToApi(`{
+  if (!Number.isInteger(+team)) {
+    return {};
+  }
+  const response = await postToApi(`{
         teams ( filter: {TeamId: { eq: ${team} } } ) {
           items {
                 LeagueId
@@ -499,15 +503,14 @@ export const teamLoader = async (team) => {
           }
         }
       }`);
-    return response.data.data?.teams?.items[0];
-
-}
+  return response.data.data?.teams?.items[0];
+};
 
 export const userTeamLoader = async (leagueId, userId) => {
-    if (!Number.isInteger(+leagueId)) {
-        return {};
-    }
-    const response = await postToApi(`{
+  if (!Number.isInteger(+leagueId)) {
+    return {};
+  }
+  const response = await postToApi(`{
         teams ( filter: {and: [
                     { TeamOwner: {UserId: { eq: "${userId}" } }  }
                     { LeagueId: { eq: ${leagueId} } } 
@@ -530,14 +533,14 @@ export const userTeamLoader = async (leagueId, userId) => {
             }
         }
     }`);
-    return response.data.data.teams.items.length > 0 ? response.data.data.teams.items[0] : {};
-
-}
+  return response.data.data.teams.items.length > 0
+    ? response.data.data.teams.items[0]
+    : {};
+};
 
 export const lineupsLoader = async (league, week) => {
-    if (!Number.isInteger(league) && !Number.isInteger(week))
-        return [];
-    const response = await postToApi(`{
+  if (!Number.isInteger(league) && !Number.isInteger(week)) return [];
+  const response = await postToApi(`{
         lineups ( 
             filter: {and: [
                 { Team: {LeagueId: { eq: ${league} } } } 
@@ -579,13 +582,12 @@ export const lineupsLoader = async (league, week) => {
           
         }
       }`);
-    return response.data.data?.lineups?.items;
-}
+  return response.data.data?.lineups?.items;
+};
 
 export const teamLineupLoader = async (team, week) => {
-    if (!Number.isInteger(team) && !Number.isInteger(team))
-        return [];
-    const response = await postToApi(`{
+  if (!Number.isInteger(team) && !Number.isInteger(team)) return [];
+  const response = await postToApi(`{
         lineups ( 
             filter: {and: [
                 { Week: {eq: ${week} } }
@@ -629,13 +631,12 @@ export const teamLineupLoader = async (team, week) => {
           
         }
       }`);
-    return response.data.data?.lineups?.items[0];
-}
+  return response.data.data?.lineups?.items[0];
+};
 
 export const fantasyGameLoader = async (league, week) => {
-    if (!Number.isInteger(league) && !Number.isInteger(week))
-        return [];
-    const response = await postToApi(`{
+  if (!Number.isInteger(league) && !Number.isInteger(week)) return [];
+  const response = await postToApi(`{
         fantasyGameResults ( 
             filter: {and: [
                 { FantasyGame: {HomeTeam: {LeagueId:{ eq: ${league} } } } } 
@@ -668,13 +669,12 @@ export const fantasyGameLoader = async (league, week) => {
             }  
         }`);
 
-    return response.data.data?.fantasyGameResults?.items;
-}
+  return response.data.data?.fantasyGameResults?.items;
+};
 
 export const leagueSettingsLoader = async (league) => {
-    if (!Number.isInteger(league))
-        return [];
-    const response = await postToApi(`query {
+  if (!Number.isInteger(league)) return [];
+  const response = await postToApi(`query {
         executeGetLeagueSettings(
               LeagueId: ${league},
               )
@@ -707,12 +707,14 @@ export const leagueSettingsLoader = async (league) => {
         }
       }`);
 
-    return response.data?.data?.executeGetLeagueSettings?.length > 0 ? response.data?.data?.executeGetLeagueSettings[0] : [];
-}
+  return response.data?.data?.executeGetLeagueSettings?.length > 0
+    ? response.data?.data?.executeGetLeagueSettings[0]
+    : [];
+};
 
 export const userLeaguesLoader = async (userId) => {
-    if (!userId) return [];
-    const response = await postToApi(`query {
+  if (!userId) return [];
+  const response = await postToApi(`query {
         executeGetUserLeagues(
               UserId: "${userId}",
               )
@@ -723,14 +725,24 @@ export const userLeaguesLoader = async (userId) => {
         }
       }`);
 
-    return response.data?.data?.executeGetUserLeagues;
-}
+  return response.data?.data?.executeGetUserLeagues;
+};
 
-export const leaguePlayersLoader = async (league, spotCode = 'ALL', availability = 'ALL', page = 1, limit = 5, summaryType = 1,
-    positionFilter = 'All', nflTeamFilter = 'All', nameFilter = ' ', sortColumn = 'Points', sortDirection = 'DESC') => {
-    if (!Number.isInteger(league))
-        return [];
-    const response = await postToApi(`query {
+export const leaguePlayersLoader = async (
+  league,
+  spotCode = "ALL",
+  availability = "ALL",
+  page = 1,
+  limit = 5,
+  summaryType = 1,
+  positionFilter = "All",
+  nflTeamFilter = "All",
+  nameFilter = " ",
+  sortColumn = "Points",
+  sortDirection = "DESC"
+) => {
+  if (!Number.isInteger(league)) return [];
+  const response = await postToApi(`query {
         executeGetLeaguePlayersWithStatistics(
               LeagueId:${league},
               Availability:"${availability}",
@@ -781,17 +793,24 @@ export const leaguePlayersLoader = async (league, spotCode = 'ALL', availability
         }
       }`);
 
-    return response?.data?.data?.executeGetLeaguePlayersWithStatistics;
-}
+  return response?.data?.data?.executeGetLeaguePlayersWithStatistics;
+};
 
-export const playersLoader = async ({ pagination, columnFilters, globalFilter, endCursor, sorting }, useCursor) => {
+export const playersLoader = async (
+  { pagination, columnFilters, globalFilter, endCursor, sorting },
+  useCursor
+) => {
+  const rowCount = pagination ? pagination.pageSize : 1;
+  const filter = convertFilters(
+    columnFilters,
+    globalFilter,
+    "{ Position : { PositionCode : { isNull: false}  }  }"
+  );
+  const sort = convertSorting(sorting);
+  const after =
+    useCursor && endCursor?.length > 0 ? `after:"${endCursor}"` : "";
 
-    const rowCount = pagination ? pagination.pageSize : 1;
-    const filter = convertFilters(columnFilters, globalFilter, "{ Position : { PositionCode : { isNull: false}  }  }");
-    const sort = convertSorting(sorting);
-    const after = useCursor && endCursor?.length > 0 ? `after:"${endCursor}"` : "";
-
-    const response = await postToApi(`{
+  const response = await postToApi(`{
         players(${filter} first: ${rowCount} ${after} ${sort}) {
           items {
             PlayerId
@@ -825,13 +844,11 @@ export const playersLoader = async ({ pagination, columnFilters, globalFilter, e
         }
       }`);
 
-
-    return response.data.data.players;
-
+  return response.data.data.players;
 };
 
 export const currentNflGameWeekLoader = async () => {
-    const response = await postToApi(`{
+  const response = await postToApi(`{
         nflGames( 
             filter: {Final: { eq: false  } } first: 1 
              orderBy: { Week : ASC }) {
@@ -841,13 +858,15 @@ export const currentNflGameWeekLoader = async () => {
         }
     }`);
 
-    const week = response.data.data.nflGames?.items[0] ? response.data.data.nflGames.items[0].Week : 18;
+  const week = response.data.data.nflGames?.items[0]
+    ? response.data.data.nflGames.items[0].Week
+    : 18;
 
-    return week;
-}
+  return week;
+};
 
 export const lastNflGameWeekPlayedLoader = async () => {
-    const response = await postToApi(`{
+  const response = await postToApi(`{
         nflGames( 
             filter: {Final: { eq: true  } } first: 1 
              orderBy: { Week : DESC }) {
@@ -857,13 +876,15 @@ export const lastNflGameWeekPlayedLoader = async () => {
         }
     }`);
 
-    const week = response.data.data.nflGames?.items[0] ? response.data.data.nflGames.items[0].Week : 0;
+  const week = response.data.data.nflGames?.items[0]
+    ? response.data.data.nflGames.items[0].Week
+    : 0;
 
-    return week;
-}
+  return week;
+};
 
 export const seasonYearLoader = async () => {
-    const response = await postToApi(`{
+  const response = await postToApi(`{
         nflGames( 
             filter: {Week: { eq: 1  } } first: 1 
              orderBy: { Week : DESC }) {
@@ -873,13 +894,15 @@ export const seasonYearLoader = async () => {
         }
     }`);
 
-    const gameDate = response.data.data.nflGames?.items[0] ? response.data.data.nflGames.items[0].GameDate : new Date();
+  const gameDate = response.data.data.nflGames?.items[0]
+    ? response.data.data.nflGames.items[0].GameDate
+    : new Date();
 
-    return gameDate;
-}
+  return gameDate;
+};
 
 export const teamPrizeLoader = async (league) => {
-    const response = await postToApi(`{
+  const response = await postToApi(`{
     teamPrizes( filter: {and: [
             { Team: {LeagueId: { eq: ${league} } } } 
         ] }
@@ -898,12 +921,11 @@ export const teamPrizeLoader = async (league) => {
         }
     }`);
 
-    return response.data.data?.teamPrizes?.items;
-
-}
+  return response.data.data?.teamPrizes?.items;
+};
 
 export const rosterSettingsLoader = async (league) => {
-    const response = await postToApi(`{
+  const response = await postToApi(`{
         rosterFormats( filter: {and: [
                 { LeagueId: { eq: ${league} } } 
             ] }
@@ -949,11 +971,11 @@ export const rosterSettingsLoader = async (league) => {
         }
     }`);
 
-    return response.data.data?.rosterFormats?.items[0];
-}
+  return response.data.data?.rosterFormats?.items[0];
+};
 
 export const leaguePrizeSettingsLoader = async (league) => {
-    const response = await postToApi(`{
+  const response = await postToApi(`{
         prizeSettings( filter: {and: [
                 { LeagueId: { eq: ${league} } } 
             ] }
@@ -972,11 +994,11 @@ export const leaguePrizeSettingsLoader = async (league) => {
         }
     }`);
 
-    return response.data.data?.prizeSettings?.items[0];
-}
+  return response.data.data?.prizeSettings?.items[0];
+};
 
 export const leagueCommissionerLoader = async (league) => {
-    const response = await postToApi(`{
+  const response = await postToApi(`{
         leagueCommissioners( filter: {and: [
                 { LeagueId: { eq: ${league} } } 
             ] }
@@ -991,11 +1013,11 @@ export const leagueCommissionerLoader = async (league) => {
         }
     }`);
 
-    return response.data.data?.leagueCommissioners?.items;
-}
+  return response.data.data?.leagueCommissioners?.items;
+};
 
 export const siteScheduleLoader = async () => {
-    const response = await postToApi(`{
+  const response = await postToApi(`{
         schedules() {
           items {
                 ScheduleId
@@ -1010,11 +1032,11 @@ export const siteScheduleLoader = async () => {
         }
     }`);
 
-    return response.data.data.schedules?.items;
-}
+  return response.data.data.schedules?.items;
+};
 
 export const leagueScheduleLoader = async (league, schedule = 0) => {
-    const response = await postToApi(`{
+  const response = await postToApi(`{
         scheduleGames( filter: {and: [
                 { Schedule: {ScheduleType: { eq: ${schedule} } } } 
                 { FantasyGame: {HomeTeam: {LeagueId: { eq: ${league} } }  } } 
@@ -1052,12 +1074,11 @@ export const leagueScheduleLoader = async (league, schedule = 0) => {
         }
       }`);
 
-    return response.data.data.scheduleGames?.items;
-
-}
+  return response.data.data.scheduleGames?.items;
+};
 
 export const teamScheduleLoader = async (team, schedule) => {
-    const response = await postToApi(`{
+  const response = await postToApi(`{
         scheduleGames( filter: {and: [
                 { Schedule: {ScheduleType: { eq: ${schedule} } } } 
                 { or: [ 
@@ -1098,12 +1119,11 @@ export const teamScheduleLoader = async (team, schedule) => {
         }
       }`);
 
-    return response.data.data?.scheduleGames?.items;
-
-}
+  return response.data.data?.scheduleGames?.items;
+};
 
 export const transactionFeeLoader = async (league) => {
-    const response = await postToApi(`{
+  const response = await postToApi(`{
         transactions( filter: {or: [
                 {RosterPlayerAdded: { Team: {LeagueId: { eq: ${league} } }  }}
             ] }
@@ -1119,11 +1139,11 @@ export const transactionFeeLoader = async (league) => {
         }
       }`);
 
-    return response.data.data.transactions?.items;
-}
+  return response.data.data.transactions?.items;
+};
 
 export const teamWaiverRequestsLoader = async (team, status) => {
-    const response = await postToApi(`
+  const response = await postToApi(`
     {
         waiverRequests( filter: {and: [
                 {TeamId: { eq: ${team} } }
@@ -1162,11 +1182,11 @@ export const teamWaiverRequestsLoader = async (team, status) => {
       }
     `);
 
-    return response.data.data?.waiverRequests?.items;
-}
+  return response.data.data?.waiverRequests?.items;
+};
 
 export const teamTransactionsLoader = async (team) => {
-    const response = await postToApi(`{
+  const response = await postToApi(`{
         transactions( filter: {or: [
                 {RosterPlayerAdded: { Team: {TeamId: { eq: ${team} } }  }}
             ] }
@@ -1202,11 +1222,11 @@ export const teamTransactionsLoader = async (team) => {
         }
       }`);
 
-    return response.data.data?.transactions?.items;
-}
+  return response.data.data?.transactions?.items;
+};
 
 export const leagueTransactionsLoader = async (league) => {
-    const response = await postToApi(`{
+  const response = await postToApi(`{
         transactions( filter: {or: [
                 {RosterPlayerAdded: { Team: {LeagueId: { eq: ${league} } }  }}
             ] }
@@ -1252,11 +1272,11 @@ export const leagueTransactionsLoader = async (league) => {
         }
       }`);
 
-    return response.data.data.transactions?.items;
-}
+  return response.data.data.transactions?.items;
+};
 
 export const leagueWaiverResultsLoader = async (league, week) => {
-    const response = await postToApi(`{
+  const response = await postToApi(`{
         waiverRequestResults( filter: {and: [
                 { WaiverRequest: { Team: {LeagueId: { eq: ${league} } }  }}
                 { WaiverRequest: {Week: { eq: ${week} } } }
@@ -1296,11 +1316,11 @@ export const leagueWaiverResultsLoader = async (league, week) => {
         }
       }`);
 
-    return response.data.data.waiverRequestResults?.items;
-}
+  return response.data.data.waiverRequestResults?.items;
+};
 
 export const teamTradesLoader = async (team, status) => {
-    const response = await postToApi(`{
+  const response = await postToApi(`{
         trades( filter: {or: [
                 {GivingTeamId: { eq: ${team} } }
                 {ReceivingTeamId: { eq: ${team} } }
@@ -1354,11 +1374,11 @@ export const teamTradesLoader = async (team, status) => {
         }
       }`);
 
-    return response.data.data?.trades?.items;
-}
+  return response.data.data?.trades?.items;
+};
 
 export const leagueTradesLoader = async (league) => {
-    const response = await postToApi(`{
+  const response = await postToApi(`{
         trades( filter: 
             { GivingTeam: {LeagueId: { eq: ${league} } }  }
             orderBy: { TradeDate : ASC } ) {
@@ -1410,5 +1430,5 @@ export const leagueTradesLoader = async (league) => {
         }
     }`);
 
-    return response.data.data?.trades?.items;
-}
+  return response.data.data?.trades?.items;
+};
