@@ -6,7 +6,7 @@ import {
   nflGamesForPlayerLoader,
 } from "../../api/graphql";
 import { playerNewsLoader } from "../../api/espnData";
-import { useContext, useEffect, useState } from "react";
+import { Fragment, useContext, useEffect, useState } from "react";
 import PageToolbar from "../common/PageToolbar";
 import { mapPlayerDetails, mapTeamPlayerDetails } from "../../utils/parsers";
 import { convertDateToLocal } from "../../utils/helpers";
@@ -40,7 +40,6 @@ export default function Player() {
   const [playerNews, setPlayerNews] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [open, setOpen] = useState(false);
-  let playerNflTeam;
 
   useEffect(() => {
     const fetchPlayerNews = async () => {
@@ -278,31 +277,28 @@ export default function Player() {
                     teamPlayers={teamPlayer.Players}
                   />
                 ))
-              : player?.Statistics?.map((statistic) => {
-                  let showChange;
-                  let moveMessage = `Previously with ${playerNflTeam?.DisplayCode}, Acquired by ${statistic.Game.PlayerNflTeam?.DisplayCode}`;
-                  if (
-                    playerNflTeam?.NflTeamId > 0 &&
-                    playerNflTeam?.NflTeamId !==
-                      statistic.Game.PlayerNflTeam?.NflTeamId
-                  ) {
-                    showChange = true;
-                  }
-                  playerNflTeam = statistic.Game.PlayerNflTeam;
+              : player?.Statistics?.map((statistic, index) => {
                   return (
-                    <>
-                      {showChange ? (
+                    <Fragment key={statistic.Game.NflGameId}>
+                      {index > 0 &&
+                      player?.Statistics[index - 1].Game?.PlayerNflTeam
+                        .NflTeamId !==
+                        statistic.Game.PlayerNflTeam?.NflTeamId ? (
                         <TableRow>
-                          <TableCell colSpan={7}>{moveMessage}</TableCell>
+                          <TableCell colSpan={7}>{`Previously with ${
+                            player?.Statistics[index - 1].Game?.PlayerNflTeam
+                              ?.DisplayCode
+                          }, Acquired by ${
+                            statistic.Game.PlayerNflTeam?.DisplayCode
+                          }`}</TableCell>
                         </TableRow>
                       ) : null}
                       <PlayerStatisticRow
                         playerNflTeam={statistic.Game.PlayerNflTeam}
-                        key={statistic.Game.NflGameId}
                         player={player}
                         statistic={statistic}
                       />
-                    </>
+                    </Fragment>
                   );
                 })}
           </TableBody>
