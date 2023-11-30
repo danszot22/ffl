@@ -164,8 +164,13 @@ export function formatQuarter(nflGame) {
     : "";
 }
 
+<<<<<<< Updated upstream
 export async function dispatchTokenData(dispatch, tokenPayLoad) {
   dispatch(setUserToken(tokenPayLoad));
+=======
+export async function dispatchTokenData(dispatch, tokenPayLoad, token) {
+  dispatch(setUserToken(token));
+>>>>>>> Stashed changes
 
   const team = await teamLoader(+tokenPayLoad?.teamId);
   dispatch(setTeam(team));
