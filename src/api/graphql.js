@@ -214,7 +214,7 @@ export const scoringLoader = async (league, week) => {
                                 TeamName
                                 OwnerName
                             }
-                            PlayerStatistic {
+                            PlayerStatistic (first: 1000) {
                                 items {
                                     PlayerId
                                     Total
@@ -282,7 +282,7 @@ export const seasonScoringLoader = async (league) => {
                                 TeamName
                                 OwnerName
                             }
-                            PlayerStatistic {
+                            PlayerStatistic (first: 1000) {
                                 items {
                                     PlayerId
                                     Total
@@ -371,7 +371,7 @@ export const teamPositionPlayerLoader = async (nflTeamId, position) => {
                     Position {
                         PositionCode
                     }
-                    PlayerStatistic {
+                    PlayerStatistic (first: 1000) {
                         items {
                             Total
                             StatisticalCategory
@@ -429,7 +429,7 @@ export const playerLoader = async (player) => {
             Position {
                 PositionCode
             }
-            PlayerStatistic {
+            PlayerStatistic (first: 1000) {
                 items {
                     Total
                     StatisticalCategory
