@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import {
   playerLoader,
   teamPositionPlayerLoader,
-  nflGamesForPlayerLoader,
+  allNflGamesLoader,
 } from "../../api/graphql";
 import { playerNewsLoader } from "../../api/espnData";
 import { Fragment, useContext, useEffect, useState } from "react";
@@ -28,14 +28,15 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import IconButton from "@mui/material/IconButton";
 import { NflWeekContext } from "../../contexts/NflWeekContext";
+import withAuth from "../withAuth";
 
-export default function Player() {
+function Player({ user }) {
   const { state: nflWeekState } = useContext(NflWeekContext);
   const { id } = useParams();
   const [player, setPlayer] = useState([]);
   const [playerResponse, setPlayerResponse] = useState();
   const [teamPlayerResponse, setTeamPlayerResponse] = useState();
-  const [games, setGames] = useState([]);
+  const [allGames, setAllGames] = useState([]);
   const [teamPlayers, setTeamPlayers] = useState([]);
   const [playerNews, setPlayerNews] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -79,28 +80,31 @@ export default function Player() {
       setPlayerResponse(await playerLoader(playerId));
     };
     fetchPlayer(id);
-  }, [id]);
-
-  useEffect(() => {
-    const fetchGames = async (history) => {
-      if (history) {
-        setGames(await nflGamesForPlayerLoader(history));
-      }
-    };
-    fetchGames(playerResponse?.PlayerHistory?.items);
-  }, [playerResponse]);
+  }, [id, user]);
 
   useEffect(() => {
     const mapPlayer = async () => {
-      if (games && playerResponse) {
-        setPlayer(mapPlayerDetails(playerResponse, games));
+      if (allGames && playerResponse) {
+        setPlayer(mapPlayerDetails(playerResponse, allGames));
       }
-      if (games && teamPlayerResponse) {
+      if (allGames && teamPlayerResponse) {
+        const games = allGames.filter(
+          (game) =>
+            game.AwayTeam.NflTeamId === playerResponse?.NflTeam?.NflTeamId ||
+            game.HomeTeam.NflTeamId === playerResponse?.NflTeam?.NflTeamId
+        );
         setTeamPlayers(mapTeamPlayerDetails(teamPlayerResponse, games));
       }
     };
     mapPlayer();
-  }, [games, teamPlayerResponse, playerResponse]);
+  }, [allGames, teamPlayerResponse, playerResponse]);
+
+  useEffect(() => {
+    const getAllGames = async () => {
+      setAllGames(await allNflGamesLoader());
+    };
+    getAllGames();
+  }, [user]);
 
   return (
     <Root title={"Player Details"}>
@@ -307,3 +311,5 @@ export default function Player() {
     </Root>
   );
 }
+
+export default withAuth(Player);

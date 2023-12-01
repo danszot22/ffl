@@ -155,6 +155,34 @@ export const nflGamesForPlayerLoader = async (playerHistoryList) => {
   return games;
 };
 
+export const allNflGamesLoader = async () => {
+  const response = await postToApi(`{
+          nflGames(first: 1000) {
+              items {
+                  NflGameId
+                  GameDate
+                  Week
+                  HomeScore
+                  AwayScore
+                  AwayTeam {
+                      NflTeamId
+                      NflTeamCode
+                      DisplayName
+                      DisplayCode
+                  }
+                  HomeTeam {
+                      NflTeamId
+                      NflTeamCode
+                      DisplayName
+                      DisplayCode
+                  }
+                  BoxScoreURL
+              }
+          }
+        }`);
+  return response.data.data?.nflGames?.items;
+};
+
 const nflGamesInPeriodByTeamLoader = async (team, startDate, endDate) => {
   const response = await postToApi(`{
         nflGames( filter: {and: [{or: [
