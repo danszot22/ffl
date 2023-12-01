@@ -6,6 +6,7 @@ import PlayerLink from "../components/common/PlayerLink";
 import { playerStatusCodes } from "../utils/helpers";
 import { nflTeamsLoader } from "../api/graphql";
 import { getPositionsToAdd } from "../api/ffl";
+import { useQuery } from "@tanstack/react-query";
 
 function usePlayerTableColumns(
   spot,
@@ -53,12 +54,19 @@ function usePlayerTableColumns(
     }
   }, [spot, rosterPlayerToDrop, teamId, leagueId, setPositionFilter]);
 
+  const { data: nflTeamResponse } = useQuery({
+    queryKey: ["nflTeams"],
+    queryFn: async () => {
+      return await nflTeamsLoader();
+    },
+    staleTime: 15 * 60 * 1000, //15 minutes
+  });
+
   useEffect(() => {
-    const fetchTeams = async () => {
-      const response = await nflTeamsLoader();
-      setNflTeams(response);
-    };
-    fetchTeams();
+    setNflTeams(nflTeamResponse);
+  }, [nflTeamResponse]);
+
+  useEffect(() => {
     setSummaryTypes([
       { id: 1, value: "Season" },
       { id: 2, value: "Last 2 Weeks" },
