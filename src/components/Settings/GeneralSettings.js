@@ -28,10 +28,10 @@ export default function GeneralSettings({ leagueId, settings, isEditable }) {
     const fetchSchedule = async () => {
       const response = await siteScheduleLoader();
       setPlayoffSchedule(
-        response.find((s) => s.ScheduleId === settings?.PlayoffScheduleId)
+        response?.find((s) => s.ScheduleId === settings?.PlayoffScheduleId)
       );
       setRegularSchedule(
-        response.find((s) => s.ScheduleId === settings?.ScheduleId)
+        response?.find((s) => s.ScheduleId === settings?.ScheduleId)
       );
     };
     setKeeperDrop(settings && settings?.AllowDropEligibleKeeper ? true : false);

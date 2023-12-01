@@ -111,7 +111,7 @@ export const nflTeamsLoader = async () => {
           }
         }
       }`);
-  return response.data.data.nflTeams.items.map((item) => item.Name);
+  return response.data.data?.nflTeams?.items?.map((item) => item.Name);
 };
 
 export const nflGamesLoader = async (week) => {
@@ -1060,7 +1060,7 @@ export const siteScheduleLoader = async () => {
         }
     }`);
 
-  return response.data.data.schedules?.items;
+  return response.data.data?.schedules?.items;
 };
 
 export const leagueScheduleLoader = async (league, schedule = 0) => {
@@ -1300,7 +1300,7 @@ export const leagueTransactionsLoader = async (league) => {
         }
       }`);
 
-  return response.data.data.transactions?.items;
+  return response.data.data?.transactions?.items;
 };
 
 export const leagueWaiverResultsLoader = async (league, week) => {

@@ -87,8 +87,10 @@ function usePlayerTableLoader(id, initialSpot, initialAvailability, leagueId) {
           sorting?.length > 0 ? sorting[0].id : "Points",
           sorting?.length > 0 ? (sorting[0].desc ? "DESC" : "ASC") : "DESC"
         );
-        setPlayers(response);
-        setRowCount(response[0]?.TotalRows);
+        if (response) {
+          setPlayers(response);
+          setRowCount(response[0]?.TotalRows);
+        }
       } catch (error) {
         setIsError(true);
         console.error(error);

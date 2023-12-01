@@ -153,7 +153,7 @@ function usePlayerTableColumns(
           size: isBelowLarge ? 50 : 200,
           enableSorting: false,
           filterVariant: "select",
-          filterSelectOptions: ["All", ...nflTeams],
+          filterSelectOptions: nflTeams ? ["All", ...nflTeams] : [],
           Cell: ({ renderedCellValue, row }) => (
             <Box
               sx={{
