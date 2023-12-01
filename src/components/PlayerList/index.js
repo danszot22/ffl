@@ -71,9 +71,14 @@ function PlayerList({ league, team }) {
             value={nflTeams?.length > 0 ? nflTeamFilter : ""}
             onChange={(event) => setNflTeamFilter(event.target.value)}
           >
-            {["All", ...nflTeams]?.map((nflteam, index) => (
-              <MenuItem key={nflteam} value={nflteam}>{`${nflteam}`}</MenuItem>
-            ))}
+            {nflTeams
+              ? ["All", ...nflTeams]?.map((nflteam, index) => (
+                  <MenuItem
+                    key={nflteam}
+                    value={nflteam}
+                  >{`${nflteam}`}</MenuItem>
+                ))
+              : null}
           </Select>
         </FormControl>
         <FormControl fullWidth>

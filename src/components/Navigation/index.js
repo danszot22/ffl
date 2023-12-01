@@ -7,6 +7,7 @@ import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import NavItems from "./NavItems";
 import withAuth from "../withAuth";
+import { useQuery } from "@tanstack/react-query";
 
 function Navigation({ league, team, isAuthenticated, user, title, subtitle }) {
   const [teams, setTeams] = useState([]);
@@ -17,17 +18,29 @@ function Navigation({ league, team, isAuthenticated, user, title, subtitle }) {
     setOpen(newOpen);
   };
 
+  const { data: teamResponse } = useQuery({
+    queryKey: ["teams", league?.LeagueId],
+    queryFn: async () => {
+      return await teamsLoader(league?.LeagueId);
+    },
+    staleTime: 60 * 1000, //60 seconds
+  });
+
+  const { data: userLeagueResponse } = useQuery({
+    queryKey: ["userLeagues", user?.userId],
+    queryFn: async () => {
+      return await userLeaguesLoader(user?.userId);
+    },
+    staleTime: 60 * 1000, //60 seconds
+  });
+
   useEffect(() => {
-    const fetchData = async (leagueId) => {
-      if (leagueId) {
-        setTeams(await teamsLoader(leagueId));
-      }
-      if (user?.userId) {
-        setLeagues(await userLeaguesLoader(user?.userId));
-      }
-    };
-    fetchData(league?.LeagueId);
-  }, [user?.userId, league?.LeagueId]);
+    setTeams(teamResponse);
+  }, [teamResponse]);
+
+  useEffect(() => {
+    setLeagues(userLeagueResponse);
+  }, [userLeagueResponse]);
 
   return (
     <>

@@ -16,7 +16,7 @@ export default function withAuth(Component) {
 
         const tokenPayLoad = jwtDecode(token);
         if (tokenPayLoad?.userName) {
-          dispatchTokenData(dispatch, tokenPayLoad);
+          dispatchTokenData(dispatch, tokenPayLoad, token);
         }
 
         return true;
@@ -30,7 +30,7 @@ export default function withAuth(Component) {
           }
         }
       })();
-    }, [state?.user, navigate, dispatch]);
+    }, [state, state?.user, navigate, dispatch]);
 
     return (
       <Component

@@ -37,6 +37,7 @@ function Root({ children, title, subtitle }) {
       const gameDate = await seasonYearLoader();
       return convertDateToLocal(gameDate)?.getFullYear();
     },
+    staleTime: 15 * 60 * 1000, //15 minutes
     //refetchInterval: 5 * 60 * 1000, //5 minutes
   });
   useEffect(() => {
@@ -48,6 +49,7 @@ function Root({ children, title, subtitle }) {
     queryFn: async () => {
       return await lastNflGameWeekPlayedLoader();
     },
+    staleTime: 5 * 60 * 1000, //5 minutes
     refetchInterval: 5 * 60 * 1000, //5 minutes
   });
   useEffect(() => {
@@ -59,6 +61,7 @@ function Root({ children, title, subtitle }) {
     queryFn: async () => {
       return await currentNflGameWeekLoader();
     },
+    staleTime: 5 * 60 * 1000, //5 minutes
     refetchInterval: 5 * 60 * 1000, //5 minutes
   });
   useEffect(() => {

@@ -22,17 +22,16 @@ export default function Login() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const processTokenPayLoad = async (tokenPayLoad) => {
+    const processToken = async (token) => {
+      localStorage.setItem("token", token);
+      const tokenPayLoad = jwtDecode(token);
       if (tokenPayLoad?.userName) {
-        dispatchTokenData(dispatch, tokenPayLoad);
-
+        dispatchTokenData(dispatch, tokenPayLoad, token);
         navigate(`/`);
       }
     };
     if (token) {
-      const tokenPayLoad = jwtDecode(token);
-      processTokenPayLoad(tokenPayLoad);
-      localStorage.setItem("token", token);
+      processToken(token);
     }
   }, [token, navigate, dispatch]);
 

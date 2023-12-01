@@ -111,7 +111,7 @@ export const nflTeamsLoader = async () => {
           }
         }
       }`);
-  return response.data.data.nflTeams.items.map((item) => item.Name);
+  return response.data.data?.nflTeams?.items?.map((item) => item.Name);
 };
 
 export const nflGamesLoader = async (week) => {
@@ -153,6 +153,34 @@ export const nflGamesForPlayerLoader = async (playerHistoryList) => {
   });
 
   return games;
+};
+
+export const allNflGamesLoader = async () => {
+  const response = await postToApi(`{
+          nflGames(first: 1000) {
+              items {
+                  NflGameId
+                  GameDate
+                  Week
+                  HomeScore
+                  AwayScore
+                  AwayTeam {
+                      NflTeamId
+                      NflTeamCode
+                      DisplayName
+                      DisplayCode
+                  }
+                  HomeTeam {
+                      NflTeamId
+                      NflTeamCode
+                      DisplayName
+                      DisplayCode
+                  }
+                  BoxScoreURL
+              }
+          }
+        }`);
+  return response.data.data?.nflGames?.items;
 };
 
 const nflGamesInPeriodByTeamLoader = async (team, startDate, endDate) => {
@@ -214,7 +242,7 @@ export const scoringLoader = async (league, week) => {
                                 TeamName
                                 OwnerName
                             }
-                            PlayerStatistic {
+                            PlayerStatistic (first: 1000) {
                                 items {
                                     PlayerId
                                     Total
@@ -282,7 +310,7 @@ export const seasonScoringLoader = async (league) => {
                                 TeamName
                                 OwnerName
                             }
-                            PlayerStatistic {
+                            PlayerStatistic (first: 1000) {
                                 items {
                                     PlayerId
                                     Total
@@ -371,7 +399,7 @@ export const teamPositionPlayerLoader = async (nflTeamId, position) => {
                     Position {
                         PositionCode
                     }
-                    PlayerStatistic {
+                    PlayerStatistic (first: 1000) {
                         items {
                             Total
                             StatisticalCategory
@@ -429,7 +457,7 @@ export const playerLoader = async (player) => {
             Position {
                 PositionCode
             }
-            PlayerStatistic {
+            PlayerStatistic (first: 1000) {
                 items {
                     Total
                     StatisticalCategory
@@ -1032,7 +1060,7 @@ export const siteScheduleLoader = async () => {
         }
     }`);
 
-  return response.data.data.schedules?.items;
+  return response.data.data?.schedules?.items;
 };
 
 export const leagueScheduleLoader = async (league, schedule = 0) => {
@@ -1272,7 +1300,7 @@ export const leagueTransactionsLoader = async (league) => {
         }
       }`);
 
-  return response.data.data.transactions?.items;
+  return response.data.data?.transactions?.items;
 };
 
 export const leagueWaiverResultsLoader = async (league, week) => {

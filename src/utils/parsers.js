@@ -1080,11 +1080,38 @@ export function mapTeamPlayerDetails(data, gameData) {
       }
     });
   });
+
+  gameData.forEach((game) => {
+    if (!gameMap[game?.NflGameId]) {
+      gameMap[game?.NflGameId] = {
+        Game: {
+          ...mapNflGame(game),
+        },
+        Players: [],
+      };
+    }
+  });
+
   return gameMap;
 }
 
-export function mapPlayerDetails(data, gameData) {
+export function mapPlayerDetails(data, allGameData) {
   const gameMap = {};
+  let gameData = [];
+
+  data?.PlayerHistory?.items.forEach(async (playerHistory) => {
+    if (playerHistory?.NflTeamId) {
+      const g = allGameData.filter(
+        (game) =>
+          (game.AwayTeam.NflTeamId === playerHistory?.NflTeamId ||
+            game.HomeTeam.NflTeamId === playerHistory?.NflTeamId) &&
+          game.GameDate > playerHistory?.FromDate &&
+          game.GameDate < playerHistory?.ToDate
+      );
+      gameData.push(...g);
+    }
+  });
+
   data?.PlayerStatistic.items.forEach((playerStatistic) => {
     if (!gameMap[playerStatistic.PlayerStatisticVersion.NflGame?.NflGameId]) {
       const playerHistory = data?.PlayerHistory?.items.find(

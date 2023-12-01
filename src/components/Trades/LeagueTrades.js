@@ -152,7 +152,7 @@ function LeagueTrades({ league, user }) {
                               detail.GivingRosterPlayer.Player.Name
                             )}{" "}
                         {detail.GivingRosterPlayer.Player.Position.PositionCode}{" "}
-                        {detail.GivingRosterPlayer.Player.NflTeam.DisplayCode}
+                        {detail.GivingRosterPlayer.Player.NflTeam?.DisplayCode}
                       </Typography>
                     ))}
                   </TableCell>
@@ -179,7 +179,7 @@ function LeagueTrades({ league, user }) {
                         }{" "}
                         {
                           detail.ReceivingRosterPlayer.Player.NflTeam
-                            .DisplayCode
+                            ?.DisplayCode
                         }
                       </Typography>
                     ))}

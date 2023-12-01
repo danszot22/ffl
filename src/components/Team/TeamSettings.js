@@ -22,11 +22,11 @@ function TeamSettings({ league, team }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (+leagueId !== league?.LeagueId) {
-      if (!team.TeamId) navigate("/");
+    if (league?.LeagueId && +leagueId !== league?.LeagueId) {
+      if (!team?.TeamId) navigate("/");
       else navigate("/Team");
     }
-  }, [navigate, leagueId, league?.LeagueId, team.TeamId]);
+  }, [navigate, leagueId, league?.LeagueId, team?.TeamId]);
 
   const handleSave = async () => {
     setMessage();

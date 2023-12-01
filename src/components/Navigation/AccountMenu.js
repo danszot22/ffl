@@ -142,7 +142,7 @@ export default function AccountMenu({ user, leagues, league, team }) {
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           <MenuList title="Leagues">
             {leagues
-              .filter((siteLeague) => siteLeague.LeagueId !== league?.LeagueId)
+              ?.filter((siteLeague) => siteLeague.LeagueId !== league?.LeagueId)
               .map((siteLeague) => (
                 <MenuItem
                   key={siteLeague.LeagueId}

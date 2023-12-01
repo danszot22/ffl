@@ -3,10 +3,10 @@ import { useParams } from "react-router-dom";
 import {
   playerLoader,
   teamPositionPlayerLoader,
-  nflGamesForPlayerLoader,
+  allNflGamesLoader,
 } from "../../api/graphql";
 import { playerNewsLoader } from "../../api/espnData";
-import { useContext, useEffect, useState } from "react";
+import { Fragment, useContext, useEffect, useState } from "react";
 import PageToolbar from "../common/PageToolbar";
 import { mapPlayerDetails, mapTeamPlayerDetails } from "../../utils/parsers";
 import { convertDateToLocal } from "../../utils/helpers";
@@ -28,19 +28,19 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import IconButton from "@mui/material/IconButton";
 import { NflWeekContext } from "../../contexts/NflWeekContext";
+import withAuth from "../withAuth";
 
-export default function Player() {
+function Player({ user }) {
   const { state: nflWeekState } = useContext(NflWeekContext);
   const { id } = useParams();
   const [player, setPlayer] = useState([]);
   const [playerResponse, setPlayerResponse] = useState();
   const [teamPlayerResponse, setTeamPlayerResponse] = useState();
-  const [games, setGames] = useState([]);
+  const [allGames, setAllGames] = useState([]);
   const [teamPlayers, setTeamPlayers] = useState([]);
   const [playerNews, setPlayerNews] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [open, setOpen] = useState(false);
-  let playerNflTeam;
 
   useEffect(() => {
     const fetchPlayerNews = async () => {
@@ -80,28 +80,31 @@ export default function Player() {
       setPlayerResponse(await playerLoader(playerId));
     };
     fetchPlayer(id);
-  }, [id]);
-
-  useEffect(() => {
-    const fetchGames = async (history) => {
-      if (history) {
-        setGames(await nflGamesForPlayerLoader(history));
-      }
-    };
-    fetchGames(playerResponse?.PlayerHistory?.items);
-  }, [playerResponse]);
+  }, [id, user]);
 
   useEffect(() => {
     const mapPlayer = async () => {
-      if (games && playerResponse) {
-        setPlayer(mapPlayerDetails(playerResponse, games));
+      if (allGames && playerResponse) {
+        setPlayer(mapPlayerDetails(playerResponse, allGames));
       }
-      if (games && teamPlayerResponse) {
+      if (allGames && teamPlayerResponse) {
+        const games = allGames.filter(
+          (game) =>
+            game.AwayTeam.NflTeamId === playerResponse?.NflTeam?.NflTeamId ||
+            game.HomeTeam.NflTeamId === playerResponse?.NflTeam?.NflTeamId
+        );
         setTeamPlayers(mapTeamPlayerDetails(teamPlayerResponse, games));
       }
     };
     mapPlayer();
-  }, [games, teamPlayerResponse, playerResponse]);
+  }, [allGames, teamPlayerResponse, playerResponse]);
+
+  useEffect(() => {
+    const getAllGames = async () => {
+      setAllGames(await allNflGamesLoader());
+    };
+    getAllGames();
+  }, [user]);
 
   return (
     <Root title={"Player Details"}>
@@ -278,31 +281,28 @@ export default function Player() {
                     teamPlayers={teamPlayer.Players}
                   />
                 ))
-              : player?.Statistics?.map((statistic) => {
-                  let showChange;
-                  let moveMessage = `Previously with ${playerNflTeam?.DisplayCode}, Acquired by ${statistic.Game.PlayerNflTeam?.DisplayCode}`;
-                  if (
-                    playerNflTeam?.NflTeamId > 0 &&
-                    playerNflTeam?.NflTeamId !==
-                      statistic.Game.PlayerNflTeam?.NflTeamId
-                  ) {
-                    showChange = true;
-                  }
-                  playerNflTeam = statistic.Game.PlayerNflTeam;
+              : player?.Statistics?.map((statistic, index) => {
                   return (
-                    <>
-                      {showChange ? (
+                    <Fragment key={statistic.Game.NflGameId}>
+                      {index > 0 &&
+                      player?.Statistics[index - 1].Game?.PlayerNflTeam
+                        .NflTeamId !==
+                        statistic.Game.PlayerNflTeam?.NflTeamId ? (
                         <TableRow>
-                          <TableCell colSpan={7}>{moveMessage}</TableCell>
+                          <TableCell colSpan={7}>{`Previously with ${
+                            player?.Statistics[index - 1].Game?.PlayerNflTeam
+                              ?.DisplayCode
+                          }, Acquired by ${
+                            statistic.Game.PlayerNflTeam?.DisplayCode
+                          }`}</TableCell>
                         </TableRow>
                       ) : null}
                       <PlayerStatisticRow
                         playerNflTeam={statistic.Game.PlayerNflTeam}
-                        key={statistic.Game.NflGameId}
                         player={player}
                         statistic={statistic}
                       />
-                    </>
+                    </Fragment>
                   );
                 })}
           </TableBody>
@@ -311,3 +311,5 @@ export default function Player() {
     </Root>
   );
 }
+
+export default withAuth(Player);
