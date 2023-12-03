@@ -30,7 +30,7 @@ export default function withAuth(Component) {
           }
         }
       })();
-    }, [state, state?.user, navigate, dispatch]);
+    }, [state?.userToken, state?.user, navigate, dispatch]);
 
     return (
       <Component
