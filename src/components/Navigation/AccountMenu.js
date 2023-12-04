@@ -123,7 +123,7 @@ export default function AccountMenu({ user, leagues, league, team }) {
               variant: "body2",
             }}
             primary={`${league?.LeagueName}`}
-            secondary={team ? formatFantasyTeamName(team) : null}
+            secondary={team?.TeamId ? formatFantasyTeamName(team) : null}
           />
         </MenuItem>
         <Divider />
