@@ -7,6 +7,7 @@ export const fflapi = axios.create({
   baseURL: fflapiurl,
   headers: {
     "content-type": "application/json",
+    Authorization: `Bearer ${localStorage.getItem("token")}`,
   },
 });
 
