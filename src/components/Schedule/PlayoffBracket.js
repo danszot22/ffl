@@ -45,7 +45,7 @@ function PlayoffBracket({ league }) {
           display: "flex",
           alignItems: "flex-start",
           flexDirection: "row",
-          justifyContent: "space-evenly",
+          overflow: "auto",
         }}
       >
         {playoffBracket?.Rounds?.map((round) => (
