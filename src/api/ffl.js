@@ -450,3 +450,17 @@ export const updateSize = async (leagueId, size) => {
     });
   return result?.data ? result?.data : result;
 };
+
+export const getPlayoffBracket = async (leagueId) => {
+  const result = await fflapi
+    .get(`/schedule/playoffBracket/${leagueId}`)
+    .catch((error) => {
+      const message = error.response?.data?.Message
+        ? error.response?.data?.Message
+        : error?.message
+        ? error.message
+        : "An error occurred";
+      return { Message: message };
+    });
+  return result?.data ? result?.data : result;
+};

@@ -1,13 +1,114 @@
+import { useEffect, useState } from "react";
 import Root from "../Root";
 import PageToolbar from "../common/PageToolbar";
+import { getPlayoffBracket } from "../../api/ffl";
+import withAuth from "../withAuth";
+import {
+  Box,
+  Card,
+  CardContent,
+  Divider,
+  Table,
+  TableBody,
+  TableCell,
+  TableRow,
+  Typography,
+} from "@mui/material";
+import { formatFantasyTeamName } from "../../utils/helpers";
 
-export default function PlayoffBracket() {
+function PlayoffBracket({ league }) {
+  const [playoffBracket, setPlayoffBracket] = useState([]);
   const divisionCount = 3;
   const firstRoundGames = 4;
+
+  useEffect(() => {
+    const fetchSchedule = async () => {
+      try {
+        const response = await getPlayoffBracket(league?.LeagueId);
+        console.log(response);
+        setPlayoffBracket(response);
+      } catch (error) {
+        console.error(error);
+        return;
+      }
+    };
+    fetchSchedule();
+  }, [league?.LeagueId]);
 
   return (
     <Root title={"Playoff Bracket"}>
       <PageToolbar title={"Playoff Bracket"} />
+      <Box
+        sx={{
+          p: 1,
+          m: 1,
+          display: "flex",
+          alignItems: "flex-start",
+          flexDirection: "row",
+          justifyContent: "space-evenly",
+        }}
+      >
+        {playoffBracket?.Rounds?.map((round) => (
+          <Box
+            key={round.$id}
+            sx={{
+              p: 1,
+              m: 1,
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-evenly",
+              alignItems: "center",
+              height: 500,
+              gap: 1,
+            }}
+          >
+            <Typography>{round.Heading}</Typography>
+            <Box
+              key={round.$id}
+              sx={{
+                p: 1,
+                m: 1,
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-evenly",
+                alignItems: "center",
+                height: 500,
+                gap: 1,
+              }}
+            >
+              {round.Games?.map((game) => (
+                <Card sx={{ width: 350 }}>
+                  <CardContent p={0}>
+                    <Table size="small">
+                      <TableBody>
+                        <TableRow>
+                          <TableCell>
+                            {game.HomeTeam.TeamId > 0
+                              ? `(${
+                                  game.HomeTeam.LeagueSeed
+                                }) ${formatFantasyTeamName(game.HomeTeam)}`
+                              : "TBD"}
+                          </TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell>
+                            {game.AwayTeam.TeamId > 0
+                              ? `(${
+                                  game.AwayTeam.LeagueSeed
+                                }) ${formatFantasyTeamName(game.AwayTeam)}`
+                              : "TBD"}
+                          </TableCell>
+                        </TableRow>
+                      </TableBody>
+                    </Table>
+                  </CardContent>
+                </Card>
+              ))}
+            </Box>
+          </Box>
+        ))}
+      </Box>
+      <Divider />
       <div>
         <small>Playoff Seeding based on following tie-breaker formula: </small>
         <ul>
@@ -78,3 +179,5 @@ export default function PlayoffBracket() {
     </Root>
   );
 }
+
+export default withAuth(PlayoffBracket);
