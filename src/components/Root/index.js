@@ -42,7 +42,6 @@ function Root({ children, title, subtitle }) {
       window.localStorage.removeItem("version-update-needed"); // remove the storage object
       window.location.reload(); // refresh the browser
     }
-    console.log("checked if version updated");
   }, [location]);
 
   const { data: seasonYear } = useQuery({
