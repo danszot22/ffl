@@ -25,10 +25,8 @@ function PlayoffBracket({ league }) {
     const fetchSchedule = async () => {
       try {
         const response = await getPlayoffBracket(league?.LeagueId);
-        console.log(response);
         setPlayoffBracket(response);
       } catch (error) {
-        console.error(error);
         return;
       }
     };
@@ -64,7 +62,6 @@ function PlayoffBracket({ league }) {
           >
             <Typography>{round.Heading}</Typography>
             <Box
-              key={round.$id}
               sx={{
                 p: 1,
                 m: 1,
@@ -77,7 +74,7 @@ function PlayoffBracket({ league }) {
               }}
             >
               {round.Games?.map((game) => (
-                <Card sx={{ width: 350 }}>
+                <Card variant="outlined" key={game.$id} sx={{ width: 350 }}>
                   <CardContent p={0}>
                     <Table size="small">
                       <TableBody>
