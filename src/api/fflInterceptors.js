@@ -11,6 +11,10 @@ async function renewToken() {
     accessToken,
     refreshToken,
   });
+  if (response.headers["x-version"] > process.env.REACT_APP_VERSION) {
+    // if server version newer
+    window.localStorage.setItem("version-update-needed", "true"); // set version update item so can refresh app later
+  }
   const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
     response.data;
   return [newAccessToken, newRefreshToken];

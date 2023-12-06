@@ -7,7 +7,7 @@ import {
   setLastScoredWeek,
   setSeasonYear,
 } from "../../contexts/NflWeekContext";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useLayoutEffect } from "react";
 import {
   currentNflGameWeekLoader,
   lastNflGameWeekPlayedLoader,
@@ -15,6 +15,7 @@ import {
 } from "../../api/graphql";
 import { useQuery } from "@tanstack/react-query";
 import { convertDateToLocal } from "../../utils/helpers";
+import { useLocation } from "react-router-dom";
 
 const Item = styled(Paper)(({ theme }) => ({
   [theme.breakpoints.down("md")]: {
@@ -31,6 +32,19 @@ const Item = styled(Paper)(({ theme }) => ({
 function Root({ children, title, subtitle }) {
   const { dispatch: nflWeekDispatch } = useContext(NflWeekContext);
 
+  let location = useLocation();
+  useLayoutEffect(() => {
+    // if there is an update available and no state passed to route
+    if (
+      !location.state &&
+      window.localStorage.getItem("version-update-needed")
+    ) {
+      window.localStorage.removeItem("version-update-needed"); // remove the storage object
+      window.location.reload(); // refresh the browser
+    }
+    console.log("checked if version updated");
+  }, [location]);
+
   const { data: seasonYear } = useQuery({
     queryKey: ["seasonYear"],
     queryFn: async () => {
@@ -40,6 +54,7 @@ function Root({ children, title, subtitle }) {
     staleTime: 15 * 60 * 1000, //15 minutes
     //refetchInterval: 5 * 60 * 1000, //5 minutes
   });
+
   useEffect(() => {
     nflWeekDispatch(setSeasonYear(seasonYear));
   }, [seasonYear, nflWeekDispatch]);
