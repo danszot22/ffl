@@ -226,8 +226,8 @@ function Scoring({ league, team }) {
             <Paper key={game.FantasyGameId} sx={{ m: 1 }} elevation={8}>
               <Table size="small">
                 <TableHead>
-                  <TableRow sx={{ backgroundColor: grey[200] }}>
-                    <TableCell colSpan={3}>
+                  <TableRow sx={{ backgroundColor: grey[600] }}>
+                    <TableCell sx={{ color: "white" }} colSpan={3}>
                       {!summaryData.complete ? "Projected" : "Final"}
                     </TableCell>
                   </TableRow>
