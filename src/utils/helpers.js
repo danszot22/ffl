@@ -88,7 +88,7 @@ export function formatPlayerName(name, position) {
 
   const nameParts = name.split(",");
   if (position.startsWith("TM")) return nameParts[0];
-  return nameParts[1].trim().charAt(0) + ". " + nameParts[0];
+  return nameParts[1].trim().charAt(0) + "." + nameParts[0];
 }
 
 export function formatPlayerFullName(name) {
