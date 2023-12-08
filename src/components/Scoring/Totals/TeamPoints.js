@@ -9,22 +9,17 @@ import {
   DialogContent,
   Button,
 } from "@mui/material";
-import { StyledTableRow } from "../common/styled";
+import { StyledTableRow } from "../../common/styled";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import IconButton from "@mui/material/IconButton";
 import { useState } from "react";
-import SummaryPlayerList from "./SummaryPlayerList";
+import PlayerList from "./PlayerList";
 import { useTheme, useMediaQuery } from "@mui/material";
-import TeamLink from "../common/TeamLink";
-import { formatFantasyTeamName } from "../../utils/helpers";
+import TeamLink from "../../common/TeamLink";
+import { formatFantasyTeamName } from "../../../utils/helpers";
 
-export default function ExpandableSummaryRow({
-  team,
-  row,
-  topScore,
-  showProjections,
-}) {
+export default function TeamPoints({ team, row, topScore, showProjections }) {
   const theme = useTheme();
   const isXs = useMediaQuery(theme.breakpoints.down("sm"));
   const isBelowMedium = useMediaQuery(theme.breakpoints.down("md"));
@@ -135,12 +130,12 @@ export default function ExpandableSummaryRow({
           {formatFantasyTeamName(row.team, false)}
         </DialogTitle>
         <DialogContent sx={{ backgroundColor: "black", color: "white" }}>
-          <SummaryPlayerList
+          <PlayerList
             title={"Starters"}
             players={row.Starters}
             showProjections={showProjections}
           />
-          <SummaryPlayerList
+          <PlayerList
             title="Bench"
             players={row.Bench}
             showProjections={showProjections}

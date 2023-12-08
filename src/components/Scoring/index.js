@@ -5,45 +5,22 @@ import {
   mapTeamScoringTotals,
   mapFantasyGames,
 } from "../../utils/parsers";
-import ScoringTabs from "./ScoringTabs";
-import GameHeaderCard from "./GameHeaderCard";
+import Points from "./Points";
 import {
   scoringLoader,
   fantasyGameLoader,
   lineupsLoader,
   nflGamesLoader,
 } from "../../api/graphql";
-import {
-  Button,
-  ButtonGroup,
-  Box,
-  Typography,
-  Skeleton,
-  Table,
-  TableRow,
-  TableCell,
-  Paper,
-  TableHead,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  useTheme,
-  useMediaQuery,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-} from "@mui/material";
+import { Skeleton } from "@mui/material";
 import { NflWeekContext } from "../../contexts/NflWeekContext";
 import PageToolbar from "../common/PageToolbar";
 import withAuth from "../withAuth";
-import { formatFantasyTeamName } from "../../utils/helpers";
 import { useQuery } from "@tanstack/react-query";
-import { grey } from "@mui/material/colors";
+import WeeklyGames from "./WeeklyGames";
+import Header from "./Header";
 
 function Scoring({ league, team }) {
-  const theme = useTheme();
-  const isBelowMedium = useMediaQuery(theme.breakpoints.down("md"));
   const { state: nflWeekState } = useContext(NflWeekContext);
 
   const [summaryData, setSummaryData] = useState([]);
@@ -137,76 +114,20 @@ function Scoring({ league, team }) {
   return (
     <Root title={`Scoring - Week ${week}`} subtitle={`Updated: ${updatedOn}`}>
       <PageToolbar title={"Scoring"} />
-      <Box
-        sx={{
-          pt: 1,
-          display: "flex",
-          flexDirection: { xs: "column", sm: "column", md: "row" },
-          justifyContent: "center",
-        }}
-      >
-        <Box
-          sx={{
-            display: { xs: "none", md: "flex" },
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <ButtonGroup
-            sx={{ mt: 1 }}
-            variant="outlined"
-            aria-label="outlined primary button group"
-          >
-            <Typography p={1}>Week:</Typography>
-            {weeks.map((i) => (
-              <Button
-                key={i}
-                variant={week === i + 1 ? "contained" : "outlined"}
-                onClick={() => handleClick(i + 1)}
-              >
-                {i + 1}
-              </Button>
-            ))}
-          </ButtonGroup>
-          <Typography variant="subtitle2" component="span">
-            Updated:{" "}
-            <Typography variant="caption" component="span">
-              {updatedOn}
-            </Typography>
-          </Typography>
-        </Box>
-        <Box sx={{ display: { xs: "block", md: "none" } }}>
-          <FormControl fullWidth>
-            <InputLabel id="week-select-label">Week</InputLabel>
-            <Select
-              labelId="week-select-label"
-              id="Week"
-              value={week ? week : ""}
-              label="Week"
-              onChange={(event) => handleClick(event.target.value)}
-            >
-              {weeks.map((i) => (
-                <MenuItem key={i} value={i + 1}>
-                  {i + 1}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </Box>
-
-        {teamFantasyGame && !isLoading ? (
-          <GameHeaderCard
-            handleOpen={handleOpen}
-            game={teamFantasyGame}
-            showProjections={!summaryData.complete}
-          />
-        ) : null}
-      </Box>
+      <Header
+        week={week}
+        weeks={weeks}
+        showProjections={!summaryData.complete}
+        updatedOn={updatedOn}
+        teamFantasyGame={teamFantasyGame}
+        isLoading={isLoading}
+        handleClick={handleClick}
+        handleOpen={handleOpen}
+      />
       {isLoading ? (
         <Skeleton variant="rectangular" height={48} />
       ) : (
-        <ScoringTabs
+        <Points
           team={team?.TeamId}
           data={categoryData}
           summaryData={summaryData.totals}
@@ -214,55 +135,12 @@ function Scoring({ league, team }) {
           showProjections={!summaryData.complete}
         />
       )}
-      <Dialog
+      <WeeklyGames
+        fantasyGames={fantasyGames}
+        summaryData={summaryData}
         open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <DialogTitle id="alert-dialog-title">Game Results</DialogTitle>
-        <DialogContent>
-          {fantasyGames.map((game) => (
-            <Paper key={game.FantasyGameId} sx={{ m: 1 }} elevation={8}>
-              <Table size="small">
-                <TableHead>
-                  <TableRow sx={{ backgroundColor: grey[600] }}>
-                    <TableCell sx={{ color: "white" }} colSpan={3}>
-                      {!summaryData.complete ? "Projected" : "Final"}
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableRow>
-                  <TableCell>
-                    {formatFantasyTeamName(game.HomeTeam, isBelowMedium)}
-                  </TableCell>
-                  <TableCell sx={{ textAlign: "right" }}>
-                    {game.HomeTotal.toFixed(1)}
-                  </TableCell>
-                  {!summaryData.complete ? (
-                    <TableCell
-                      sx={{ textAlign: "right" }}
-                    >{`(${game.ProjectedHomeTotal.toFixed(1)})`}</TableCell>
-                  ) : null}
-                </TableRow>
-                <TableRow>
-                  <TableCell>
-                    {formatFantasyTeamName(game.AwayTeam, isBelowMedium)}
-                  </TableCell>
-                  <TableCell sx={{ textAlign: "right" }}>
-                    {game.AwayTotal.toFixed(1)}
-                  </TableCell>
-                  {!summaryData.complete ? (
-                    <TableCell
-                      sx={{ textAlign: "right" }}
-                    >{`(${game.ProjectedAwayTotal.toFixed(1)})`}</TableCell>
-                  ) : null}
-                </TableRow>
-              </Table>
-            </Paper>
-          ))}
-        </DialogContent>
-      </Dialog>
+        handleClose={handleClose}
+      />
     </Root>
   );
 }

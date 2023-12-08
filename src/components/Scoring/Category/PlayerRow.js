@@ -1,9 +1,9 @@
 import { Typography, TableCell, Box, TableRow } from "@mui/material";
-import { formatGameInfo } from "../../utils/helpers";
-import PlayerLink from "../common/PlayerLink";
+import { formatGameInfo } from "../../../utils/helpers";
+import PlayerLink from "../../common/PlayerLink";
 import { grey } from "@mui/material/colors";
 
-export default function CategoryPlayerRow({ row, showProjections, showGame }) {
+export default function PlayerRow({ row, showProjections, showGame }) {
   return (
     <TableRow
       key={row.PlayerId}

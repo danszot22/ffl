@@ -8,15 +8,10 @@ import {
   TableBody,
   Paper,
   Link,
-  useMediaQuery,
-  useTheme,
 } from "@mui/material";
-import { formatFantasyTeamName } from "../../utils/helpers";
+import { formatFantasyTeamName } from "../../../utils/helpers";
 
-export default function GameHeaderCard({ game, handleOpen, showProjections }) {
-  const theme = useTheme();
-  const isBelowMedium = useMediaQuery(theme.breakpoints.down("md"));
-
+export default function HeaderGame({ game, handleOpen, showProjections }) {
   return (
     <Card onClick={handleOpen}>
       <CardContent p={0}>
@@ -31,9 +26,7 @@ export default function GameHeaderCard({ game, handleOpen, showProjections }) {
             </TableHead>
             <TableBody>
               <TableRow>
-                <TableCell>
-                  {formatFantasyTeamName(game.HomeTeam, isBelowMedium)}
-                </TableCell>
+                <TableCell>{formatFantasyTeamName(game.HomeTeam)}</TableCell>
                 <TableCell sx={{ textAlign: "right" }}>
                   {game.HomeTotal.toFixed(1)}
                 </TableCell>
@@ -44,9 +37,7 @@ export default function GameHeaderCard({ game, handleOpen, showProjections }) {
                 ) : null}
               </TableRow>
               <TableRow>
-                <TableCell>
-                  {formatFantasyTeamName(game.AwayTeam, isBelowMedium)}
-                </TableCell>
+                <TableCell>{formatFantasyTeamName(game.AwayTeam)}</TableCell>
                 <TableCell sx={{ textAlign: "right" }}>
                   {game.AwayTotal.toFixed(1)}
                 </TableCell>

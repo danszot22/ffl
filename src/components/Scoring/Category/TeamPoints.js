@@ -1,7 +1,7 @@
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import IconButton from "@mui/material/IconButton";
-import { StyledTableRow } from "../common/styled";
+import { StyledTableRow } from "../../common/styled";
 import { useState } from "react";
 import {
   Box,
@@ -15,16 +15,20 @@ import {
   DialogContent,
   Button,
 } from "@mui/material";
-import CategoryPlayerList from "./CategoryPlayerList";
-import TeamLink from "../common/TeamLink";
-import { formatFantasyTeamName, formatPlayerName } from "../../utils/helpers";
+import PlayerList from "./PlayerList";
+import TeamLink from "../../common/TeamLink";
+import {
+  formatFantasyTeamName,
+  formatPlayerName,
+} from "../../../utils/helpers";
 import { Link } from "react-router-dom";
 
-export default function ExpandableCategoryRow({
+export default function TeamPoints({
   category,
   team,
   row,
   showProjections,
+  lineup,
   showGame = true,
 }) {
   const theme = useTheme();
@@ -69,7 +73,7 @@ export default function ExpandableCategoryRow({
               }}
             >
               {
-                row.Starters.filter(
+                lineup?.Starters?.filter(
                   (player) =>
                     player.NflGame?.Playing &&
                     ((category.startsWith("Pass") &&
@@ -115,7 +119,7 @@ export default function ExpandableCategoryRow({
               }}
             >
               {
-                row.Starters.filter(
+                lineup?.Starters?.filter(
                   (player) =>
                     player.NflGame?.NotPlayed &&
                     ((category.startsWith("Pass") &&
@@ -218,14 +222,14 @@ export default function ExpandableCategoryRow({
           {formatFantasyTeamName(row.Team, false)}
         </DialogTitle>
         <DialogContent sx={{ backgroundColor: "black", color: "white" }}>
-          <CategoryPlayerList
+          <PlayerList
             title={`Starters`}
             players={row.Starters}
             showProjections={showProjections}
             showGame={showGame}
           />
           {row.Bench ? (
-            <CategoryPlayerList
+            <PlayerList
               title={`Bench`}
               players={row.Bench}
               showProjections={showProjections}

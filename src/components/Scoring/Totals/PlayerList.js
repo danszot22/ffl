@@ -6,9 +6,9 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import SummaryPlayerRow from "./SummaryPlayerRow";
+import PlayerRow from "./PlayerRow";
 
-export default function SummaryPlayerList({ players, showProjections, title }) {
+export default function PlayerList({ players, showProjections, title }) {
   return (
     <Paper elevation={3}>
       <Table size="small" aria-label={title}>
@@ -20,7 +20,7 @@ export default function SummaryPlayerList({ players, showProjections, title }) {
         </TableHead>
         <TableBody>
           {players?.map((player) => (
-            <SummaryPlayerRow
+            <PlayerRow
               key={player.PlayerId}
               row={player}
               showProjections={showProjections}

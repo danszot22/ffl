@@ -1,9 +1,9 @@
 import { grey } from "@mui/material/colors";
-import { formatGameInfo } from "../../utils/helpers";
-import PlayerLink from "../common/PlayerLink";
+import { formatGameInfo } from "../../../utils/helpers";
+import PlayerLink from "../../common/PlayerLink";
 import { Typography, TableCell, Box, TableRow } from "@mui/material";
 
-export default function SummaryPlayerRow({ row, showProjections }) {
+export default function PlayerRow({ row, showProjections }) {
   return (
     <TableRow
       key={row.PlayerId}

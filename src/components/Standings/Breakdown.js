@@ -18,8 +18,8 @@ import { seasonScoringLoader } from "../../api/graphql";
 import { mapSeasonCategoryScoring } from "../../utils/parsers";
 import { a11yProps, CustomTabPanel } from "../common/CustomTabPanel";
 import { useTheme, useMediaQuery } from "@mui/material";
-import ExpandableCategoryRow from "../Scoring/ExpandableCategoryRow";
-import PanelToolbar from "../Scoring/PanelToolbar";
+import TeamPoints from "../Scoring/Category/TeamPoints";
+import PointsToolbar from "../Scoring/Points/PointsToolbar";
 import TableToolbar from "../common/PageToolbar";
 import withAuth from "../withAuth";
 
@@ -76,7 +76,7 @@ function Breakdown({ league, team }) {
           </Box>
           {Object.values(categoryData).map((category, index) => (
             <CustomTabPanel key={category.key} value={value} index={index}>
-              <PanelToolbar title={category.title} showProjections={false} />
+              <PointsToolbar title={category.title} showProjections={false} />
               <TableContainer component={Paper}>
                 <Table
                   size="small"
@@ -104,7 +104,7 @@ function Breakdown({ league, team }) {
                   </TableHead>
                   <TableBody>
                     {category.teamStatistics.map((teamStatistic) => (
-                      <ExpandableCategoryRow
+                      <TeamPoints
                         team={team?.TeamId}
                         key={`${category.key}-${teamStatistic.TeamId}`}
                         row={teamStatistic}

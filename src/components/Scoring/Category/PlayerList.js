@@ -7,10 +7,10 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import CategoryPlayerRow from "./CategoryPlayerRow";
+import PlayerRow from "./PlayerRow";
 import { grey } from "@mui/material/colors";
 
-export default function CategoryPlayerList({
+export default function PlayerList({
   players,
   showProjections,
   title,
@@ -31,7 +31,7 @@ export default function CategoryPlayerList({
         <TableBody>
           {players?.length > 0 ? (
             players.map((player) => (
-              <CategoryPlayerRow
+              <PlayerRow
                 key={player.PlayerId}
                 row={player}
                 showGame={showGame}

@@ -1,7 +1,7 @@
 import { Box, Paper, Toolbar, Typography } from "@mui/material";
 import { alpha } from "@mui/material/styles";
 
-export default function PanelToolbar({ title, showProjections }) {
+export default function PointsToolbar({ title, showProjections }) {
   return (
     <Toolbar
       sx={{
@@ -58,7 +58,7 @@ export default function PanelToolbar({ title, showProjections }) {
                   bgcolor: (theme) => theme.palette.error.dark,
                 }}
               >
-                Not Playing
+                Not Played
               </Paper>
             </Box>
           ) : null}
