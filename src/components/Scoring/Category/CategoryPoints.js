@@ -70,12 +70,7 @@ function CategoryPoints({ category, showProjections, team, summaryData }) {
             <TableCell align="right">
               Amount {showProjections && !isBelowMedium ? "(Proj)" : null}
             </TableCell>
-            <TableCell
-              align="right"
-              sx={{ display: { xs: "none", md: "table-cell" } }}
-            >
-              Top Starter
-            </TableCell>
+            <TableCell align="right">Top Starters</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>

@@ -1,6 +1,3 @@
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import IconButton from "@mui/material/IconButton";
 import { StyledTableRow } from "../../common/styled";
 import { useState } from "react";
 import {
@@ -33,6 +30,7 @@ export default function TeamPoints({
 }) {
   const theme = useTheme();
   const isBelowMedium = useMediaQuery(theme.breakpoints.down("md"));
+  const isBelowLarge = useMediaQuery(theme.breakpoints.down("lg"));
   const [open, setOpen] = useState(false);
   const handleClose = () => setOpen(false);
 
@@ -44,7 +42,7 @@ export default function TeamPoints({
             team={row.Team}
             variant="inherit"
             sx={{ fontWeight: row.TeamId === team ? 600 : 0 }}
-            shortName={isBelowMedium}
+            shortName={isBelowLarge}
           />
         </TableCell>
         <TableCell
@@ -196,18 +194,25 @@ export default function TeamPoints({
             </Typography>
           </Link>
         </TableCell>
-        {!isBelowMedium ? (
-          <TableCell align="right">
-            {formatPlayerName(row.Starters[0]?.Player.Name, "")}
-            <IconButton
-              aria-label="expand row"
-              size="small"
-              onClick={() => setOpen(!open)}
-            >
-              {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-            </IconButton>
-          </TableCell>
-        ) : null}
+        <TableCell align="right">
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: { xs: "column", md: "row" },
+              justifyContent: "flex-end",
+            }}
+          >
+            {row.Starters?.map((starter, index) =>
+              starter.Total > 0 && index < 4 ? (
+                <Typography sx={{ m: { xs: 0, md: 1 } }} variant="caption">
+                  {`${formatPlayerName(starter.Player.Name, "")}(${
+                    starter.Total
+                  })`}
+                </Typography>
+              ) : null
+            )}
+          </Box>
+        </TableCell>
       </StyledTableRow>
       <Dialog
         open={open}
