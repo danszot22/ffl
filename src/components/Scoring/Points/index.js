@@ -54,7 +54,7 @@ function Points({ team, data, summaryData, week, showProjections }) {
   return isBelowMedium ? (
     <>
       <Accordion TransitionProps={{ unmountOnExit: true }} expanded={true}>
-        <AccordionDetails>
+        <AccordionDetails sx={{ p: 0 }}>
           <WeekPoints
             team={team}
             summaryData={summaryData}
@@ -73,7 +73,7 @@ function Points({ team, data, summaryData, week, showProjections }) {
               {category.title}
             </Typography>
           </AccordionSummary>
-          <AccordionDetails>
+          <AccordionDetails sx={{ p: 0 }}>
             <CategoryPoints
               category={category}
               summaryData={summaryData}
