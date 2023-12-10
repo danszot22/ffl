@@ -16,7 +16,7 @@ function WeekPoints({ team, summaryData, showProjections }) {
   const isXs = useMediaQuery(theme.breakpoints.only("xs"));
 
   return (
-    <TableContainer component={Paper}>
+    <TableContainer sx={{ maxWidth: 600 }} component={Paper}>
       <Table size="small" aria-label="Scoring Summary table">
         <TableHead>
           <TableRow>
@@ -31,7 +31,6 @@ function WeekPoints({ team, summaryData, showProjections }) {
             {!isXs ? (
               <>
                 <TableCell align="right">Back</TableCell>
-                <TableCell align="right">Action</TableCell>
               </>
             ) : null}
           </TableRow>

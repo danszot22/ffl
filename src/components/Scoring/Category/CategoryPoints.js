@@ -17,7 +17,7 @@ function CategoryPoints({ category, showProjections, team, summaryData }) {
   const isBelowMedium = useMediaQuery(theme.breakpoints.down("md"));
 
   return (
-    <TableContainer component={Paper}>
+    <TableContainer sx={{ maxWidth: 1200 }} component={Paper}>
       <Table
         size="small"
         sx={{ minWidth: { xs: 250, md: 400 } }}

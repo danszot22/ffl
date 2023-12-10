@@ -105,15 +105,6 @@ export default function TeamPoints({ team, row, topScore, showProjections }) {
                 {(topScore - row.total).toFixed(1)}
               </Typography>
             </TableCell>
-            <TableCell align="right">
-              <IconButton
-                aria-label="expand row"
-                size="small"
-                onClick={() => setOpen(!open)}
-              >
-                {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-              </IconButton>
-            </TableCell>
           </>
         ) : null}
       </StyledTableRow>

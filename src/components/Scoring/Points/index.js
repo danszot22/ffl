@@ -113,11 +113,20 @@ function Points({ team, data, summaryData, week, showProjections }) {
           title={`Week ${week}`}
           showProjections={showProjections}
         />
-        <WeekPoints
-          team={team}
-          summaryData={summaryData}
-          showProjections={showProjections}
-        />
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "center",
+            p: 1,
+          }}
+        >
+          <WeekPoints
+            team={team}
+            summaryData={summaryData}
+            showProjections={showProjections}
+          />
+        </Box>
       </CustomTabPanel>
       {Object.values(data).map((category, index) => (
         <CustomTabPanel key={category.key} value={value} index={index + 1}>
@@ -125,12 +134,21 @@ function Points({ team, data, summaryData, week, showProjections }) {
             title={category.title}
             showProjections={showProjections}
           />
-          <CategoryPoints
-            category={category}
-            summaryData={summaryData}
-            team={team}
-            showProjections={showProjections}
-          />
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "center",
+              p: 1,
+            }}
+          >
+            <CategoryPoints
+              category={category}
+              summaryData={summaryData}
+              team={team}
+              showProjections={showProjections}
+            />
+          </Box>
         </CustomTabPanel>
       ))}
     </Box>

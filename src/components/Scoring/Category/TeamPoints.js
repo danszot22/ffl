@@ -204,7 +204,7 @@ export default function TeamPoints({
           >
             {row.Starters?.map((starter, index) =>
               starter.Total > 0 && index < 4 ? (
-                <Typography sx={{ m: { xs: 0, md: 1 } }} variant="caption">
+                <Typography sx={{ ml: { xs: 0, md: 1 } }} variant="caption">
                   {`${formatPlayerName(starter.Player.Name, "")}(${
                     starter.Total
                   })`}
