@@ -102,6 +102,20 @@ export function formatFantasyTeamName(team, excludeTeamName) {
     : `${team?.TeamName} (${team?.OwnerName})`;
 }
 
+export function formatDateToMonthYear(dateToFormat) {
+  const dateLocal = convertDateToLocal(dateToFormat);
+  return dateLocal.getMonth() + 1 + "/" + dateLocal.getDate();
+}
+
+export function numberOfDaysSinceDate(sinceDate) {
+  if (!sinceDate) return;
+  const days = Math.round(
+    (new Date().getTime() - convertDateToLocal(sinceDate).getTime()) /
+      (1000 * 3600 * 24)
+  );
+  return days;
+}
+
 export function formatGameTime(nflGame) {
   if (nflGame?.NotPlayed) {
     const gameDateLocal = convertDateToLocal(nflGame.GameDate);

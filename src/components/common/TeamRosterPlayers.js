@@ -1,6 +1,10 @@
 import { Typography, Tooltip, Box, IconButton } from "@mui/material";
 import { TableBody, TableCell, TableRow } from "@mui/material";
-import { playerStatuses } from "../../utils/helpers";
+import {
+  playerStatuses,
+  formatDateToMonthYear,
+  numberOfDaysSinceDate,
+} from "../../utils/helpers";
 import { Delete, Info, PersonRemove } from "@mui/icons-material";
 import PlayerImage from "../common/PlayerImage";
 import PlayerLink from "../common/PlayerLink";
@@ -60,15 +64,23 @@ export default function TeamRosterPlayers({
             <FormattedPlayerStats player={player} />
           </TableCell>
           <TableCell sx={{ display: { xs: "none", md: "table-cell" } }}>
-            {player.StatusDescription?.length > 0 ? (
-              <Tooltip component="span" title={player.StatusDescription}>
+            {player.StatusCode ? (
+              <Tooltip
+                component="span"
+                title={
+                  player.StatusDescription?.length > 0
+                    ? player.StatusDescription
+                    : playerStatuses[player.StatusCode]
+                }
+              >
                 <Box
                   sx={{
                     display: "flex",
                   }}
                 >
                   <Typography variant="caption" sx={{ pr: 1 }}>
-                    {playerStatuses[player.StatusCode]}
+                    {playerStatuses[player.StatusCode]}{" "}
+                    {formatDateToMonthYear(player.InjuryDate)}
                   </Typography>
                   <Info />
                 </Box>
@@ -77,7 +89,10 @@ export default function TeamRosterPlayers({
           </TableCell>
           <TableCell>{player.ByeWeek}</TableCell>
           <TableCell sx={{ p: { xs: 0, sm: 1 } }}>
-            {team?.TeamId === teamDetails?.TeamId ? (
+            {team?.TeamId === teamDetails?.TeamId &&
+            (teamDetails?.AvlAddDrops > 0 ||
+              (player.StatusCode === 1 &&
+                numberOfDaysSinceDate(player.InjuryDate) < 15)) ? (
               <Tooltip title="Drop">
                 <IconButton
                   variant="contained"

@@ -16,6 +16,7 @@ import Root from "../Root";
 import usePlayerTableColumns from "../../hooks/usePlayerTableColumns";
 import usePlayerTableLoader from "../../hooks/usePlayerTableLoader";
 import { PersonAdd, PersonRemove } from "@mui/icons-material";
+import { numberOfDaysSinceDate } from "../../utils/helpers";
 
 function PlayerList({ league, team }) {
   const [searchParams] = useSearchParams();
@@ -152,7 +153,11 @@ function PlayerList({ league, team }) {
                 </IconButton>
               </Tooltip>
             ) : null}
-            {row.original.TeamId && row.original.TeamId === team?.TeamId ? (
+            {row.original.TeamId &&
+            row.original.TeamId === team?.TeamId &&
+            (team?.AvlAddDrops > 0 ||
+              (row.original.StatusCode === 1 &&
+                numberOfDaysSinceDate(row.original.InjuryDate) < 15)) ? (
               <Tooltip title="Drop">
                 <IconButton
                   color="error"
