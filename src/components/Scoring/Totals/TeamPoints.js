@@ -10,9 +10,6 @@ import {
   Button,
 } from "@mui/material";
 import { StyledTableRow } from "../../common/styled";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import IconButton from "@mui/material/IconButton";
 import { useState } from "react";
 import PlayerList from "./PlayerList";
 import { useTheme, useMediaQuery } from "@mui/material";
