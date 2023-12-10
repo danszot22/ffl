@@ -10,6 +10,10 @@ import withAuth from "../withAuth";
 import LineupTable from "./LineupTable";
 import useTeamLineupData from "../../hooks/useTeamLineupData";
 import { updateLineup } from "../../api/ffl";
+import { Skeleton } from "@mui/material";
+import PageToolbar from "../common/PageToolbar";
+import Root from "../Root";
+import { formatFantasyTeamName } from "../../utils/helpers";
 
 function LineupEdit({ league, team }) {
   const navigate = useNavigate();
@@ -27,6 +31,7 @@ function LineupEdit({ league, team }) {
   const [teamRoster, setTeamRoster] = useState([]);
   const [teamScoring, setTeamScoring] = useState([]);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const {
     rosterSettingData,
@@ -66,6 +71,12 @@ function LineupEdit({ league, team }) {
   useEffect(() => {
     setSettings(rosterSettingData);
   }, [rosterSettingData]);
+
+  useEffect(() => {
+    if (roster && roster.Players?.length > 0) {
+      setIsLoading(false);
+    }
+  }, [roster]);
 
   useEffect(() => {
     if (nflWeekState && week && week < nflWeekState.lineupWeek) {
@@ -269,15 +280,36 @@ function LineupEdit({ league, team }) {
   };
 
   return (
-    <LineupTable
-      isUpdating={isUpdating}
-      roster={roster}
-      week={week}
-      errorList={errorList}
-      handleSave={handleSave}
-      handleChange={handleChange}
-      currentWeek={nflWeekState?.lineupWeek}
-    />
+    <Root
+      title={"Edit Lineup"}
+      subtitle={
+        roster?.team
+          ? `${formatFantasyTeamName(roster?.team)} - Week ${week}`
+          : ""
+      }
+    >
+      <PageToolbar
+        title={"Edit Lineup"}
+        subtitle={
+          roster?.team
+            ? `${formatFantasyTeamName(roster?.team)} - Week ${week}`
+            : ""
+        }
+      />
+      {isLoading ? (
+        <Skeleton variant="rectangular" height={48} />
+      ) : (
+        <LineupTable
+          isUpdating={isUpdating}
+          roster={roster}
+          week={week}
+          errorList={errorList}
+          handleSave={handleSave}
+          handleChange={handleChange}
+          currentWeek={nflWeekState?.lineupWeek}
+        />
+      )}
+    </Root>
   );
 }
 
