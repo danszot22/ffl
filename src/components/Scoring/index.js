@@ -112,7 +112,11 @@ function Scoring({ league, team }) {
   }, [league, team, fantasyGames]);
 
   return (
-    <Root title={`Scoring - Week ${week}`} subtitle={`Updated: ${updatedOn}`}>
+    <Root
+      sx={{ p: 0 }}
+      title={`Scoring - Week ${week}`}
+      subtitle={`Updated: ${updatedOn}`}
+    >
       <PageToolbar title={"Scoring"} />
       <Header
         week={week}

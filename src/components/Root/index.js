@@ -29,7 +29,7 @@ const Item = styled(Paper)(({ theme }) => ({
   textAlign: "left",
 }));
 
-function Root({ children, title, subtitle }) {
+function Root({ children, title, subtitle, sx }) {
   const { dispatch: nflWeekDispatch } = useContext(NflWeekContext);
 
   let location = useLocation();
@@ -85,7 +85,7 @@ function Root({ children, title, subtitle }) {
   return (
     <>
       <Navigation title={title} subtitle={subtitle} />
-      <Item>{children}</Item>
+      {sx ? <Paper sx={sx}>{children}</Paper> : <Item>{children}</Item>}
     </>
   );
 }
