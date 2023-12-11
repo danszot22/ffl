@@ -11,7 +11,7 @@ import { mapScoring } from "../../../utils/parsers";
 import TeamPoints from "./TeamPoints";
 import { useTheme, useMediaQuery } from "@mui/material";
 
-function WeekPoints({ team, summaryData, showProjections }) {
+function WeekPoints({ userTeamId, summaryData, showProjections }) {
   const theme = useTheme();
   const isXs = useMediaQuery(theme.breakpoints.only("xs"));
 
@@ -38,7 +38,7 @@ function WeekPoints({ team, summaryData, showProjections }) {
         <TableBody>
           {mapScoring(summaryData).map((row) => (
             <TeamPoints
-              team={team}
+              userTeamId={userTeamId}
               key={`${row.key}`}
               row={row}
               topScore={summaryData[0].total}

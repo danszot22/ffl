@@ -22,7 +22,7 @@ import { Link } from "react-router-dom";
 
 export default function TeamPoints({
   category,
-  team,
+  userTeamId,
   row,
   showProjections,
   lineup,
@@ -41,7 +41,7 @@ export default function TeamPoints({
           <TeamLink
             team={row.Team}
             variant="inherit"
-            sx={{ fontWeight: row.TeamId === team ? 600 : 0 }}
+            sx={{ fontWeight: row.TeamId === userTeamId ? 600 : 0 }}
             shortName={isBelowLarge}
           />
         </TableCell>
@@ -158,7 +158,7 @@ export default function TeamPoints({
         <TableCell align="right">
           <Typography
             variant="inherit"
-            sx={{ fontWeight: row.TeamId === team ? 600 : 0 }}
+            sx={{ fontWeight: row.TeamId === userTeamId ? 600 : 0 }}
           >
             {(row.PointTotal + row.BonusTotal).toFixed(1)}
           </Typography>
@@ -169,7 +169,7 @@ export default function TeamPoints({
         >
           <Typography
             variant="inherit"
-            sx={{ fontWeight: row.TeamId === team ? 600 : 0 }}
+            sx={{ fontWeight: row.TeamId === userTeamId ? 600 : 0 }}
           >
             {row.BonusTotal}
           </Typography>
@@ -177,7 +177,7 @@ export default function TeamPoints({
         <TableCell align="right">
           <Link
             variant="inherit"
-            sx={{ fontWeight: row.TeamId === team ? 600 : 0 }}
+            sx={{ fontWeight: row.TeamId === userTeamId ? 600 : 0 }}
             onClick={() => setOpen(!open)}
           >
             <Typography

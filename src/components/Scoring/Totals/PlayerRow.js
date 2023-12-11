@@ -1,14 +1,14 @@
 import { grey } from "@mui/material/colors";
 import { formatGameInfo } from "../../../utils/helpers";
 import PlayerLink from "../../common/PlayerLink";
-import { Typography, TableCell, Box, TableRow } from "@mui/material";
+import { Typography, TableCell, Box } from "@mui/material";
+import { StyledTableRow } from "../../common/styled";
 
-export default function PlayerRow({ row, showProjections }) {
+export default function PlayerRow({ row, showProjections, variant }) {
   return (
-    <TableRow
+    <StyledTableRow
       key={row.PlayerId}
       sx={{
-        backgroundColor: "black",
         color: row.NflGame?.NotPlayed
           ? "error.light"
           : row.NflGame?.Playing
@@ -16,17 +16,16 @@ export default function PlayerRow({ row, showProjections }) {
           : grey[400],
       }}
     >
-      <TableCell sx={{ pl: 0, pr: 0 }} variant="caption" scope="row">
+      <TableCell variant={variant} scope="row">
         <Box sx={{ display: "flex", flexDirection: "column" }}>
           <Box sx={{ display: "flex", flexDirection: "row", gap: 1 }}>
             <PlayerLink
               playerId={row.PlayerId}
               playerName={row?.Player.Name}
               positionCode={row.Player?.Position?.PositionCode}
-              variant={"caption"}
+              variant={variant}
               xsOnly={true}
               sx={{
-                backgroundColor: "black",
                 color: row.NflGame?.NotPlayed
                   ? "error.light"
                   : row.NflGame?.Playing
@@ -34,23 +33,23 @@ export default function PlayerRow({ row, showProjections }) {
                   : grey[400],
               }}
             />
-            <Typography variant="caption">
+            <Typography variant={variant}>
               {" "}
               {row.Player?.Position.PositionCode}
             </Typography>
           </Box>
           {row.NflGame.GameDate ? (
-            <Typography variant="caption">
+            <Typography variant={variant}>
               {formatGameInfo(row.Player.NflTeam?.NflTeamId, row.NflGame)}
             </Typography>
           ) : (
-            <Typography variant="caption">Bye</Typography>
+            <Typography variant={variant}>Bye</Typography>
           )}
         </Box>
       </TableCell>
-      <TableCell variant="caption">
+      <TableCell variant={variant}>
         {row.NflGame.GameDate ? (
-          <Typography variant="caption">
+          <Typography component="p" variant={variant}>
             {["TMQB", "QB"].includes(row.Player.Position.PositionCode)
               ? `${row.PassYds ?? 0} Yds, ${row.PassTds ?? 0} TDs, ${
                   row.PassInts ?? 0
@@ -74,9 +73,8 @@ export default function PlayerRow({ row, showProjections }) {
         ) : null}
         {showProjections ? (
           <>
-            <br />
             {row.NflGame.GameDate && !row.NflGame.Final ? (
-              <Typography variant="caption">
+              <Typography component="p" variant={variant}>
                 Proj:
                 {["TMQB", "QB"].includes(row.Player.Position.PositionCode)
                   ? `${row.ProjPassYds ?? 0} Yds, ${
@@ -105,11 +103,11 @@ export default function PlayerRow({ row, showProjections }) {
         ) : null}
       </TableCell>
       <TableCell
-        variant="caption"
+        variant={variant}
         sx={{ display: { xs: "none", md: "table-cell" } }}
       >
         {row.NflGame.GameDate ? (
-          <Typography variant="caption">
+          <Typography variant={variant}>
             {["QB", "WR", "TE"].includes(row.Player.Position.PositionCode)
               ? `${row.RushYds ?? 0} RushYds, ${row.RushTds ?? 0} TDs`
               : " "}
@@ -119,6 +117,6 @@ export default function PlayerRow({ row, showProjections }) {
           </Typography>
         ) : null}
       </TableCell>
-    </TableRow>
+    </StyledTableRow>
   );
 }

@@ -132,7 +132,7 @@ function Scoring({ league, team }) {
         <Skeleton variant="rectangular" height={48} />
       ) : (
         <Points
-          team={team?.TeamId}
+          userTeamId={team?.TeamId}
           data={categoryData}
           summaryData={summaryData.totals}
           week={week}

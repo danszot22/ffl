@@ -8,9 +8,14 @@ import {
 } from "@mui/material";
 import PlayerRow from "./PlayerRow";
 
-export default function PlayerList({ players, showProjections, title }) {
+export default function PlayerList({
+  players,
+  showProjections,
+  title,
+  variant,
+}) {
   return (
-    <Paper elevation={3}>
+    <Paper sx={{ minWidth: { xs: 500, md: 600 } }} elevation={3}>
       <Table size="small" aria-label={title}>
         <TableHead>
           <TableRow>
@@ -24,6 +29,7 @@ export default function PlayerList({ players, showProjections, title }) {
               key={player.PlayerId}
               row={player}
               showProjections={showProjections}
+              variant={variant}
             />
           ))}
         </TableBody>

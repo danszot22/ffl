@@ -16,6 +16,7 @@ import PointsToolbar from "./PointsToolbar";
 import WeekPoints from "../Totals/WeekPoints";
 import CategoryPoints from "../Category/CategoryPoints";
 import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
+import PlayerList from "../Totals/PlayerList";
 
 const AccordionSummary = styled((props) => (
   <MuiAccordionSummary
@@ -35,7 +36,7 @@ const AccordionSummary = styled((props) => (
     marginLeft: theme.spacing(1),
   },
 }));
-function Points({ team, data, summaryData, week, showProjections }) {
+function Points({ userTeamId, data, summaryData, week, showProjections }) {
   const theme = useTheme();
   const isBelowMedium = useMediaQuery(theme.breakpoints.down("md"));
   const isBelowLarge = useMediaQuery(theme.breakpoints.down("lg"));
@@ -56,7 +57,7 @@ function Points({ team, data, summaryData, week, showProjections }) {
       <Accordion TransitionProps={{ unmountOnExit: true }} expanded={true}>
         <AccordionDetails sx={{ p: 0 }}>
           <WeekPoints
-            team={team}
+            userTeamId={userTeamId}
             summaryData={summaryData}
             showProjections={showProjections}
           />
@@ -77,7 +78,7 @@ function Points({ team, data, summaryData, week, showProjections }) {
             <CategoryPoints
               category={category}
               summaryData={summaryData}
-              team={team}
+              userTeamId={userTeamId}
               showProjections={showProjections}
             />
           </AccordionDetails>
@@ -119,12 +120,21 @@ function Points({ team, data, summaryData, week, showProjections }) {
             flexDirection: "row",
             justifyContent: "center",
             p: 1,
+            gap: 2,
           }}
         >
           <WeekPoints
-            team={team}
+            userTeamId={userTeamId}
             summaryData={summaryData}
             showProjections={showProjections}
+          />
+          <PlayerList
+            title={"Starters"}
+            players={
+              summaryData?.find((row) => row.key === userTeamId)?.Starters
+            }
+            showProjections={showProjections}
+            variant="inherit"
           />
         </Box>
       </CustomTabPanel>
@@ -145,7 +155,7 @@ function Points({ team, data, summaryData, week, showProjections }) {
             <CategoryPoints
               category={category}
               summaryData={summaryData}
-              team={team}
+              userTeamId={userTeamId}
               showProjections={showProjections}
             />
           </Box>

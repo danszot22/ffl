@@ -16,7 +16,12 @@ import { useTheme, useMediaQuery } from "@mui/material";
 import TeamLink from "../../common/TeamLink";
 import { formatFantasyTeamName } from "../../../utils/helpers";
 
-export default function TeamPoints({ team, row, topScore, showProjections }) {
+export default function TeamPoints({
+  userTeamId,
+  row,
+  topScore,
+  showProjections,
+}) {
   const theme = useTheme();
   const isXs = useMediaQuery(theme.breakpoints.down("sm"));
   const isBelowMedium = useMediaQuery(theme.breakpoints.down("md"));
@@ -29,7 +34,7 @@ export default function TeamPoints({ team, row, topScore, showProjections }) {
         <TableCell sx={{ pr: 0 }} component="th" scope="row">
           <Typography
             variant="inherit"
-            sx={{ fontWeight: row.key === team ? 600 : 0 }}
+            sx={{ fontWeight: row.key === userTeamId ? 600 : 0 }}
           >
             {row.rank}
           </Typography>
@@ -38,7 +43,7 @@ export default function TeamPoints({ team, row, topScore, showProjections }) {
           <TeamLink
             team={row.team}
             variant="inherit"
-            sx={{ fontWeight: row.key === team ? 600 : 0 }}
+            sx={{ fontWeight: row.key === userTeamId ? 600 : 0 }}
             shortName={isBelowMedium}
           />
         </TableCell>
@@ -85,7 +90,7 @@ export default function TeamPoints({ team, row, topScore, showProjections }) {
         <TableCell align="right">
           <Link
             variant="inherit"
-            sx={{ fontWeight: row.key === team ? 600 : 0 }}
+            sx={{ fontWeight: row.key === userTeamId ? 600 : 0 }}
             onClick={() => setOpen(!open)}
           >
             {row.total.toFixed(1)}{" "}
@@ -97,7 +102,7 @@ export default function TeamPoints({ team, row, topScore, showProjections }) {
             <TableCell align="right">
               <Typography
                 variant="inherit"
-                sx={{ fontWeight: row.key === team ? 600 : 0 }}
+                sx={{ fontWeight: row.key === userTeamId ? 600 : 0 }}
               >
                 {(topScore - row.total).toFixed(1)}
               </Typography>
@@ -117,16 +122,18 @@ export default function TeamPoints({ team, row, topScore, showProjections }) {
         >
           {formatFantasyTeamName(row.team, false)}
         </DialogTitle>
-        <DialogContent sx={{ backgroundColor: "black", color: "white" }}>
+        <DialogContent sx={{ p: 0, backgroundColor: "black", color: "white" }}>
           <PlayerList
             title={"Starters"}
             players={row.Starters}
             showProjections={showProjections}
+            variant="caption"
           />
           <PlayerList
             title="Bench"
             players={row.Bench}
             showProjections={showProjections}
+            variant="caption"
           />
         </DialogContent>
         <DialogTitle

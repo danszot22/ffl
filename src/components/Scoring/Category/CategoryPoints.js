@@ -12,7 +12,12 @@ import {
 } from "@mui/material";
 import TeamPoints from "./TeamPoints";
 
-function CategoryPoints({ category, showProjections, team, summaryData }) {
+function CategoryPoints({
+  category,
+  showProjections,
+  userTeamId,
+  summaryData,
+}) {
   const theme = useTheme();
   const isBelowMedium = useMediaQuery(theme.breakpoints.down("md"));
 
@@ -77,7 +82,7 @@ function CategoryPoints({ category, showProjections, team, summaryData }) {
           {category.teamStatistics.map((teamStatistic) => (
             <TeamPoints
               category={category.title}
-              team={team}
+              userTeamId={userTeamId}
               key={`${category.key}-${teamStatistic.TeamId}`}
               row={teamStatistic}
               showProjections={showProjections}
