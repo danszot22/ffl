@@ -17,7 +17,7 @@ export default function PlayerList({
   showGame,
 }) {
   return (
-    <Paper sx={{ minWidth: 400 }} elevation={3}>
+    <Paper sx={{ minWidth: { xs: 350, md: 500 } }} elevation={3}>
       <Table size="small" aria-label="players">
         <TableHead>
           <TableRow>

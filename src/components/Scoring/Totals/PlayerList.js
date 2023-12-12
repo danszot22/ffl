@@ -15,7 +15,7 @@ export default function PlayerList({
   variant,
 }) {
   return (
-    <Paper sx={{ minWidth: { xs: 500, md: 600 } }} elevation={3}>
+    <Paper sx={{ minWidth: { xs: 350, md: 500 } }} elevation={3}>
       <Table size="small" aria-label={title}>
         <TableHead>
           <TableRow>
