@@ -65,7 +65,7 @@ export default function NavItems({
       <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
         <MenuList title="Opposing Teams">
           {teams
-            ?.filter((leagueTeam) => leagueTeam.TeamId !== team?.teamId)
+            ?.filter((leagueTeam) => leagueTeam.TeamId !== team?.TeamId)
             .map((leagueTeam) => (
               <MenuItem
                 key={leagueTeam.TeamId}
