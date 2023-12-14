@@ -3,7 +3,11 @@ import { useMediaQuery, useTheme } from "@mui/material";
 import { Box, Typography } from "@mui/material";
 import PlayerImage from "../components/common/PlayerImage";
 import PlayerLink from "../components/common/PlayerLink";
-import { playerStatusCodes } from "../utils/helpers";
+import {
+  formatDateToMonthYear,
+  playerStatusCodes,
+  playerStatuses,
+} from "../utils/helpers";
 import { nflTeamsLoader } from "../api/graphql";
 import { getPositionsToAdd } from "../api/ffl";
 import { useQuery } from "@tanstack/react-query";
@@ -92,6 +96,7 @@ function usePlayerTableColumns(
               gap: "1rem",
             }}
           >
+            {`${row.original?.RowNumber}.`}
             <PlayerImage
               positionCode={row.original?.PositionCode}
               nflTeamCode={row.original?.DisplayCode}
@@ -230,7 +235,14 @@ function usePlayerTableColumns(
       allcolumns = [
         ...allcolumns,
         {
-          accessorFn: (row) => row.StatusDescription,
+          accessorFn: (row) =>
+            row.StatusDescription
+              ? row.StatusDescription
+              : row.StatusCode
+              ? `${formatDateToMonthYear(row.InjuryDate)} ${
+                  playerStatuses[row.StatusCode]
+                }`
+              : null,
           id: "Status",
           header: "Status",
           size: 200,
