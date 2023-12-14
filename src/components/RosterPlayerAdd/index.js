@@ -108,6 +108,7 @@ function RosterPlayerAdd({ league, team }) {
       ) : (
         <DropRosterPlayers
           leagueId={league?.LeagueId}
+          team={team}
           roster={rosterPlayers}
           playerToAdd={player}
         />

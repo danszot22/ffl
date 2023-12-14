@@ -24,7 +24,12 @@ import { getTransactionText, updateRoster } from "../../api/ffl";
 import TeamRosterPlayers from "../common/TeamRosterPlayers";
 import { useNavigate } from "react-router-dom";
 
-export default function DropRosterPlayers({ leagueId, roster, playerToAdd }) {
+export default function DropRosterPlayers({
+  leagueId,
+  roster,
+  playerToAdd,
+  team,
+}) {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [selectedRosterPlayer, setSelectedRosterPlayer] = useState({});
@@ -138,7 +143,12 @@ export default function DropRosterPlayers({ leagueId, roster, playerToAdd }) {
               <TableCell></TableCell>
             </TableRow>
           </TableHead>
-          <TeamRosterPlayers roster={roster} handleClick={handleClickOpen} />
+          <TeamRosterPlayers
+            team={team}
+            teamDetails={team}
+            roster={roster}
+            handleClick={handleClickOpen}
+          />
         </Table>
       </TableContainer>
     </>
