@@ -2,19 +2,18 @@ import { fflapi } from "./ffl";
 
 export const seasonStandingsLoader = async (year, leagueId) => {
   const response = await postToApi(`{
-        seasonStandings( filter: {and: [
-                { Team :{ LeagueId: { eq: ${leagueId}} } }
+        leagueStandings( filter: {and: [
+                { LeagueId: { eq: ${leagueId}} }
                 { Year: { eq: ${year} } }
             ] }) {
             items {
                 Year
                 TeamId
-                Team {
-                    TeamId
-                    Division
-                    TeamName
-                    OwnerName
-                }
+                Division
+                TeamName
+                OwnerName
+                DivisionSeed
+                PlayoffTeamId
                 PointTotal
                 Wins
                 Losses
@@ -26,7 +25,7 @@ export const seasonStandingsLoader = async (year, leagueId) => {
             }
         }
     }`);
-  return response.data.data?.seasonStandings?.items;
+  return response.data.data?.leagueStandings?.items;
 };
 
 async function postToApi(query) {
@@ -1105,14 +1104,12 @@ export const leagueScheduleLoader = async (league, schedule = 0) => {
   return response.data.data.scheduleGames?.items;
 };
 
-export const teamScheduleLoader = async (team, schedule) => {
+export const teamScheduleLoader = async (team) => {
   const response = await postToApi(`{
-        scheduleGames( filter: {and: [
-                { Schedule: {ScheduleType: { eq: ${schedule} } } } 
+        scheduleGames( filter:
                 { or: [ 
                     { FantasyGame: {HomeTeamId:  { eq: ${team} }  } }
                     { FantasyGame: {AwayTeamId:  { eq: ${team} }  } }
-                ] } 
             ] }
             orderBy: { Week : ASC } ) {
             items {
@@ -1459,4 +1456,22 @@ export const leagueTradesLoader = async (league) => {
     }`);
 
   return response.data.data?.trades?.items;
+};
+
+export const incompleteWeeksLoader = async (leagueId) => {
+  if (!Number.isInteger(leagueId)) return [];
+  const response = await postToApi(`{
+        incompleteWeeks ( 
+            filter: {
+                LeagueId:{ eq: ${leagueId} } }                 
+            ) {
+            items {
+                WeekCount 
+            }   
+        }  
+    }`);
+  return response.data.data.incompleteWeeks.items[0]?.WeekCount &&
+    response.data.data.incompleteWeeks.items[0]?.WeekCount > 0
+    ? true
+    : false;
 };

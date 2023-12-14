@@ -41,7 +41,7 @@ function SeasonPoints({ data }) {
             <StyledTableRow key={point.TeamId}>
               <TableCell>{point.rank}</TableCell>
               <TableCell sx={{ width: { md: 350 } }}>
-                <TeamLink team={point.Team} />
+                <TeamLink team={point} />
               </TableCell>
               <TableCell>{point.PointTotal}</TableCell>
               <TableCell>

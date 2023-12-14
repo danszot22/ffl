@@ -24,13 +24,13 @@ export function mapSeasonRecords(data) {
   let divisionMap = {};
 
   data?.forEach((record) => {
-    if (!divisionMap[record.Team.Division]) {
-      divisionMap[record.Team.Division] = {
-        key: record.Team.Division,
+    if (!divisionMap[record.Division]) {
+      divisionMap[record.Division] = {
+        key: record.Division,
         records: [],
       };
     }
-    divisionMap[record.Team.Division].records.push(record);
+    divisionMap[record.Division].records.push(record);
   });
 
   const divisions = Object.values(divisionMap).map((division) => division);

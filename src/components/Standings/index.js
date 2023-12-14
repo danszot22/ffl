@@ -31,7 +31,7 @@ function Standings({ league, team }) {
             <SeasonPoints data={standings} />
           </Grid>
           <Grid lg={6}>
-            <SeasonRecords data={standings} />
+            <SeasonRecords data={standings} leagueId={league?.LeagueId} />
           </Grid>
         </Grid>
       ) : null}

@@ -40,7 +40,7 @@ function Team({ league, team, user }) {
     const fetchTeam = async (teamId) => {
       const teamResponse = await teamLoader(teamId);
       setTeamDetails(teamResponse);
-      const scheduleResponse = await teamScheduleLoader(teamId, 0);
+      const scheduleResponse = await teamScheduleLoader(teamId);
       setSchedule(mapToTeamGameList(scheduleResponse, teamId));
       const waiverResponse = await teamWaiverRequestsLoader(teamId, 0);
       setWaivers(waiverResponse);
