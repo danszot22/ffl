@@ -161,7 +161,7 @@ function PlayerList({ league, team }) {
               <Tooltip title="Drop">
                 <IconButton
                   color="error"
-                  to={`/RosterPlayer/Drop/${row.original.TeamId}/${row.original.PlayerId}`}
+                  to={`/RosterPlayer/Drop/${row.original.TeamId}/${row.original.RosterPlayerId}`}
                 >
                   <PersonRemove />
                 </IconButton>
