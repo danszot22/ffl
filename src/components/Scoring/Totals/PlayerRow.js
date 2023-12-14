@@ -67,7 +67,11 @@ export default function PlayerRow({ row, showProjections, variant }) {
             {["S", "CB", "LB", "DE", "DT"].includes(
               row.Player.Position.PositionCode
             )
-              ? ` ${row.Tackles ?? 0} Tckls, ${row.Sacks ?? 0} Sacks`
+              ? ` ${row.Tackles ?? 0} Tckls, ${
+                  row.RelatedStatistics?.length > 0
+                    ? row.RelatedStatistics[0]
+                    : 0
+                } Solo, ${row.Sacks ?? 0} Sacks`
               : " "}
           </Typography>
         ) : null}
@@ -113,6 +117,9 @@ export default function PlayerRow({ row, showProjections, variant }) {
               : " "}
             {["RB"].includes(row.Player.Position.PositionCode)
               ? `${row.RecYds ?? 0} RecYds, ${row.RecTds ?? 0} TDs`
+              : " "}
+            {["TMPK", "PK"].includes(row.Player.Position.PositionCode)
+              ? row.RelatedStatistics?.join(", ")
               : " "}
           </Typography>
         ) : null}

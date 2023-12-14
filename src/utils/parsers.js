@@ -335,6 +335,9 @@ const mapPlayerStatistic = (
     NflGame: {
       ...mapNflGame(newStatistic.PlayerStatisticVersion.NflGame),
     },
+    RelatedStatistics: newStatistic.RelatedStatistic?.items?.map(
+      (item) => item.Total
+    ),
     [projected
       ? "Proj" + statisticalCategory[statisticalCategoryId]
       : statisticalCategory[statisticalCategoryId]]: newStatistic.Total,
