@@ -245,6 +245,11 @@ export const scoringLoader = async (league, week) => {
                                 items {
                                     PlayerId
                                     Total
+                                    RelatedStatistic {
+                                        items {
+                                           Total
+                                        }
+                                    }
                                     Player {
                                         Name
                                         Position {

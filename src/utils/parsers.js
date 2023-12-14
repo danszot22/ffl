@@ -289,6 +289,9 @@ const mapPlayerCategoryTotal = (prevStatistics, projected, newStatistics) => {
         ...mapNflGame(newStatistic.PlayerStatisticVersion.NflGame),
       },
       [projected ? "ProjTotal" : "Total"]: newStatistic.Total,
+      RelatedStatistics: newStatistic.RelatedStatistic?.items?.map(
+        (item) => item.Total
+      ),
     };
     return playerStatistic;
   });

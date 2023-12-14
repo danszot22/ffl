@@ -207,7 +207,9 @@ export default function TeamPoints({
                 <Typography sx={{ ml: { xs: 0, md: 1 } }} variant="caption">
                   {`${formatPlayerName(starter.Player.Name, "")}(${
                     starter.Total
-                  })`}
+                  }${
+                    starter.RelatedStatistics.length > 0 ? ":" : ""
+                  }${starter.RelatedStatistics?.join(", ")})`}
                 </Typography>
               ) : null
             )}
