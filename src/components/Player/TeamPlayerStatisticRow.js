@@ -13,6 +13,7 @@ import {
   TableBody,
 } from "@mui/material";
 import { StyledExpandableTableRow } from "../common/styled";
+import PlayerLink from "../common/PlayerLink";
 
 export default function TeamPlayerStatisticRow({
   player,
@@ -109,7 +110,15 @@ export default function TeamPlayerStatisticRow({
                             <TableRow
                               key={`${game.NflGameId}-${player?.Player?.PlayerId}`}
                             >
-                              <TableCell>{player?.Player?.Name}</TableCell>
+                              <TableCell>
+                                <PlayerLink
+                                  playerId={player?.Player?.PlayerId}
+                                  playerName={player?.Player?.Name}
+                                  positionCode={
+                                    player?.Player?.Position?.PositionCode
+                                  }
+                                />
+                              </TableCell>
                               <TableCell align="right">
                                 {["PK"].includes(
                                   player?.Player?.Position?.PositionCode
