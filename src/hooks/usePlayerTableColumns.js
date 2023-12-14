@@ -247,7 +247,7 @@ function usePlayerTableColumns(
         size: 50,
         enableColumnFilter: isAboveSmall,
         filterVariant: "select",
-        filterSelectOptions: summaryTypes,
+        filterSelectOptions: summaryTypes?.map((type) => type.value),
         Cell: ({ renderedCellValue, row }) => row.original.Points,
       },
     ];
