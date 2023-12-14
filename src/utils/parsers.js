@@ -1038,9 +1038,16 @@ export function mapTeamPlayerDetails(data, gameData) {
   const gameMap = {};
 
   data?.forEach((playerHistory) => {
-    playerMap = playerMap.concat(
-      mapPlayerDetails(playerHistory.Player, gameData)
+    //check if player already added
+    const player = playerMap?.find(
+      (p) => p.Player.PlayerId === playerHistory.Player.PlayerId
     );
+    //don't add player twice
+    if (!player) {
+      playerMap = playerMap.concat(
+        mapPlayerDetails(playerHistory.Player, gameData)
+      );
+    }
   });
 
   playerMap?.forEach((player) => {
