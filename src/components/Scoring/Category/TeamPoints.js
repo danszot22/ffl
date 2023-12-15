@@ -228,7 +228,13 @@ export default function TeamPoints({
         >
           {formatFantasyTeamName(row.Team, false)}
         </DialogTitle>
-        <DialogContent sx={{ backgroundColor: "black", color: "white" }}>
+        <DialogContent
+          sx={{
+            p: { xs: 0, md: 1 },
+            backgroundColor: "black",
+            color: "white",
+          }}
+        >
           <PlayerList
             title={`Starters`}
             players={row.Starters}

@@ -16,7 +16,7 @@ export default function PlayerRow({ row, showProjections, showGame }) {
           : grey[400],
       }}
     >
-      <TableCell sx={{ pl: 0, pr: 0 }} variant="caption" scope="row">
+      <TableCell sx={{ pr: 0 }} variant="caption" scope="row">
         <Box sx={{ display: "flex", flexDirection: "column" }}>
           <PlayerLink
             playerId={row.PlayerId}
