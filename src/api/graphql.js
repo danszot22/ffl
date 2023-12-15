@@ -879,7 +879,7 @@ export const playersLoader = async (
   return response.data.data.players;
 };
 
-export const currentNflGameWeekLoader = async () => {
+export const firstWeekIncompleteGameLoader = async () => {
   const response = await postToApi(`{
         nflGames( 
             filter: {Final: { eq: false  } } first: 1 
@@ -897,7 +897,7 @@ export const currentNflGameWeekLoader = async () => {
   return week;
 };
 
-export const lastNflGameWeekPlayedLoader = async () => {
+export const lastWeekCompletedGameLoader = async () => {
   const response = await postToApi(`{
         nflGames( 
             filter: {Final: { eq: true  } } first: 1 
@@ -910,6 +910,27 @@ export const lastNflGameWeekPlayedLoader = async () => {
 
   const week = response.data.data.nflGames?.items[0]
     ? response.data.data.nflGames.items[0].Week
+    : 0;
+
+  return week;
+};
+
+export const lastWeekStatsLoader = async () => {
+  const response = await postToApi(`{
+        playerStatisticVersions( 
+            filter: {and: [
+                {Active: { eq: true  }} 
+                {Projected: { eq: false  }} 
+            ]} first: 1 
+                orderBy: { Week : DESC }) {
+            items {
+                Week
+            }
+        }
+    }`);
+
+  const week = response.data.data.playerStatisticVersions?.items[0]
+    ? response.data.data.playerStatisticVersions.items[0].Week
     : 0;
 
   return week;

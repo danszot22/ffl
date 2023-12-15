@@ -9,8 +9,8 @@ import {
 } from "../../contexts/NflWeekContext";
 import { useContext, useEffect, useLayoutEffect } from "react";
 import {
-  currentNflGameWeekLoader,
-  lastNflGameWeekPlayedLoader,
+  firstWeekIncompleteGameLoader,
+  lastWeekStatsLoader,
   seasonYearLoader,
 } from "../../api/graphql";
 import { useQuery } from "@tanstack/react-query";
@@ -58,29 +58,29 @@ function Root({ children, title, subtitle, sx }) {
     nflWeekDispatch(setSeasonYear(seasonYear));
   }, [seasonYear, nflWeekDispatch]);
 
-  const { data: lastPlayedWeek } = useQuery({
-    queryKey: ["lastPlayedWeek"],
+  const { data: lastWeekStats } = useQuery({
+    queryKey: ["lastWeekStats"],
     queryFn: async () => {
-      return await lastNflGameWeekPlayedLoader();
+      return await lastWeekStatsLoader();
     },
     staleTime: 5 * 60 * 1000, //5 minutes
     refetchInterval: 5 * 60 * 1000, //5 minutes
   });
   useEffect(() => {
-    nflWeekDispatch(setLastScoredWeek(lastPlayedWeek));
-  }, [lastPlayedWeek, nflWeekDispatch]);
+    nflWeekDispatch(setLastScoredWeek(lastWeekStats));
+  }, [lastWeekStats, nflWeekDispatch]);
 
-  const { data: currentGameWeek } = useQuery({
-    queryKey: ["currentGameWeek"],
+  const { data: firstWeekIncomplete } = useQuery({
+    queryKey: ["firstWeekIncomplete"],
     queryFn: async () => {
-      return await currentNflGameWeekLoader();
+      return await firstWeekIncompleteGameLoader();
     },
     staleTime: 5 * 60 * 1000, //5 minutes
     refetchInterval: 5 * 60 * 1000, //5 minutes
   });
   useEffect(() => {
-    nflWeekDispatch(setLineupWeek(currentGameWeek));
-  }, [currentGameWeek, nflWeekDispatch]);
+    nflWeekDispatch(setLineupWeek(firstWeekIncomplete));
+  }, [firstWeekIncomplete, nflWeekDispatch]);
 
   return (
     <>
