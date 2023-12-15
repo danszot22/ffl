@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const fflapiurl = "https://ffl2013.azurewebsites.net/api";
-export const fflurl = "https://kind-sky-02d625b0f.4.azurestaticapps.net";
+export const fflurl = window.location.origin; //"https://kind-sky-02d625b0f.4.azurestaticapps.net";
 
 export const fflapi = axios.create({
   baseURL: fflapiurl,
