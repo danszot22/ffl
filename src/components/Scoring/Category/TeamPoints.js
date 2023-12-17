@@ -160,7 +160,9 @@ export default function TeamPoints({
             variant="inherit"
             sx={{ fontWeight: row.TeamId === userTeamId ? 600 : 0 }}
           >
-            {(row.PointTotal + row.BonusTotal).toFixed(1)}
+            {isBelowMedium
+              ? (row.PointTotal + row.BonusTotal).toFixed(1)
+              : row.PointTotal.toFixed(1)}
           </Typography>
         </TableCell>
         <TableCell
@@ -194,7 +196,7 @@ export default function TeamPoints({
             </Typography>
           </Link>
         </TableCell>
-        <TableCell align="right">
+        <TableCell sx={{ pl: 0 }} align="right">
           <Box
             sx={{
               display: "flex",

@@ -65,15 +65,17 @@ function CategoryPoints({
                   : ""}
               </Box>
             </TableCell>
-            <TableCell align="right">Pts + Bonus</TableCell>
+            <TableCell align="right">
+              {isBelowMedium ? "Pts+ Bon." : "Points"}
+            </TableCell>
             <TableCell
               align="right"
               sx={{ display: { xs: "none", md: "table-cell" } }}
             >
               Bonus
             </TableCell>
-            <TableCell align="right">
-              Amount {showProjections && !isBelowMedium ? "(Proj)" : null}
+            <TableCell align="right" sx={{ pl: 0 }}>
+              Amt {showProjections && !isBelowMedium ? "(Proj)" : null}
             </TableCell>
             <TableCell align="right">Top Starters</TableCell>
           </TableRow>
