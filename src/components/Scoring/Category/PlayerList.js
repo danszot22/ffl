@@ -44,7 +44,7 @@ export default function PlayerList({
                 variant="caption"
                 scope="row"
                 colSpan={4}
-                sx={{ pl: 0, backgroundColor: "black", color: grey[400] }}
+                sx={{ backgroundColor: "black", color: grey[400] }}
               >
                 <Typography variant="caption">No Players</Typography>
               </TableCell>
