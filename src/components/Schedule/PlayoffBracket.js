@@ -74,7 +74,7 @@ function PlayoffBracket({ league }) {
               }}
             >
               {round.Games?.map((game) => (
-                <Card variant="outlined" key={game.$id} sx={{ width: 350 }}>
+                <Card variant="outlined" key={game.$id} sx={{ width: 400 }}>
                   <CardContent p={0}>
                     <Table size="small">
                       <TableBody>
@@ -86,6 +86,11 @@ function PlayoffBracket({ league }) {
                                 }) ${formatFantasyTeamName(game.HomeTeam)}`
                               : "TBD"}
                           </TableCell>
+                          <TableCell>
+                            {game.Played
+                              ? game.FantasyGameResult.HomePointTotal.toFixed(1)
+                              : null}
+                          </TableCell>
                         </TableRow>
                         <TableRow>
                           <TableCell>
@@ -94,6 +99,11 @@ function PlayoffBracket({ league }) {
                                   game.AwayTeam.LeagueSeed
                                 }) ${formatFantasyTeamName(game.AwayTeam)}`
                               : "TBD"}
+                          </TableCell>
+                          <TableCell>
+                            {game.Played
+                              ? game.FantasyGameResult.AwayPointTotal.toFixed(1)
+                              : null}
                           </TableCell>
                         </TableRow>
                       </TableBody>
