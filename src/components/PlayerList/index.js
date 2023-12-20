@@ -8,6 +8,8 @@ import {
   MenuItem,
   Tooltip,
   IconButton,
+  useTheme,
+  useMediaQuery,
 } from "@mui/material";
 import { useSearchParams, useParams } from "react-router-dom";
 import PageToolbar from "../common/PageToolbar";
@@ -50,6 +52,8 @@ function PlayerList({ league, team }) {
   const { columns, positions, nflTeams, summaryTypes } =
     usePlayerTableColumns(spot);
 
+  const theme = useTheme();
+  const isAboveMedium = useMediaQuery(theme.breakpoints.up("md"));
   return (
     <Root title={"Players"}>
       <PageToolbar title={"Players"} />
@@ -119,8 +123,11 @@ function PlayerList({ league, team }) {
         columns={columns}
         data={players}
         getRowId={(row) => row.PlayerId}
+        muiTableHeadCellProps={{
+          sx: { pr: 1, pl: 1, pb: 1, pt: 0 },
+        }}
         muiTableBodyCellProps={{
-          sx: { pr: 0 },
+          sx: { pr: 1, pl: 1, pb: 1, pt: 0 },
         }}
         manualFiltering
         manualPagination
@@ -141,8 +148,9 @@ function PlayerList({ league, team }) {
               }
             : undefined
         }
+        positionActionsColumn={isAboveMedium ? "first" : "last"}
         renderRowActions={({ row, table }) => (
-          <Box sx={{ display: "flex", gap: "1rem" }}>
+          <Box>
             {!row.original.OwnerName ? (
               <Tooltip title="Add">
                 <IconButton
