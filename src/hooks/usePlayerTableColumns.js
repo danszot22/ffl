@@ -249,42 +249,47 @@ function usePlayerTableColumns(
         header: "Points",
         enableColumnFilter: isAboveSmall,
         filterVariant: "select",
+        size: spot === "All" ? null : 50,
         filterSelectOptions: summaryTypes?.map((type) => type.value),
         Cell: ({ renderedCellValue, row }) => (
           <Box sx={{ display: "flex", flexDirection: "column" }}>
             <Typography variant="inherit">
               {row.original.Points} {isAboveMedium ? "" : "Pts"}
             </Typography>
-            <Typography
-              sx={{ display: { xs: "block", md: "none" } }}
-              variant="inherit"
-            >
-              {["TMQB", "QB"].includes(row.original.PositionCode)
-                ? `${row.original.PassYds ?? 0} Yds, ${
-                    row.original.PassTds ?? 0
-                  } TDs, ${row.original.PassInts ?? 0} Ints`
-                : " "}
-              {["RB"].includes(row.original.PositionCode)
-                ? `${row.original.RushingYds ?? 0} Yds, ${
-                    row.original.RushingTds ?? 0
-                  } TDs`
-                : " "}
-              {["WR", "TE"].includes(row.original.PositionCode)
-                ? `${row.original.ReceivingYds ?? 0} Yds, ${
-                    row.original.ReceivingTds ?? 0
-                  } TDs`
-                : " "}
-              {["TMPK", "PK"].includes(row.original.PositionCode)
-                ? ` ${row.original.FGYds ?? 0} FGYds, ${
-                    row.original.XPs ?? 0
-                  } XPs`
-                : " "}
-              {["S", "CB", "LB", "DE", "DT"].includes(row.original.PositionCode)
-                ? ` ${row.original.Tackles ?? 0} Tckls, ${
-                    row.original.Sacks ?? 0
-                  } Sacks`
-                : " "}
-            </Typography>
+            {spot === "All" ? (
+              <Typography
+                sx={{ display: { xs: "block", md: "none" } }}
+                variant="inherit"
+              >
+                {["TMQB", "QB"].includes(row.original.PositionCode)
+                  ? `${row.original.PassYds ?? 0} Yds, ${
+                      row.original.PassTds ?? 0
+                    } TDs, ${row.original.PassInts ?? 0} Ints`
+                  : " "}
+                {["RB"].includes(row.original.PositionCode)
+                  ? `${row.original.RushingYds ?? 0} Yds, ${
+                      row.original.RushingTds ?? 0
+                    } TDs`
+                  : " "}
+                {["WR", "TE"].includes(row.original.PositionCode)
+                  ? `${row.original.ReceivingYds ?? 0} Yds, ${
+                      row.original.ReceivingTds ?? 0
+                    } TDs`
+                  : " "}
+                {["TMPK", "PK"].includes(row.original.PositionCode)
+                  ? ` ${row.original.FGYds ?? 0} FGYds, ${
+                      row.original.XPs ?? 0
+                    } XPs`
+                  : " "}
+                {["S", "CB", "LB", "DE", "DT"].includes(
+                  row.original.PositionCode
+                )
+                  ? ` ${row.original.Tackles ?? 0} Tckls, ${
+                      row.original.Sacks ?? 0
+                    } Sacks`
+                  : " "}
+              </Typography>
+            ) : null}
           </Box>
         ),
       },
