@@ -113,7 +113,6 @@ function usePlayerTableColumns(
                 sx={{
                   display: "flex",
                   flexDirection: "row",
-                  gap: 1,
                 }}
               >
                 <PlayerLink
@@ -124,21 +123,13 @@ function usePlayerTableColumns(
                 <Typography variant="caption">
                   {playerStatusCodes[row.original.StatusCode]}
                 </Typography>
-              </Box>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  gap: 1,
-                }}
-              >
                 {isXs ? (
-                  <Typography variant="caption">
+                  <Typography sx={{ pl: 1 }} variant="caption">
                     {row.original.PositionCode}
                   </Typography>
                 ) : null}
                 {isXs ? (
-                  <Typography variant="caption">
+                  <Typography sx={{ pl: 1 }} variant="caption">
                     {row.original.DisplayCode}
                   </Typography>
                 ) : null}
@@ -256,11 +247,46 @@ function usePlayerTableColumns(
         accessorFn: (row) => row.Points,
         id: "Points",
         header: "Points",
-        size: 50,
         enableColumnFilter: isAboveSmall,
         filterVariant: "select",
         filterSelectOptions: summaryTypes?.map((type) => type.value),
-        Cell: ({ renderedCellValue, row }) => row.original.Points,
+        Cell: ({ renderedCellValue, row }) => (
+          <Box sx={{ display: "flex", flexDirection: "column" }}>
+            <Typography variant="inherit">
+              {row.original.Points} {isAboveMedium ? "" : "Pts"}
+            </Typography>
+            <Typography
+              sx={{ display: { xs: "block", md: "none" } }}
+              variant="inherit"
+            >
+              {["TMQB", "QB"].includes(row.original.PositionCode)
+                ? `${row.original.PassYds ?? 0} Yds, ${
+                    row.original.PassTds ?? 0
+                  } TDs, ${row.original.PassInts ?? 0} Ints`
+                : " "}
+              {["RB"].includes(row.original.PositionCode)
+                ? `${row.original.RushingYds ?? 0} Yds, ${
+                    row.original.RushingTds ?? 0
+                  } TDs`
+                : " "}
+              {["WR", "TE"].includes(row.original.PositionCode)
+                ? `${row.original.ReceivingYds ?? 0} Yds, ${
+                    row.original.ReceivingTds ?? 0
+                  } TDs`
+                : " "}
+              {["TMPK", "PK"].includes(row.original.PositionCode)
+                ? ` ${row.original.FGYds ?? 0} FGYds, ${
+                    row.original.XPs ?? 0
+                  } XPs`
+                : " "}
+              {["S", "CB", "LB", "DE", "DT"].includes(row.original.PositionCode)
+                ? ` ${row.original.Tackles ?? 0} Tckls, ${
+                    row.original.Sacks ?? 0
+                  } Sacks`
+                : " "}
+            </Typography>
+          </Box>
+        ),
       },
     ];
     if (spot === "TMQB") {
@@ -391,7 +417,7 @@ function usePlayerTableColumns(
         ];
       }
     }
-    if (spot === "All") {
+    if (spot === "All" && isAboveMedium) {
       allcolumns = [
         ...allcolumns,
         {
